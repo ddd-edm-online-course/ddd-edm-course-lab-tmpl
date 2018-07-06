@@ -1,5 +1,6 @@
 package com.mattstine.dddworkshop.pizzashop.ordering;
 
+import com.mattstine.dddworkshop.pizzashop.infrastructure.Amount;
 import com.mattstine.dddworkshop.pizzashop.infrastructure.EventLog;
 
 import java.util.ArrayList;
@@ -11,12 +12,14 @@ import java.util.List;
 public class Order {
 	private final OrderType type;
 	private final EventLog eventLog;
+	private final OrderRef id;
 	private OrderState state;
 	private List<Pizza> pizzas;
 
-	private Order(OrderType type, EventLog eventLog) {
+	private Order(OrderType type, EventLog eventLog, OrderRef ref) {
 		this.type = type;
 		this.eventLog = eventLog;
+		this.id = ref;
 		this.pizzas = new ArrayList<>();
 	}
 
@@ -53,9 +56,20 @@ public class Order {
 		eventLog.publish(new OrderPlacedEvent());
 	}
 
+	public List<Pizza> getPizzas() {
+		return pizzas;
+	}
+
+	public Amount getPrice() {
+		return this.pizzas.stream()
+				.map(Pizza::getPrice)
+				.reduce(Amount.of(0,0), Amount::plus);
+	}
+
 	static class OrderBuilder {
 		private OrderType type;
 		private EventLog eventLog;
+		private OrderRef ref;
 
 		OrderBuilder(OrderType type) {
 			this.type = type;
@@ -84,7 +98,16 @@ public class Order {
 				throw new IllegalStateException("Cannot build Order without valid EventLog");
 			}
 
-			return new Order(this.type, this.eventLog);
+			if (this.ref == null) {
+				throw new IllegalStateException("Cannot build Order without valid Id");
+			}
+
+			return new Order(this.type, this.eventLog, this.ref);
+		}
+
+		public OrderBuilder withId(OrderRef ref) {
+			this.ref = ref;
+			return this;
 		}
 	}
 }

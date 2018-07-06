@@ -26,6 +26,7 @@ public class OrderTests {
 	public void should_create_pickup_order() {
 		Order order = Order.withType(OrderType.PICKUP)
 				.withEventLog(eventLog)
+				.withId(new OrderRef())
 				.build();
 		assertThat(order.isPickupOrder()).isTrue();
 	}
@@ -34,6 +35,7 @@ public class OrderTests {
 	public void should_create_delivery_order() {
 		Order order = Order.withType(OrderType.DELIVERY)
 				.withEventLog(eventLog)
+				.withId(new OrderRef())
 				.build();
 		assertThat(order.isDeliveryOrder()).isTrue();
 	}
@@ -42,6 +44,7 @@ public class OrderTests {
 	public void can_start_builder_from_eventlog() {
 		Order.withEventLog(eventLog)
 				.withType(OrderType.DELIVERY)
+				.withId(new OrderRef())
 				.build();
 	}
 
@@ -70,8 +73,9 @@ public class OrderTests {
 	public void submit_order_fires_event() {
 		Order order = Order.withType(OrderType.PICKUP)
 				.withEventLog(eventLog)
+				.withId(new OrderRef())
 				.build();
-		order.addPizza(new Pizza());
+		order.addPizza(Pizza.ofSize(PizzaSize.MEDIUM).build());
 		order.submit();
 
 		verify(eventLog).publish(isA(OrderPlacedEvent.class));
@@ -81,11 +85,23 @@ public class OrderTests {
 	public void submit_order_updates_state() {
 		Order order = Order.withType(OrderType.PICKUP)
 				.withEventLog(eventLog)
+				.withId(new OrderRef())
 				.build();
-		order.addPizza(new Pizza());
+		order.addPizza(Pizza.ofSize(PizzaSize.MEDIUM).build());
 		order.submit();
 
 		assertThat(order.isSubmitted()).isTrue();
+	}
+
+	@Test
+	public void calculates_price() {
+		Order order = Order.withType(OrderType.PICKUP)
+				.withEventLog(eventLog)
+				.withId(new OrderRef())
+				.build();
+		order.addPizza(Pizza.ofSize(PizzaSize.MEDIUM).build());
+
+		assertThat(order.getPrice()).isEqualTo(PizzaSize.MEDIUM.getPrice());
 	}
 
 }
