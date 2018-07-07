@@ -1,16 +1,14 @@
 package com.mattstine.dddworkshop.pizzashop.ordering;
 
+import com.mattstine.dddworkshop.pizzashop.infrastructure.Amount;
 import com.mattstine.dddworkshop.pizzashop.infrastructure.EventLog;
-import com.mattstine.dddworkshop.pizzashop.payments.Payment;
-import com.mattstine.dddworkshop.pizzashop.payments.PaymentProcessor;
+import com.mattstine.dddworkshop.pizzashop.payments.PaymentService;
 import org.junit.Before;
 import org.junit.Test;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.isA;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 
 /**
  * @author Matt Stine
@@ -20,14 +18,14 @@ public class OrderServiceTests {
 	private EventLog eventLog;
 	private OrderRepository repository;
 	private OrderService orderService;
-	private PaymentProcessor paymentProcessor;
+	private PaymentService paymentService;
 
 	@Before
 	public void setUp() {
 		eventLog = mock(EventLog.class);
 		repository = mock(OrderRepository.class);
-		paymentProcessor = mock(PaymentProcessor.class);
-		orderService = new OrderService(eventLog, repository, paymentProcessor);
+		paymentService = mock(PaymentService.class);
+		orderService = new OrderService(eventLog, repository, paymentService);
 	}
 
 	@Test
@@ -39,6 +37,7 @@ public class OrderServiceTests {
 
 	@Test
 	public void returns_ref_to_new_order() {
+		//TODO: fix for equality instead of null check
 		when(repository.nextIdentity()).thenReturn(new OrderRef());
 		OrderRef orderRef = orderService.createOrder(OrderType.PICKUP);
 		assertThat(orderRef).isNotNull();
@@ -64,22 +63,7 @@ public class OrderServiceTests {
 	@Test
 	public void requests_payment_for_order() {
 		OrderRef orderRef = new OrderRef();
-		Order order = Order.withType(OrderType.PICKUP)
-				.withEventLog(eventLog)
-				.withId(orderRef)
-				.build();
-
-		Pizza pizza = Pizza.ofSize(PizzaSize.MEDIUM).build();
-		order.addPizza(pizza);
-
-		when(repository.findById(orderRef)).thenReturn(order);
-
 		orderService.requestPayment(orderRef);
-
-		Payment payment = Payment.of(PizzaSize.MEDIUM.getPrice())
-				.withProcessor(paymentProcessor)
-				.build();
-
-		verify(paymentProcessor).request(payment);
+		verify(paymentService).requestPaymentFor(orderRef, Amount.of(10, 0));
 	}
 }

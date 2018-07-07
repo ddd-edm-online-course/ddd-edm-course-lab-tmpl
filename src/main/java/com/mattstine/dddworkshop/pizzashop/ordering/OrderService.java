@@ -1,8 +1,8 @@
 package com.mattstine.dddworkshop.pizzashop.ordering;
 
+import com.mattstine.dddworkshop.pizzashop.infrastructure.Amount;
 import com.mattstine.dddworkshop.pizzashop.infrastructure.EventLog;
-import com.mattstine.dddworkshop.pizzashop.payments.Payment;
-import com.mattstine.dddworkshop.pizzashop.payments.PaymentProcessor;
+import com.mattstine.dddworkshop.pizzashop.payments.PaymentService;
 
 /**
  * @author Matt Stine
@@ -10,12 +10,12 @@ import com.mattstine.dddworkshop.pizzashop.payments.PaymentProcessor;
 public class OrderService {
 	private final EventLog eventLog;
 	private final OrderRepository repository;
-	private final PaymentProcessor paymentProcessor;
+	private final PaymentService paymentService;
 
-	OrderService(EventLog eventLog, OrderRepository repository, PaymentProcessor paymentProcessor) {
+	OrderService(EventLog eventLog, OrderRepository repository, PaymentService paymentService) {
 		this.eventLog = eventLog;
 		this.repository = repository;
-		this.paymentProcessor = paymentProcessor;
+		this.paymentService = paymentService;
 	}
 
 	public OrderRef createOrder(OrderType type) {
@@ -38,10 +38,6 @@ public class OrderService {
 	}
 
 	public void requestPayment(OrderRef orderRef) {
-		Order order = repository.findById(orderRef);
-		Payment payment = Payment.of(order.getPrice())
-				.withProcessor(paymentProcessor)
-				.build();
-		payment.request();
+		paymentService.requestPaymentFor(orderRef, Amount.of(10, 0));
 	}
 }
