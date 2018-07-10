@@ -3,6 +3,7 @@ package com.mattstine.dddworkshop.pizzashop.payments;
 import com.mattstine.dddworkshop.pizzashop.infrastructure.Amount;
 import com.mattstine.dddworkshop.pizzashop.infrastructure.EventLog;
 import com.mattstine.dddworkshop.pizzashop.ordering.OrderRef;
+import org.junit.Before;
 import org.junit.Test;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -16,14 +17,21 @@ import static org.mockito.Mockito.when;
  */
 public class PaymentServiceTests {
 
+	private PaymentProcessor processor;
+	private PaymentRepository repository;
+	private EventLog eventLog;
+	private PaymentService paymentService;
+
+	@Before
+	public void setUp() throws Exception {
+		processor = mock(PaymentProcessor.class);
+		repository = mock(PaymentRepository.class);
+		eventLog = mock(EventLog.class);
+		paymentService = new PaymentService(processor, repository, eventLog);
+	}
+
 	@Test
 	public void creates_payment_and_requests_from_processor() {
-		PaymentProcessor processor = mock(PaymentProcessor.class);
-		PaymentRepository repository = mock(PaymentRepository.class);
-		EventLog eventLog = mock(EventLog.class);
-
-		PaymentService paymentService = new PaymentService(processor, repository, eventLog);
-
 		PaymentRef ref = new PaymentRef();
 		when(repository.nextIdentity()).thenReturn(ref);
 
@@ -36,5 +44,24 @@ public class PaymentServiceTests {
 		assertThat(paymentService.requestPaymentFor(new OrderRef(), Amount.of(10,0)))
 				.isEqualTo(ref);
 		verify(repository).add(eq(payment));
+		//TODO: this test is smelly...
+	}
+
+	@Test
+	public void receives_payment_success_event_and_updates_status() {
+		PaymentRef paymentRef = new PaymentRef();
+		PaymentSuccessfulEvent psEvent = new PaymentSuccessfulEvent(paymentRef);
+
+		Payment payment = Payment.of(Amount.of(10,0))
+				.withId(paymentRef)
+				.withProcessor(processor)
+				.build();
+		payment.request();
+
+		when(repository.findById(eq(paymentRef))).thenReturn(payment);
+
+		paymentService.processSuccesfulPayment(psEvent);
+
+		assertThat(payment.isSuccessful()).isTrue();
 	}
 }

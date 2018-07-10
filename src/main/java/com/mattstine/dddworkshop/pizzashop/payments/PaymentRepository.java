@@ -7,4 +7,6 @@ public interface PaymentRepository {
 	PaymentRef nextIdentity();
 
 	void add(Payment payment);
+
+	Payment findById(PaymentRef id);
 }

@@ -30,4 +30,9 @@ public class PaymentService {
 
 		return ref;
 	}
+
+	public void processSuccesfulPayment(PaymentSuccessfulEvent psEvent) {
+		Payment payment = repository.findById(psEvent.getRef());
+		payment.markSuccessful();
+	}
 }

@@ -1,20 +1,27 @@
 package com.mattstine.dddworkshop.pizzashop.payments;
 
 import com.mattstine.dddworkshop.pizzashop.infrastructure.Amount;
-import lombok.AccessLevel;
 import lombok.Data;
-import lombok.RequiredArgsConstructor;
 
 /**
  * @author Matt Stine
  */
 @Data
-@RequiredArgsConstructor(access = AccessLevel.PRIVATE)
 public class Payment {
 	private final Amount amount;
 	private final PaymentProcessor paymentProcessor;
 	private final PaymentRef id;
+	private PaymentState paymentState;
 	private boolean requested;
+	private boolean successful;
+
+	private Payment(Amount amount, PaymentProcessor paymentProcessor, PaymentRef id) {
+		this.amount = amount;
+		this.paymentProcessor = paymentProcessor;
+		this.id = id;
+
+		this.paymentState = PaymentState.NEW;
+	}
 
 	public static PaymentBuilder of(Amount amount) {
 		return new PaymentBuilder(amount);
@@ -29,12 +36,32 @@ public class Payment {
 	}
 
 	public void request() {
+		if (paymentState != PaymentState.NEW) {
+			throw new IllegalStateException("Payment must be NEW to request payment");
+		}
+
 		paymentProcessor.request(this);
-		requested = true;
+		paymentState = PaymentState.REQUESTED;
 	}
 
 	public boolean isRequested() {
-		return requested;
+		return paymentState == PaymentState.REQUESTED;
+	}
+
+	public boolean isSuccessful() {
+		return paymentState == PaymentState.SUCCESSFUL;
+	}
+
+	public void markSuccessful() {
+		if (paymentState != PaymentState.REQUESTED) {
+			throw new IllegalStateException("Payment must be REQUESTED to mark successful");
+		}
+
+		paymentState = PaymentState.SUCCESSFUL;
+	}
+
+	public boolean isNew() {
+		return paymentState == PaymentState.NEW;
 	}
 
 	public static class PaymentBuilder {

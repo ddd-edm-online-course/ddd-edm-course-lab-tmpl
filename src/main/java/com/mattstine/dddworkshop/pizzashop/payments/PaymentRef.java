@@ -13,4 +13,12 @@ public class PaymentRef {
 	public PaymentRef() {
 		reference = RefStringGenerator.generateRefString();
 	}
+
+	public PaymentRef(String reference) {
+		this.reference = reference;
+	}
+
+	public static PaymentRef from(String reference) {
+		return new PaymentRef(reference);
+	}
 }
