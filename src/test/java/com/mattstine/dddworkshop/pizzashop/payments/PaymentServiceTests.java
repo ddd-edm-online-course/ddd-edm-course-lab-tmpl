@@ -38,6 +38,7 @@ public class PaymentServiceTests {
 		Payment payment = Payment.of(Amount.of(10, 0))
 				.withId(ref)
 				.withProcessor(processor)
+				.withOrderRef(new OrderRef())
 				.build();
 		payment.request();
 
@@ -54,6 +55,7 @@ public class PaymentServiceTests {
 
 		Payment payment = Payment.of(Amount.of(10,0))
 				.withId(paymentRef)
+				.withOrderRef(new OrderRef())
 				.withProcessor(processor)
 				.build();
 		payment.request();

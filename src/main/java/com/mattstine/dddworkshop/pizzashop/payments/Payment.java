@@ -1,6 +1,7 @@
 package com.mattstine.dddworkshop.pizzashop.payments;
 
 import com.mattstine.dddworkshop.pizzashop.infrastructure.Amount;
+import com.mattstine.dddworkshop.pizzashop.ordering.OrderRef;
 import lombok.Data;
 
 /**
@@ -11,14 +12,16 @@ public class Payment {
 	private final Amount amount;
 	private final PaymentProcessor paymentProcessor;
 	private final PaymentRef id;
+	private final OrderRef orderRef;
 	private PaymentState paymentState;
 	private boolean requested;
 	private boolean successful;
 
-	private Payment(Amount amount, PaymentProcessor paymentProcessor, PaymentRef id) {
+	private Payment(Amount amount, PaymentProcessor paymentProcessor, PaymentRef id, OrderRef orderRef) {
 		this.amount = amount;
 		this.paymentProcessor = paymentProcessor;
 		this.id = id;
+		this.orderRef = orderRef;
 
 		this.paymentState = PaymentState.NEW;
 	}
@@ -33,6 +36,10 @@ public class Payment {
 
 	public static PaymentBuilder withProcessor(PaymentProcessor paymentProcessor) {
 		return new PaymentBuilder(paymentProcessor);
+	}
+
+	public static PaymentBuilder withOrderRef(OrderRef orderRef) {
+		return new PaymentBuilder(orderRef);
 	}
 
 	public void request() {
@@ -65,6 +72,7 @@ public class Payment {
 	}
 
 	public static class PaymentBuilder {
+		private OrderRef orderRef;
 		private Amount amount;
 		private PaymentProcessor paymentProcessor;
 		private PaymentRef id;
@@ -79,6 +87,10 @@ public class Payment {
 
 		PaymentBuilder(PaymentRef ref) {
 			this.id = ref;
+		}
+
+		PaymentBuilder(OrderRef orderRef) {
+			this.orderRef = orderRef;
 		}
 
 		public PaymentBuilder of(Amount amount) {
@@ -96,6 +108,11 @@ public class Payment {
 			return this;
 		}
 
+		public PaymentBuilder withOrderRef(OrderRef orderRef) {
+			this.orderRef = orderRef;
+			return this;
+		}
+
 		public Payment build() {
 			if (amount == null) {
 				throw new IllegalStateException("Cannot build Payment without Amount");
@@ -109,7 +126,11 @@ public class Payment {
 				throw new IllegalStateException("Cannot build Payment without PaymentRef");
 			}
 
-			return new Payment(amount, paymentProcessor, id);
+			if (orderRef == null) {
+				throw new IllegalStateException("Cannot build Payment without OrderRef");
+			}
+
+			return new Payment(amount, paymentProcessor, id, orderRef);
 		}
 	}
 }

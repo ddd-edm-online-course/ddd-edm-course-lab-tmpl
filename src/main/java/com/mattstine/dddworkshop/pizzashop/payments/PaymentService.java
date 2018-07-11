@@ -22,6 +22,7 @@ public class PaymentService {
 
 		Payment payment = Payment.of(amount)
 				.withId(ref)
+				.withOrderRef(orderRef)
 				.withProcessor(processor)
 				.build();
 

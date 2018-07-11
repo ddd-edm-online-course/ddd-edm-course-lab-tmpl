@@ -10,11 +10,11 @@ import lombok.Data;
 public class PaymentRef {
 	private final String reference;
 
-	public PaymentRef() {
+	PaymentRef() {
 		reference = RefStringGenerator.generateRefString();
 	}
 
-	public PaymentRef(String reference) {
+	private PaymentRef(String reference) {
 		this.reference = reference;
 	}
 
