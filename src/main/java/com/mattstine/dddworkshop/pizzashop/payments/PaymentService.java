@@ -26,9 +26,9 @@ public class PaymentService {
 				.withProcessor(processor)
 				.withEventLog(eventLog)
 				.build();
+		repository.add(payment);
 
 		payment.request();
-		repository.add(payment);
 
 		return ref;
 	}
