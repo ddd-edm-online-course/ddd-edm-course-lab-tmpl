@@ -37,10 +37,10 @@ public class OrderServiceTests {
 
 	@Test
 	public void returns_ref_to_new_order() {
-		//TODO: fix for equality instead of null check
-		when(repository.nextIdentity()).thenReturn(new OrderRef());
+		OrderRef ref = new OrderRef();
+		when(repository.nextIdentity()).thenReturn(ref);
 		OrderRef orderRef = orderService.createOrder(OrderType.PICKUP);
-		assertThat(orderRef).isNotNull();
+		assertThat(orderRef).isEqualTo(orderRef);
 	}
 
 	@Test
