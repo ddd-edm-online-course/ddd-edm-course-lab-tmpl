@@ -72,11 +72,11 @@ public class OrderServiceTests {
 		when(repository.findById(orderRef)).thenReturn(order);
 
 		PaymentRef paymentRef = new PaymentRef();
-		when(paymentService.requestPaymentFor(orderRef, Amount.of(10,0))).thenReturn(paymentRef);
+		when(paymentService.requestPaymentFor(Amount.of(10,0))).thenReturn(paymentRef);
 
 		orderService.requestPayment(orderRef);
 		assertThat(order.getPaymentRef()).isEqualTo(paymentRef);
-		verify(paymentService).requestPaymentFor(orderRef, Amount.of(10, 0));
+		verify(paymentService).requestPaymentFor(Amount.of(10, 0));
 	}
 
 	@Test

@@ -40,7 +40,7 @@ public class OrderService {
 	}
 
 	public void requestPayment(OrderRef orderRef) {
-		PaymentRef paymentRef = paymentService.requestPaymentFor(orderRef, Amount.of(10, 0));
+		PaymentRef paymentRef = paymentService.requestPaymentFor(Amount.of(10, 0));
 		Order order = repository.findById(orderRef);
 		order.setPaymentRef(paymentRef);
 	}

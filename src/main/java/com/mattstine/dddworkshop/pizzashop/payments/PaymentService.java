@@ -2,7 +2,7 @@ package com.mattstine.dddworkshop.pizzashop.payments;
 
 import com.mattstine.dddworkshop.pizzashop.infrastructure.Amount;
 import com.mattstine.dddworkshop.pizzashop.infrastructure.EventLog;
-import com.mattstine.dddworkshop.pizzashop.ordering.OrderRef;
+
 /**
  * @author Matt Stine
  */
@@ -17,12 +17,11 @@ public class PaymentService {
 		this.eventLog = eventLog;
 	}
 
-	public PaymentRef requestPaymentFor(OrderRef orderRef, Amount amount) {
+	public PaymentRef requestPaymentFor(Amount amount) {
 		PaymentRef ref = repository.nextIdentity();
 
 		Payment payment = Payment.of(amount)
 				.withId(ref)
-				.withOrderRef(orderRef)
 				.withProcessor(processor)
 				.withEventLog(eventLog)
 				.build();

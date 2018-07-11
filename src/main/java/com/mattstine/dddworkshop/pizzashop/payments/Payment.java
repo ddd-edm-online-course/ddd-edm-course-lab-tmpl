@@ -2,7 +2,6 @@ package com.mattstine.dddworkshop.pizzashop.payments;
 
 import com.mattstine.dddworkshop.pizzashop.infrastructure.Amount;
 import com.mattstine.dddworkshop.pizzashop.infrastructure.EventLog;
-import com.mattstine.dddworkshop.pizzashop.ordering.OrderRef;
 import lombok.Data;
 
 /**
@@ -13,15 +12,13 @@ public class Payment {
 	private final Amount amount;
 	private final PaymentProcessor paymentProcessor;
 	private final PaymentRef id;
-	private final OrderRef orderRef;
 	private final EventLog eventLog;
 	private PaymentState paymentState;
 
-	private Payment(Amount amount, PaymentProcessor paymentProcessor, PaymentRef id, OrderRef orderRef, EventLog eventLog) {
+	private Payment(Amount amount, PaymentProcessor paymentProcessor, PaymentRef id, EventLog eventLog) {
 		this.amount = amount;
 		this.paymentProcessor = paymentProcessor;
 		this.id = id;
-		this.orderRef = orderRef;
 		this.eventLog = eventLog;
 
 		this.paymentState = PaymentState.NEW;
@@ -37,10 +34,6 @@ public class Payment {
 
 	public static PaymentBuilder withProcessor(PaymentProcessor paymentProcessor) {
 		return new PaymentBuilder(paymentProcessor);
-	}
-
-	public static PaymentBuilder withOrderRef(OrderRef orderRef) {
-		return new PaymentBuilder(orderRef);
 	}
 
 	public static PaymentBuilder withEventLog(EventLog eventLog) {
@@ -92,7 +85,6 @@ public class Payment {
 	}
 
 	public static class PaymentBuilder {
-		private OrderRef orderRef;
 		private Amount amount;
 		private PaymentProcessor paymentProcessor;
 		private PaymentRef id;
@@ -108,10 +100,6 @@ public class Payment {
 
 		PaymentBuilder(PaymentRef ref) {
 			this.id = ref;
-		}
-
-		PaymentBuilder(OrderRef orderRef) {
-			this.orderRef = orderRef;
 		}
 
 		PaymentBuilder(EventLog eventLog) {
@@ -133,11 +121,6 @@ public class Payment {
 			return this;
 		}
 
-		public PaymentBuilder withOrderRef(OrderRef orderRef) {
-			this.orderRef = orderRef;
-			return this;
-		}
-
 		public PaymentBuilder withEventLog(EventLog eventLog) {
 			this.eventLog = eventLog;
 			return this;
@@ -156,15 +139,11 @@ public class Payment {
 				throw new IllegalStateException("Cannot build Payment without PaymentRef");
 			}
 
-			if (orderRef == null) {
-				throw new IllegalStateException("Cannot build Payment without OrderRef");
-			}
-
 			if (eventLog == null) {
 				throw new IllegalStateException("Cannot build Payment without EventLog");
 			}
 
-			return new Payment(amount, paymentProcessor, id, orderRef, eventLog);
+			return new Payment(amount, paymentProcessor, id, eventLog);
 		}
 	}
 }

@@ -2,15 +2,12 @@ package com.mattstine.dddworkshop.pizzashop.payments;
 
 import com.mattstine.dddworkshop.pizzashop.infrastructure.Amount;
 import com.mattstine.dddworkshop.pizzashop.infrastructure.EventLog;
-import com.mattstine.dddworkshop.pizzashop.ordering.OrderRef;
 import org.junit.Before;
 import org.junit.Test;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.eq;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 
 /**
  * @author Matt Stine
@@ -38,12 +35,11 @@ public class PaymentServiceTests {
 		Payment payment = Payment.of(Amount.of(10, 0))
 				.withId(ref)
 				.withProcessor(processor)
-				.withOrderRef(new OrderRef())
 				.withEventLog(eventLog)
 				.build();
 		payment.request();
 
-		assertThat(paymentService.requestPaymentFor(new OrderRef(), Amount.of(10,0)))
+		assertThat(paymentService.requestPaymentFor(Amount.of(10, 0)))
 				.isEqualTo(ref);
 		verify(repository).add(eq(payment));
 		//TODO: this test is smelly...can't remember what I thought would fix it :-(
@@ -54,9 +50,8 @@ public class PaymentServiceTests {
 		PaymentRef paymentRef = new PaymentRef();
 		PaymentProcessedEvent ppEvent = new PaymentProcessedEvent(paymentRef, PaymentProcessedEvent.Status.SUCCESSFUL);
 
-		Payment payment = Payment.of(Amount.of(10,0))
+		Payment payment = Payment.of(Amount.of(10, 0))
 				.withId(paymentRef)
-				.withOrderRef(new OrderRef())
 				.withProcessor(processor)
 				.withEventLog(eventLog)
 				.build();
@@ -74,9 +69,8 @@ public class PaymentServiceTests {
 		PaymentRef paymentRef = new PaymentRef();
 		PaymentProcessedEvent ppEvent = new PaymentProcessedEvent(paymentRef, PaymentProcessedEvent.Status.FAILED);
 
-		Payment payment = Payment.of(Amount.of(10,0))
+		Payment payment = Payment.of(Amount.of(10, 0))
 				.withId(paymentRef)
-				.withOrderRef(new OrderRef())
 				.withProcessor(processor)
 				.withEventLog(eventLog)
 				.build();
