@@ -7,5 +7,5 @@ import lombok.Data;
  * @author Matt Stine
  */
 @Data
-public class PaymentSuccessfulEvent implements Event {
+public class PaymentFailedEvent implements Event {
 }

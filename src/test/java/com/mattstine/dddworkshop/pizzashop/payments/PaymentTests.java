@@ -58,6 +58,29 @@ public class PaymentTests {
 	}
 
 	@Test
+	public void payment_success_should_fire_event() {
+		payment.request();
+		verify(eventLog).publish(new PaymentRequestedEvent());
+		payment.markSuccessful();
+		verify(eventLog).publish(new PaymentSuccessfulEvent());
+	}
+
+	@Test
+	public void should_reflect_failed_payment() {
+		payment.request();
+		payment.markFailed();
+		assertThat(payment.isFailed()).isTrue();
+	}
+
+	@Test
+	public void payment_failure_should_fire_event() {
+		payment.request();
+		verify(eventLog).publish(new PaymentRequestedEvent());
+		payment.markFailed();
+		verify(eventLog).publish(new PaymentFailedEvent());
+	}
+
+	@Test
 	public void build_requires_processor() {
 		assertThatIllegalStateException().isThrownBy(() -> Payment.of(Amount.of(15, 0)).withId(new PaymentRef()).build());
 	}
@@ -93,5 +116,10 @@ public class PaymentTests {
 	@Test
 	public void can_only_mark_requested_payment_as_successful() {
 		assertThatIllegalStateException().isThrownBy(payment::markSuccessful);
+	}
+
+	@Test
+	public void can_only_mark_requested_payment_as_failed() {
+		assertThatIllegalStateException().isThrownBy(payment::markFailed);
 	}
 }

@@ -16,8 +16,6 @@ public class Payment {
 	private final OrderRef orderRef;
 	private final EventLog eventLog;
 	private PaymentState paymentState;
-	private boolean requested;
-	private boolean successful;
 
 	private Payment(Amount amount, PaymentProcessor paymentProcessor, PaymentRef id, OrderRef orderRef, EventLog eventLog) {
 		this.amount = amount;
@@ -65,6 +63,16 @@ public class Payment {
 		}
 
 		paymentState = PaymentState.SUCCESSFUL;
+		eventLog.publish(new PaymentSuccessfulEvent());
+	}
+
+	public void markFailed() {
+		if (paymentState != PaymentState.REQUESTED) {
+			throw new IllegalStateException("Payment must be REQUESTED to mark failed");
+		}
+
+		paymentState = PaymentState.FAILED;
+		eventLog.publish(new PaymentFailedEvent());
 	}
 
 	public boolean isNew() {
@@ -77,6 +85,10 @@ public class Payment {
 
 	public boolean isSuccessful() {
 		return paymentState == PaymentState.SUCCESSFUL;
+	}
+
+	public boolean isFailed() {
+		return paymentState == PaymentState.FAILED;
 	}
 
 	public static class PaymentBuilder {

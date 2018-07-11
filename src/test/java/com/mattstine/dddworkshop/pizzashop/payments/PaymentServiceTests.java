@@ -50,9 +50,9 @@ public class PaymentServiceTests {
 	}
 
 	@Test
-	public void receives_payment_success_event_and_updates_status() {
+	public void receives_successful_payment_processed_event_and_updates_status() {
 		PaymentRef paymentRef = new PaymentRef();
-		PaymentSuccessfulEvent psEvent = new PaymentSuccessfulEvent(paymentRef);
+		PaymentProcessedEvent ppEvent = new PaymentProcessedEvent(paymentRef, PaymentProcessedEvent.Status.SUCCESSFUL);
 
 		Payment payment = Payment.of(Amount.of(10,0))
 				.withId(paymentRef)
@@ -64,8 +64,28 @@ public class PaymentServiceTests {
 
 		when(repository.findById(eq(paymentRef))).thenReturn(payment);
 
-		paymentService.processSuccessfulPayment(psEvent);
+		paymentService.receivePaymentProcessedEvent(ppEvent);
 
 		assertThat(payment.isSuccessful()).isTrue();
+	}
+
+	@Test
+	public void received_failed_payment_processed_event_and_updates_status() {
+		PaymentRef paymentRef = new PaymentRef();
+		PaymentProcessedEvent ppEvent = new PaymentProcessedEvent(paymentRef, PaymentProcessedEvent.Status.FAILED);
+
+		Payment payment = Payment.of(Amount.of(10,0))
+				.withId(paymentRef)
+				.withOrderRef(new OrderRef())
+				.withProcessor(processor)
+				.withEventLog(eventLog)
+				.build();
+		payment.request();
+
+		when(repository.findById(eq(paymentRef))).thenReturn(payment);
+
+		paymentService.receivePaymentProcessedEvent(ppEvent);
+
+		assertThat(payment.isFailed()).isTrue();
 	}
 }

@@ -33,8 +33,13 @@ public class PaymentService {
 		return ref;
 	}
 
-	public void processSuccessfulPayment(PaymentSuccessfulEvent psEvent) {
-		Payment payment = repository.findById(psEvent.getRef());
-		payment.markSuccessful();
+	public void receivePaymentProcessedEvent(PaymentProcessedEvent ppEvent) {
+		Payment payment = repository.findById(ppEvent.getRef());
+
+		if (ppEvent.isSuccessful()) {
+			payment.markSuccessful();
+		} else if (ppEvent.isFailed()) {
+			payment.markFailed();
+		}
 	}
 }
