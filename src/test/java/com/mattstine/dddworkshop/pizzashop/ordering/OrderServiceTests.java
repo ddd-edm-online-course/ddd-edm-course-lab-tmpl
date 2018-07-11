@@ -48,9 +48,10 @@ public class OrderServiceTests {
 	@Test
 	public void adds_pizza_to_order() {
 		OrderRef orderRef = new OrderRef();
-		Order order = Order.withType(OrderType.PICKUP)
-				.withEventLog(eventLog)
-				.withId(orderRef)
+		Order order = Order.builder()
+				.type(OrderType.PICKUP)
+				.eventLog(eventLog)
+				.ref(orderRef)
 				.build();
 
 		when(repository.findById(orderRef)).thenReturn(order);
@@ -64,9 +65,10 @@ public class OrderServiceTests {
 	@Test
 	public void requests_payment_for_order() {
 		OrderRef orderRef = new OrderRef();
-		Order order = Order.withType(OrderType.PICKUP)
-				.withEventLog(eventLog)
-				.withId(orderRef)
+		Order order = Order.builder()
+				.type(OrderType.PICKUP)
+				.eventLog(eventLog)
+				.ref(orderRef)
 				.build();
 		when(repository.findById(orderRef)).thenReturn(order);
 
@@ -81,9 +83,10 @@ public class OrderServiceTests {
 	@Test
 	public void receives_payment_successful_event_and_updates_state() {
 		OrderRef orderRef = new OrderRef();
-		Order order = Order.withType(OrderType.PICKUP)
-				.withEventLog(eventLog)
-				.withId(orderRef)
+		Order order = Order.builder()
+				.type(OrderType.PICKUP)
+				.eventLog(eventLog)
+				.ref(orderRef)
 				.build();
 		PaymentRef paymentRef = new PaymentRef();
 		order.setPaymentRef(paymentRef);

@@ -24,47 +24,30 @@ public class OrderTests {
 
 	@Test
 	public void should_create_pickup_order() {
-		Order order = Order.withType(OrderType.PICKUP)
-				.withEventLog(eventLog)
-				.withId(new OrderRef())
+		Order order = Order.builder()
+				.type(OrderType.PICKUP)
+				.eventLog(eventLog)
+				.ref(new OrderRef())
 				.build();
 		assertThat(order.isPickupOrder()).isTrue();
 	}
 
 	@Test
 	public void should_create_delivery_order() {
-		Order order = Order.withType(OrderType.DELIVERY)
-				.withEventLog(eventLog)
-				.withId(new OrderRef())
+		Order order = Order.builder()
+				.type(OrderType.DELIVERY)
+				.eventLog(eventLog)
+				.ref(new OrderRef())
 				.build();
 		assertThat(order.isDeliveryOrder()).isTrue();
 	}
 
 	@Test
-	public void can_start_builder_from_eventlog() {
-		Order.withEventLog(eventLog)
-				.withType(OrderType.DELIVERY)
-				.withId(new OrderRef())
-				.build();
-	}
-
-	@Test
-	public void builder_requires_order_type() {
-		assertThatIllegalStateException()
-				.isThrownBy(() -> Order.withEventLog(eventLog).build());
-	}
-
-	@Test
-	public void builder_requires_event_log() {
-		assertThatIllegalStateException()
-				.isThrownBy(() -> Order.withType(OrderType.PICKUP).build());
-	}
-
-	@Test
 	public void submit_requires_at_least_one_pizza() {
 		assertThatIllegalStateException()
-				.isThrownBy(() -> Order.withType(OrderType.PICKUP)
-						.withEventLog(eventLog)
+				.isThrownBy(() -> Order.builder().type(OrderType.PICKUP)
+						.ref(new OrderRef())
+						.eventLog(eventLog)
 						.build()
 						.submit());
 	}
@@ -73,9 +56,10 @@ public class OrderTests {
 	public void should_add_pizza() {
 		Pizza pizza = Pizza.ofSize(PizzaSize.MEDIUM).build();
 
-		Order order = Order.withType(OrderType.PICKUP)
-				.withEventLog(eventLog)
-				.withId(new OrderRef())
+		Order order = Order.builder()
+				.type(OrderType.PICKUP)
+				.eventLog(eventLog)
+				.ref(new OrderRef())
 				.build();
 
 		order.addPizza(pizza);
@@ -88,9 +72,10 @@ public class OrderTests {
 		Pizza pizza = Pizza.ofSize(PizzaSize.MEDIUM).build();
 
 		OrderRef ref = new OrderRef();
-		Order order = Order.withType(OrderType.PICKUP)
-				.withEventLog(eventLog)
-				.withId(ref)
+		Order order = Order.builder()
+				.type(OrderType.PICKUP)
+				.eventLog(eventLog)
+				.ref(ref)
 				.build();
 
 		order.addPizza(pizza);
@@ -100,9 +85,10 @@ public class OrderTests {
 
 	@Test
 	public void submit_order_fires_event() {
-		Order order = Order.withType(OrderType.PICKUP)
-				.withEventLog(eventLog)
-				.withId(new OrderRef())
+		Order order = Order.builder()
+				.type(OrderType.PICKUP)
+				.eventLog(eventLog)
+				.ref(new OrderRef())
 				.build();
 		order.addPizza(Pizza.ofSize(PizzaSize.MEDIUM).build());
 		order.submit();
@@ -112,9 +98,10 @@ public class OrderTests {
 
 	@Test
 	public void submit_order_updates_state() {
-		Order order = Order.withType(OrderType.PICKUP)
-				.withEventLog(eventLog)
-				.withId(new OrderRef())
+		Order order = Order.builder()
+				.type(OrderType.PICKUP)
+				.eventLog(eventLog)
+				.ref(new OrderRef())
 				.build();
 		order.addPizza(Pizza.ofSize(PizzaSize.MEDIUM).build());
 		order.submit();
@@ -124,20 +111,22 @@ public class OrderTests {
 
 	@Test
 	public void calculates_price() {
-		Order order = Order.withType(OrderType.PICKUP)
-				.withEventLog(eventLog)
-				.withId(new OrderRef())
+		Order order = Order.builder()
+				.type(OrderType.PICKUP)
+				.eventLog(eventLog)
+				.ref(new OrderRef())
 				.build();
 		order.addPizza(Pizza.ofSize(PizzaSize.MEDIUM).build());
 
-		assertThat(order.getPrice()).isEqualTo(PizzaSize.MEDIUM.getPrice());
+		assertThat(order.calculatePrice()).isEqualTo(PizzaSize.MEDIUM.getPrice());
 	}
 
 	@Test
 	public void mark_paid_updates_state() {
-		Order order = Order.withType(OrderType.PICKUP)
-				.withEventLog(eventLog)
-				.withId(new OrderRef())
+		Order order = Order.builder()
+				.type(OrderType.PICKUP)
+				.eventLog(eventLog)
+				.ref(new OrderRef())
 				.build();
 		order.addPizza(Pizza.ofSize(PizzaSize.MEDIUM).build());
 		order.submit();

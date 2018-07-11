@@ -23,9 +23,9 @@ public class OrderService {
 	public OrderRef createOrder(OrderType type) {
 		OrderRef orderRef = repository.nextIdentity();
 
-		Order order = Order.withType(type)
-				.withEventLog(eventLog)
-				.withId(orderRef)
+		Order order = Order.builder().type(type)
+				.eventLog(eventLog)
+				.ref(orderRef)
 				.build();
 
 		repository.add(order);
