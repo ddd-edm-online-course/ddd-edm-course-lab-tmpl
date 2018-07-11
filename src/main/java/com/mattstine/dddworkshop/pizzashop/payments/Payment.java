@@ -59,14 +59,6 @@ public class Payment {
 		eventLog.publish(new PaymentRequestedEvent());
 	}
 
-	public boolean isRequested() {
-		return paymentState == PaymentState.REQUESTED;
-	}
-
-	public boolean isSuccessful() {
-		return paymentState == PaymentState.SUCCESSFUL;
-	}
-
 	public void markSuccessful() {
 		if (paymentState != PaymentState.REQUESTED) {
 			throw new IllegalStateException("Payment must be REQUESTED to mark successful");
@@ -77,6 +69,14 @@ public class Payment {
 
 	public boolean isNew() {
 		return paymentState == PaymentState.NEW;
+	}
+
+	public boolean isRequested() {
+		return paymentState == PaymentState.REQUESTED;
+	}
+
+	public boolean isSuccessful() {
+		return paymentState == PaymentState.SUCCESSFUL;
 	}
 
 	public static class PaymentBuilder {
