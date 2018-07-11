@@ -59,7 +59,6 @@ public class OrderServiceTests {
 		orderService.addPizza(orderRef, pizza);
 
 		assertThat(order.getPizzas()).contains(pizza);
-		verify(eventLog).publish(isA(PizzaAddedEvent.class));
 	}
 
 	@Test

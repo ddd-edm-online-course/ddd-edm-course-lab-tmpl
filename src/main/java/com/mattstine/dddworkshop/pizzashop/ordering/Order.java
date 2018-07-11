@@ -47,6 +47,7 @@ public class Order {
 
 	public void addPizza(Pizza pizza) {
 		this.pizzas.add(pizza);
+		eventLog.publish(new PizzaAddedEvent(id, pizza));
 	}
 
 	public void submit() {

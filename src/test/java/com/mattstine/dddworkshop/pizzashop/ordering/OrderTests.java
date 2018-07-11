@@ -70,6 +70,35 @@ public class OrderTests {
 	}
 
 	@Test
+	public void should_add_pizza() {
+		Pizza pizza = Pizza.ofSize(PizzaSize.MEDIUM).build();
+
+		Order order = Order.withType(OrderType.PICKUP)
+				.withEventLog(eventLog)
+				.withId(new OrderRef())
+				.build();
+
+		order.addPizza(pizza);
+
+		assertThat(order.getPizzas()).contains(pizza);
+	}
+
+	@Test
+	public void adding_pizza_fires_event() {
+		Pizza pizza = Pizza.ofSize(PizzaSize.MEDIUM).build();
+
+		OrderRef ref = new OrderRef();
+		Order order = Order.withType(OrderType.PICKUP)
+				.withEventLog(eventLog)
+				.withId(ref)
+				.build();
+
+		order.addPizza(pizza);
+
+		verify(eventLog).publish(new PizzaAddedEvent(ref, pizza));
+	}
+
+	@Test
 	public void submit_order_fires_event() {
 		Order order = Order.withType(OrderType.PICKUP)
 				.withEventLog(eventLog)
