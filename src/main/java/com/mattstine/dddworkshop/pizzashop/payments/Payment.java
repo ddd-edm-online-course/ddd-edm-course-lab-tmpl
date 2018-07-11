@@ -1,6 +1,7 @@
 package com.mattstine.dddworkshop.pizzashop.payments;
 
 import com.mattstine.dddworkshop.pizzashop.infrastructure.Amount;
+import com.mattstine.dddworkshop.pizzashop.infrastructure.EventLog;
 import com.mattstine.dddworkshop.pizzashop.ordering.OrderRef;
 import lombok.Data;
 
@@ -13,15 +14,17 @@ public class Payment {
 	private final PaymentProcessor paymentProcessor;
 	private final PaymentRef id;
 	private final OrderRef orderRef;
+	private final EventLog eventLog;
 	private PaymentState paymentState;
 	private boolean requested;
 	private boolean successful;
 
-	private Payment(Amount amount, PaymentProcessor paymentProcessor, PaymentRef id, OrderRef orderRef) {
+	private Payment(Amount amount, PaymentProcessor paymentProcessor, PaymentRef id, OrderRef orderRef, EventLog eventLog) {
 		this.amount = amount;
 		this.paymentProcessor = paymentProcessor;
 		this.id = id;
 		this.orderRef = orderRef;
+		this.eventLog = eventLog;
 
 		this.paymentState = PaymentState.NEW;
 	}
@@ -40,6 +43,10 @@ public class Payment {
 
 	public static PaymentBuilder withOrderRef(OrderRef orderRef) {
 		return new PaymentBuilder(orderRef);
+	}
+
+	public static PaymentBuilder withEventLog(EventLog eventLog) {
+		return new PaymentBuilder(eventLog);
 	}
 
 	public void request() {
@@ -76,6 +83,7 @@ public class Payment {
 		private Amount amount;
 		private PaymentProcessor paymentProcessor;
 		private PaymentRef id;
+		private EventLog eventLog;
 
 		PaymentBuilder(Amount amount) {
 			this.amount = amount;
@@ -91,6 +99,10 @@ public class Payment {
 
 		PaymentBuilder(OrderRef orderRef) {
 			this.orderRef = orderRef;
+		}
+
+		PaymentBuilder(EventLog eventLog) {
+			this.eventLog = eventLog;
 		}
 
 		public PaymentBuilder of(Amount amount) {
@@ -113,6 +125,11 @@ public class Payment {
 			return this;
 		}
 
+		public PaymentBuilder withEventLog(EventLog eventLog) {
+			this.eventLog = eventLog;
+			return this;
+		}
+
 		public Payment build() {
 			if (amount == null) {
 				throw new IllegalStateException("Cannot build Payment without Amount");
@@ -130,7 +147,11 @@ public class Payment {
 				throw new IllegalStateException("Cannot build Payment without OrderRef");
 			}
 
-			return new Payment(amount, paymentProcessor, id, orderRef);
+			if (eventLog == null) {
+				throw new IllegalStateException("Cannot build Payment without EventLog");
+			}
+
+			return new Payment(amount, paymentProcessor, id, orderRef, eventLog);
 		}
 	}
 }

@@ -24,6 +24,7 @@ public class PaymentService {
 				.withId(ref)
 				.withOrderRef(orderRef)
 				.withProcessor(processor)
+				.withEventLog(eventLog)
 				.build();
 
 		payment.request();

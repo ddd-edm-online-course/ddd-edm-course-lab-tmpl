@@ -39,6 +39,7 @@ public class PaymentServiceTests {
 				.withId(ref)
 				.withProcessor(processor)
 				.withOrderRef(new OrderRef())
+				.withEventLog(eventLog)
 				.build();
 		payment.request();
 
@@ -57,6 +58,7 @@ public class PaymentServiceTests {
 				.withId(paymentRef)
 				.withOrderRef(new OrderRef())
 				.withProcessor(processor)
+				.withEventLog(eventLog)
 				.build();
 		payment.request();
 

@@ -1,6 +1,7 @@
 package com.mattstine.dddworkshop.pizzashop.payments;
 
 import com.mattstine.dddworkshop.pizzashop.infrastructure.Amount;
+import com.mattstine.dddworkshop.pizzashop.infrastructure.EventLog;
 import com.mattstine.dddworkshop.pizzashop.ordering.OrderRef;
 import org.junit.Before;
 import org.junit.Test;
@@ -15,14 +16,17 @@ import static org.mockito.Mockito.verify;
  */
 public class PaymentTests {
 
+	private EventLog eventLog;
 	private PaymentProcessor paymentProcessor;
 	private Payment payment;
 
 	@Before
 	public void setUp() {
 		paymentProcessor = mock(PaymentProcessor.class);
+		eventLog = mock(EventLog.class);
 		payment = Payment.of(Amount.of(15, 0))
 				.withProcessor(paymentProcessor)
+				.withEventLog(eventLog)
 				.withId(new PaymentRef())
 				.withOrderRef(new OrderRef())
 				.build();
@@ -65,6 +69,12 @@ public class PaymentTests {
 	@Test
 	public void build_requires_orderRef() {
 		assertThatIllegalStateException().isThrownBy(() -> Payment.withProcessor(paymentProcessor).of(Amount.of(15, 0)).withId(new PaymentRef()).build());
+	}
+
+	@Test
+	public void build_requires_eventLog() {
+		assertThatIllegalStateException().isThrownBy(() -> Payment.withProcessor(paymentProcessor).of(Amount.of(15, 0)).withId(new PaymentRef()).withOrderRef(new OrderRef()).build());
+
 	}
 
 	@Test
