@@ -64,7 +64,7 @@ public class PaymentServiceTests {
 
 		when(repository.findById(eq(paymentRef))).thenReturn(payment);
 
-		paymentService.processSuccesfulPayment(psEvent);
+		paymentService.processSuccessfulPayment(psEvent);
 
 		assertThat(payment.isSuccessful()).isTrue();
 	}

@@ -11,7 +11,7 @@ public class PaymentService {
 	private final PaymentRepository repository;
 	private final EventLog eventLog;
 
-	public PaymentService(PaymentProcessor processor, PaymentRepository repository, EventLog eventLog) {
+	PaymentService(PaymentProcessor processor, PaymentRepository repository, EventLog eventLog) {
 		this.processor = processor;
 		this.repository = repository;
 		this.eventLog = eventLog;
@@ -33,7 +33,7 @@ public class PaymentService {
 		return ref;
 	}
 
-	public void processSuccesfulPayment(PaymentSuccessfulEvent psEvent) {
+	public void processSuccessfulPayment(PaymentSuccessfulEvent psEvent) {
 		Payment payment = repository.findById(psEvent.getRef());
 		payment.markSuccessful();
 	}
