@@ -45,6 +45,12 @@ public class PaymentTests {
 	}
 
 	@Test
+	public void payment_request_should_fire_event() {
+		payment.request();
+		verify(eventLog).publish(new PaymentRequestedEvent());
+	}
+
+	@Test
 	public void should_reflect_successful_payment() {
 		payment.request();
 		payment.markSuccessful();

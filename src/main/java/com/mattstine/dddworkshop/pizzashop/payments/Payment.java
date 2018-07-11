@@ -56,6 +56,7 @@ public class Payment {
 
 		paymentProcessor.request(this);
 		paymentState = PaymentState.REQUESTED;
+		eventLog.publish(new PaymentRequestedEvent());
 	}
 
 	public boolean isRequested() {
