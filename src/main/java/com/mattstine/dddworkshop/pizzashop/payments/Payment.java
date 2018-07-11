@@ -56,7 +56,7 @@ public class Payment {
 		}
 
 		paymentState = PaymentState.SUCCESSFUL;
-		eventLog.publish(new PaymentSuccessfulEvent());
+		eventLog.publish(new PaymentSuccessfulEvent(id));
 	}
 
 	public void markFailed() {

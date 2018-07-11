@@ -18,15 +18,17 @@ public class PaymentTests {
 	private EventLog eventLog;
 	private PaymentProcessor paymentProcessor;
 	private Payment payment;
+	private PaymentRef ref;
 
 	@Before
 	public void setUp() {
 		paymentProcessor = mock(PaymentProcessor.class);
 		eventLog = mock(EventLog.class);
+		ref = new PaymentRef();
 		payment = Payment.of(Amount.of(15, 0))
 				.withProcessor(paymentProcessor)
 				.withEventLog(eventLog)
-				.withId(new PaymentRef())
+				.withId(ref)
 				.build();
 	}
 
@@ -60,7 +62,7 @@ public class PaymentTests {
 		payment.request();
 		verify(eventLog).publish(new PaymentRequestedEvent());
 		payment.markSuccessful();
-		verify(eventLog).publish(new PaymentSuccessfulEvent());
+		verify(eventLog).publish(new PaymentSuccessfulEvent(ref));
 	}
 
 	@Test

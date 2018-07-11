@@ -46,6 +46,7 @@ public class OrderService {
 	}
 
 	public void receivePaymentSuccessfulEvent(PaymentSuccessfulEvent paymentSuccessfulEvent) {
-
+		Order order = repository.findByPaymentRef(paymentSuccessfulEvent.getPaymentRef());
+		order.markPaid();
 	}
 }

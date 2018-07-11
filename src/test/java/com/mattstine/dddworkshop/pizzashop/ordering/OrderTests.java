@@ -104,4 +104,17 @@ public class OrderTests {
 		assertThat(order.getPrice()).isEqualTo(PizzaSize.MEDIUM.getPrice());
 	}
 
+	@Test
+	public void mark_paid_updates_state() {
+		Order order = Order.withType(OrderType.PICKUP)
+				.withEventLog(eventLog)
+				.withId(new OrderRef())
+				.build();
+		order.addPizza(Pizza.ofSize(PizzaSize.MEDIUM).build());
+		order.submit();
+		order.markPaid();
+
+		assertThat(order.isPaid()).isTrue();
+	}
+
 }

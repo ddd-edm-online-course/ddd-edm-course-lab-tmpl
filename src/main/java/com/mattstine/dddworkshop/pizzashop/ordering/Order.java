@@ -76,6 +76,14 @@ public class Order {
 		this.paymentRef = paymentRef;
 	}
 
+	public boolean isPaid() {
+		return state == OrderState.PAID;
+	}
+
+	public void markPaid() {
+		this.state = OrderState.PAID;
+	}
+
 	static class OrderBuilder {
 		private OrderType type;
 		private EventLog eventLog;

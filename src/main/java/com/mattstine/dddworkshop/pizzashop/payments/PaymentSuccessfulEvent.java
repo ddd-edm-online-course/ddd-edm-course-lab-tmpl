@@ -8,4 +8,9 @@ import lombok.Data;
  */
 @Data
 public class PaymentSuccessfulEvent implements Event {
+	private final PaymentRef paymentRef;
+
+	public PaymentRef getPaymentRef() {
+		return paymentRef;
+	}
 }

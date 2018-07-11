@@ -81,6 +81,16 @@ public class OrderServiceTests {
 
 	@Test
 	public void receives_payment_successful_event_and_updates_state() {
-		orderService.receivePaymentSuccessfulEvent(new PaymentSuccessfulEvent());
+		OrderRef orderRef = new OrderRef();
+		Order order = Order.withType(OrderType.PICKUP)
+				.withEventLog(eventLog)
+				.withId(orderRef)
+				.build();
+		PaymentRef paymentRef = new PaymentRef();
+		order.setPaymentRef(paymentRef);
+		when(repository.findByPaymentRef(eq(paymentRef))).thenReturn(order);
+
+		orderService.receivePaymentSuccessfulEvent(new PaymentSuccessfulEvent(paymentRef));
+		assertThat(order.isPaid()).isTrue();
 	}
 }

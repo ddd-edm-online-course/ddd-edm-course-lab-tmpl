@@ -1,6 +1,6 @@
 package com.mattstine.dddworkshop.pizzashop.ordering;
 
-/**
+import com.mattstine.dddworkshop.pizzashop.payments.PaymentRef; /**
  * @author Matt Stine
  */
 public interface OrderRepository {
@@ -9,4 +9,6 @@ public interface OrderRepository {
 	OrderRef nextIdentity();
 
 	Order findById(OrderRef orderRef);
+
+	Order findByPaymentRef(PaymentRef paymentRef);
 }
