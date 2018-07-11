@@ -2,7 +2,9 @@ package com.mattstine.dddworkshop.pizzashop.ordering;
 
 import com.mattstine.dddworkshop.pizzashop.infrastructure.Amount;
 import com.mattstine.dddworkshop.pizzashop.infrastructure.EventLog;
+import com.mattstine.dddworkshop.pizzashop.payments.PaymentRef;
 import com.mattstine.dddworkshop.pizzashop.payments.PaymentService;
+import com.mattstine.dddworkshop.pizzashop.payments.PaymentSuccessfulEvent;
 
 /**
  * @author Matt Stine
@@ -38,6 +40,12 @@ public class OrderService {
 	}
 
 	public void requestPayment(OrderRef orderRef) {
-		paymentService.requestPaymentFor(orderRef, Amount.of(10, 0));
+		PaymentRef paymentRef = paymentService.requestPaymentFor(orderRef, Amount.of(10, 0));
+		Order order = repository.findById(orderRef);
+		order.setPaymentRef(paymentRef);
+	}
+
+	public void receivePaymentSuccessfulEvent(PaymentSuccessfulEvent paymentSuccessfulEvent) {
+
 	}
 }

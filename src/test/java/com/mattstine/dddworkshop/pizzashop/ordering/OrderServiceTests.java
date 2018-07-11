@@ -2,7 +2,9 @@ package com.mattstine.dddworkshop.pizzashop.ordering;
 
 import com.mattstine.dddworkshop.pizzashop.infrastructure.Amount;
 import com.mattstine.dddworkshop.pizzashop.infrastructure.EventLog;
+import com.mattstine.dddworkshop.pizzashop.payments.PaymentRef;
 import com.mattstine.dddworkshop.pizzashop.payments.PaymentService;
+import com.mattstine.dddworkshop.pizzashop.payments.PaymentSuccessfulEvent;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -63,7 +65,22 @@ public class OrderServiceTests {
 	@Test
 	public void requests_payment_for_order() {
 		OrderRef orderRef = new OrderRef();
+		Order order = Order.withType(OrderType.PICKUP)
+				.withEventLog(eventLog)
+				.withId(orderRef)
+				.build();
+		when(repository.findById(orderRef)).thenReturn(order);
+
+		PaymentRef paymentRef = new PaymentRef();
+		when(paymentService.requestPaymentFor(orderRef, Amount.of(10,0))).thenReturn(paymentRef);
+
 		orderService.requestPayment(orderRef);
+		assertThat(order.getPaymentRef()).isEqualTo(paymentRef);
 		verify(paymentService).requestPaymentFor(orderRef, Amount.of(10, 0));
+	}
+
+	@Test
+	public void receives_payment_successful_event_and_updates_state() {
+		orderService.receivePaymentSuccessfulEvent(new PaymentSuccessfulEvent());
 	}
 }

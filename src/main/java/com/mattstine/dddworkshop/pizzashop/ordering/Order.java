@@ -2,6 +2,7 @@ package com.mattstine.dddworkshop.pizzashop.ordering;
 
 import com.mattstine.dddworkshop.pizzashop.infrastructure.Amount;
 import com.mattstine.dddworkshop.pizzashop.infrastructure.EventLog;
+import com.mattstine.dddworkshop.pizzashop.payments.PaymentRef;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -15,6 +16,7 @@ public class Order {
 	private final OrderRef id;
 	private OrderState state;
 	private List<Pizza> pizzas;
+	private PaymentRef paymentRef;
 
 	private Order(OrderType type, EventLog eventLog, OrderRef ref) {
 		this.type = type;
@@ -64,6 +66,14 @@ public class Order {
 		return this.pizzas.stream()
 				.map(Pizza::getPrice)
 				.reduce(Amount.of(0,0), Amount::plus);
+	}
+
+	public PaymentRef getPaymentRef() {
+		return paymentRef;
+	}
+
+	public void setPaymentRef(PaymentRef paymentRef) {
+		this.paymentRef = paymentRef;
 	}
 
 	static class OrderBuilder {
