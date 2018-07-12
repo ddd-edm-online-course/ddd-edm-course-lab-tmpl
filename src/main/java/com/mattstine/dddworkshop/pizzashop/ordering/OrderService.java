@@ -44,7 +44,6 @@ final class OrderService {
 	public void addPizza(OrderRef orderRef, Pizza pizza) {
 		Order order = repository.findById(orderRef);
 		order.addPizza(pizza);
-		eventLog.publish(new Topic("ordering"), new PizzaAddedEvent(orderRef, pizza));
 	}
 
 	public void requestPayment(OrderRef orderRef) {
