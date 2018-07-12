@@ -9,7 +9,7 @@ import com.mattstine.dddworkshop.pizzashop.payments.PaymentSuccessfulEvent;
 /**
  * @author Matt Stine
  */
-public class OrderService {
+public final class OrderService {
 	private final EventLog eventLog;
 	private final OrderRepository repository;
 	private final PaymentService paymentService;

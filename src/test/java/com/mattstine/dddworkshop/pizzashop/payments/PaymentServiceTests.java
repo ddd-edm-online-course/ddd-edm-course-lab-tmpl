@@ -17,14 +17,14 @@ public class PaymentServiceTests {
 	private PaymentProcessor processor;
 	private PaymentRepository repository;
 	private EventLog eventLog;
-	private PaymentService paymentService;
+	private DefaultPaymentService paymentService;
 
 	@Before
 	public void setUp() {
 		processor = mock(PaymentProcessor.class);
 		repository = mock(PaymentRepository.class);
 		eventLog = mock(EventLog.class);
-		paymentService = new PaymentService(processor, repository, eventLog);
+		paymentService = new DefaultPaymentService(processor, repository, eventLog);
 	}
 
 	@Test
