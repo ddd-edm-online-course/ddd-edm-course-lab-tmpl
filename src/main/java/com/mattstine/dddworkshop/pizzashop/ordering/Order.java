@@ -2,6 +2,7 @@ package com.mattstine.dddworkshop.pizzashop.ordering;
 
 import com.mattstine.dddworkshop.pizzashop.infrastructure.Amount;
 import com.mattstine.dddworkshop.pizzashop.infrastructure.EventLog;
+import com.mattstine.dddworkshop.pizzashop.infrastructure.Topic;
 import com.mattstine.dddworkshop.pizzashop.payments.PaymentRef;
 import lombok.*;
 import lombok.experimental.NonFinal;
@@ -46,7 +47,7 @@ public class Order {
 
 	public void addPizza(Pizza pizza) {
 		this.pizzas.add(pizza);
-		eventLog.publish(new PizzaAddedEvent(ref, pizza));
+		eventLog.publish(new Topic("ordering"), new PizzaAddedEvent(ref, pizza));
 	}
 
 	public void submit() {
@@ -55,7 +56,7 @@ public class Order {
 		}
 
 		this.state = State.SUBMITTED;
-		eventLog.publish(new OrderPlacedEvent());
+		eventLog.publish(new Topic("ordering"), new OrderPlacedEvent());
 	}
 
 	public Amount calculatePrice() {
@@ -70,7 +71,7 @@ public class Order {
 
 	public void markPaid() {
 		this.state = State.PAID;
-		eventLog.publish(new OrderPaidEvent());
+		eventLog.publish(new Topic("ordering"), new OrderPaidEvent());
 	}
 
 	public enum State {

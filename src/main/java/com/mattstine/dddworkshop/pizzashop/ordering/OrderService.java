@@ -2,6 +2,7 @@ package com.mattstine.dddworkshop.pizzashop.ordering;
 
 import com.mattstine.dddworkshop.pizzashop.infrastructure.Amount;
 import com.mattstine.dddworkshop.pizzashop.infrastructure.EventLog;
+import com.mattstine.dddworkshop.pizzashop.infrastructure.Topic;
 import com.mattstine.dddworkshop.pizzashop.payments.PaymentRef;
 import com.mattstine.dddworkshop.pizzashop.payments.PaymentService;
 import com.mattstine.dddworkshop.pizzashop.payments.PaymentSuccessfulEvent;
@@ -36,7 +37,7 @@ public final class OrderService {
 	public void addPizza(OrderRef orderRef, Pizza pizza) {
 		Order order = repository.findById(orderRef);
 		order.addPizza(pizza);
-		eventLog.publish(new PizzaAddedEvent(orderRef, pizza));
+		eventLog.publish(new Topic("ordering"), new PizzaAddedEvent(orderRef, pizza));
 	}
 
 	public void requestPayment(OrderRef orderRef) {

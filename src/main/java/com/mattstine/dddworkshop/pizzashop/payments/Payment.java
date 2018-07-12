@@ -2,6 +2,7 @@ package com.mattstine.dddworkshop.pizzashop.payments;
 
 import com.mattstine.dddworkshop.pizzashop.infrastructure.Amount;
 import com.mattstine.dddworkshop.pizzashop.infrastructure.EventLog;
+import com.mattstine.dddworkshop.pizzashop.infrastructure.Topic;
 import lombok.Builder;
 import lombok.NonNull;
 import lombok.Value;
@@ -39,7 +40,7 @@ public class Payment {
 
 		paymentProcessor.request(this);
 		state = State.REQUESTED;
-		eventLog.publish(new PaymentRequestedEvent());
+		eventLog.publish(new Topic("payments"), new PaymentRequestedEvent());
 	}
 
 	public void markSuccessful() {
@@ -48,7 +49,7 @@ public class Payment {
 		}
 
 		state = State.SUCCESSFUL;
-		eventLog.publish(new PaymentSuccessfulEvent(ref));
+		eventLog.publish(new Topic("payments"), new PaymentSuccessfulEvent(ref));
 	}
 
 	public void markFailed() {
@@ -57,7 +58,7 @@ public class Payment {
 		}
 
 		state = State.FAILED;
-		eventLog.publish(new PaymentFailedEvent());
+		eventLog.publish(new Topic("payments"), new PaymentFailedEvent());
 	}
 
 	public boolean isNew() {

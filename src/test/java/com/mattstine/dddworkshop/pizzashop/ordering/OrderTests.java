@@ -1,11 +1,13 @@
 package com.mattstine.dddworkshop.pizzashop.ordering;
 
 import com.mattstine.dddworkshop.pizzashop.infrastructure.EventLog;
+import com.mattstine.dddworkshop.pizzashop.infrastructure.Topic;
 import org.junit.Before;
 import org.junit.Test;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatIllegalStateException;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.ArgumentMatchers.isA;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
@@ -80,7 +82,8 @@ public class OrderTests {
 
 		order.addPizza(pizza);
 
-		verify(eventLog).publish(new PizzaAddedEvent(ref, pizza));
+		verify(eventLog).publish(eq(new Topic("ordering")), eq(new PizzaAddedEvent(ref, pizza)));
+
 	}
 
 	@Test
@@ -93,7 +96,7 @@ public class OrderTests {
 		order.addPizza(Pizza.builder().size(Pizza.Size.MEDIUM).build());
 		order.submit();
 
-		verify(eventLog).publish(isA(OrderPlacedEvent.class));
+		verify(eventLog).publish(eq(new Topic("ordering")), isA(OrderPlacedEvent.class));
 	}
 
 	@Test
@@ -143,13 +146,13 @@ public class OrderTests {
 				.ref(new OrderRef())
 				.build();
 		order.addPizza(Pizza.builder().size(Pizza.Size.MEDIUM).build());
-		verify(eventLog).publish(isA(PizzaAddedEvent.class));
+		verify(eventLog).publish(eq(new Topic("ordering")), isA(PizzaAddedEvent.class));
 
 		order.submit();
-		verify(eventLog).publish(isA(OrderPlacedEvent.class));
+		verify(eventLog).publish(eq(new Topic("ordering")), isA(OrderPlacedEvent.class));
 
 		order.markPaid();
-		verify(eventLog).publish(isA(OrderPaidEvent.class));
+		verify(eventLog).publish(eq(new Topic("ordering")), isA(OrderPaidEvent.class));
 	}
 
 }

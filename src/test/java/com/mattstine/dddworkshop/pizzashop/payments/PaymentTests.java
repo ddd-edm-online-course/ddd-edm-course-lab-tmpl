@@ -2,11 +2,14 @@ package com.mattstine.dddworkshop.pizzashop.payments;
 
 import com.mattstine.dddworkshop.pizzashop.infrastructure.Amount;
 import com.mattstine.dddworkshop.pizzashop.infrastructure.EventLog;
+import com.mattstine.dddworkshop.pizzashop.infrastructure.Topic;
 import org.junit.Before;
 import org.junit.Test;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatIllegalStateException;
+import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.ArgumentMatchers.isA;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 
@@ -48,7 +51,7 @@ public class PaymentTests {
 	@Test
 	public void payment_request_should_fire_event() {
 		payment.request();
-		verify(eventLog).publish(new PaymentRequestedEvent());
+		verify(eventLog).publish(eq(new Topic("payments")), isA(PaymentRequestedEvent.class));
 	}
 
 	@Test
@@ -61,9 +64,9 @@ public class PaymentTests {
 	@Test
 	public void payment_success_should_fire_event() {
 		payment.request();
-		verify(eventLog).publish(new PaymentRequestedEvent());
+		verify(eventLog).publish(eq(new Topic("payments")), isA(PaymentRequestedEvent.class));
 		payment.markSuccessful();
-		verify(eventLog).publish(new PaymentSuccessfulEvent(ref));
+		verify(eventLog).publish(eq(new Topic("payments")), isA(PaymentSuccessfulEvent.class));
 	}
 
 	@Test
@@ -76,9 +79,9 @@ public class PaymentTests {
 	@Test
 	public void payment_failure_should_fire_event() {
 		payment.request();
-		verify(eventLog).publish(new PaymentRequestedEvent());
+		verify(eventLog).publish(eq(new Topic("payments")), isA(PaymentRequestedEvent.class));
 		payment.markFailed();
-		verify(eventLog).publish(new PaymentFailedEvent());
+		verify(eventLog).publish(eq(new Topic("payments")), isA(PaymentFailedEvent.class));
 	}
 
 	@Test
