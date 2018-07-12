@@ -49,7 +49,7 @@ public class DefaultPaymentServiceIntegrationTests {
 	}
 
 	@Test
-	public void on_failed_processing_mark_success() {
+	public void on_failed_processing_mark_failed() {
 		PaymentRef ref = new PaymentRef();
 		Payment payment = Payment.builder()
 				.eventLog(eventLog)
