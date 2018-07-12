@@ -12,7 +12,7 @@ import static org.mockito.Mockito.*;
 /**
  * @author Matt Stine
  */
-public class PaymentServiceTests {
+public class DefaultPaymentServiceTests {
 
 	private PaymentProcessor processor;
 	private PaymentRepository repository;
