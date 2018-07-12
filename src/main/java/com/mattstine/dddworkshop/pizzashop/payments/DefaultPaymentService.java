@@ -34,7 +34,6 @@ final class DefaultPaymentService implements PaymentService {
 		return ref;
 	}
 
-	@Override
 	public void receivePaymentProcessedEvent(PaymentProcessedEvent ppEvent) {
 		Payment payment = repository.findById(ppEvent.getRef());
 

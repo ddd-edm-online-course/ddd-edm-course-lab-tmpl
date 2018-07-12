@@ -23,7 +23,7 @@ public class Pizza {
 	public enum Size {
 		MEDIUM(Amount.of(6,0));
 
-		private Amount price;
+		final Amount price;
 
 		Size(Amount price) {
 			this.price = price;

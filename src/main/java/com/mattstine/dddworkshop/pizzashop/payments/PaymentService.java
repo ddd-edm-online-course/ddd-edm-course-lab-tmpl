@@ -7,6 +7,4 @@ import com.mattstine.dddworkshop.pizzashop.infrastructure.Amount;
  */
 public interface PaymentService {
 	PaymentRef requestPaymentFor(Amount amount);
-
-	void receivePaymentProcessedEvent(PaymentProcessedEvent ppEvent);
 }

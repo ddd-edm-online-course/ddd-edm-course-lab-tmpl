@@ -1,15 +1,15 @@
 package com.mattstine.dddworkshop.pizzashop.ordering;
 
 import com.mattstine.dddworkshop.pizzashop.infrastructure.Amount;
+import com.mattstine.dddworkshop.pizzashop.infrastructure.EventHandler;
 import com.mattstine.dddworkshop.pizzashop.infrastructure.EventLog;
+import com.mattstine.dddworkshop.pizzashop.infrastructure.Topic;
 import com.mattstine.dddworkshop.pizzashop.payments.PaymentRef;
 import com.mattstine.dddworkshop.pizzashop.payments.PaymentService;
-import com.mattstine.dddworkshop.pizzashop.payments.PaymentSuccessfulEvent;
 import org.junit.Before;
 import org.junit.Test;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.mockito.ArgumentMatchers.isA;
 import static org.mockito.Mockito.*;
 
 /**
@@ -28,6 +28,11 @@ public class OrderServiceTests {
 		repository = mock(OrderRepository.class);
 		paymentService = mock(PaymentService.class);
 		orderService = new OrderService(eventLog, repository, paymentService);
+	}
+
+	@Test
+	public void subscribes_to_payments_topic() {
+		verify(eventLog).subscribe(eq(new Topic("payments")), isA(EventHandler.class));
 	}
 
 	@Test
@@ -80,19 +85,4 @@ public class OrderServiceTests {
 		verify(paymentService).requestPaymentFor(Amount.of(10, 0));
 	}
 
-	@Test
-	public void receives_payment_successful_event_and_updates_state() {
-		OrderRef orderRef = new OrderRef();
-		Order order = Order.builder()
-				.type(Order.Type.PICKUP)
-				.eventLog(eventLog)
-				.ref(orderRef)
-				.build();
-		PaymentRef paymentRef = new PaymentRef();
-		order.setPaymentRef(paymentRef);
-		when(repository.findByPaymentRef(eq(paymentRef))).thenReturn(order);
-
-		orderService.receivePaymentSuccessfulEvent(new PaymentSuccessfulEvent(paymentRef));
-		assertThat(order.isPaid()).isTrue();
-	}
 }

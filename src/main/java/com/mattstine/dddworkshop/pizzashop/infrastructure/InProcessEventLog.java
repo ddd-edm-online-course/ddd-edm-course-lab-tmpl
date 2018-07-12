@@ -9,7 +9,7 @@ import java.util.Set;
  * @author Matt Stine
  */
 public class InProcessEventLog implements EventLog {
-	private Map<Topic, Set<EventHandler>> topics = new HashMap<>();
+	private final Map<Topic, Set<EventHandler>> topics = new HashMap<>();
 
 	@Override
 	public void publish(Topic topic, Event event) {
@@ -25,7 +25,7 @@ public class InProcessEventLog implements EventLog {
 	}
 
 	@Override
-	public int getNumberOfSubscribers(Topic topic) {
+	public int getNumberOfSubscribers() {
 		return topics.size();
 	}
 }

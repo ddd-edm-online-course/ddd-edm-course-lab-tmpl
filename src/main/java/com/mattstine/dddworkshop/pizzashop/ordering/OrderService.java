@@ -10,7 +10,7 @@ import com.mattstine.dddworkshop.pizzashop.payments.PaymentSuccessfulEvent;
 /**
  * @author Matt Stine
  */
-public final class OrderService {
+final class OrderService {
 	private final EventLog eventLog;
 	private final OrderRepository repository;
 	private final PaymentService paymentService;
@@ -19,6 +19,13 @@ public final class OrderService {
 		this.eventLog = eventLog;
 		this.repository = repository;
 		this.paymentService = paymentService;
+
+		eventLog.subscribe(new Topic("payments"), e -> {
+			if (e instanceof PaymentSuccessfulEvent) {
+				PaymentSuccessfulEvent pse = (PaymentSuccessfulEvent) e;
+				this.markOrderPaid(pse.getPaymentRef());
+			}
+		});
 	}
 
 	public OrderRef createOrder(Order.Type type) {
@@ -46,8 +53,8 @@ public final class OrderService {
 		order.setPaymentRef(paymentRef);
 	}
 
-	public void receivePaymentSuccessfulEvent(PaymentSuccessfulEvent paymentSuccessfulEvent) {
-		Order order = repository.findByPaymentRef(paymentSuccessfulEvent.getPaymentRef());
+	private void markOrderPaid(PaymentRef paymentRef) {
+		Order order = repository.findByPaymentRef(paymentRef);
 		order.markPaid();
 	}
 }

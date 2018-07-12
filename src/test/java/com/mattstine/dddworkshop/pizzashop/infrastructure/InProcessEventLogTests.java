@@ -20,7 +20,7 @@ public class InProcessEventLogTests {
 	public void shouldAddSubscriber() {
 		eventLog.subscribe(new Topic("some-topic"), System.out::println);
 
-		assertThat(eventLog.getNumberOfSubscribers(new Topic("some-topic"))).isEqualTo(1);
+		assertThat(eventLog.getNumberOfSubscribers()).isEqualTo(1);
 	}
 
 	@Test

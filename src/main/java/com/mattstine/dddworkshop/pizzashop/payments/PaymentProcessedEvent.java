@@ -19,7 +19,7 @@ public class PaymentProcessedEvent implements Event {
 		return status == Status.FAILED;
 	}
 
-	enum Status {
+	public enum Status {
 		SUCCESSFUL, FAILED
 	}
 }

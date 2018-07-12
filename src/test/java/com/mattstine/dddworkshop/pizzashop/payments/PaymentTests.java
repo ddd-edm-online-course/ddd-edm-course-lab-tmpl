@@ -21,13 +21,12 @@ public class PaymentTests {
 	private EventLog eventLog;
 	private PaymentProcessor paymentProcessor;
 	private Payment payment;
-	private PaymentRef ref;
 
 	@Before
 	public void setUp() {
 		paymentProcessor = mock(PaymentProcessor.class);
 		eventLog = mock(EventLog.class);
-		ref = new PaymentRef();
+		PaymentRef ref = new PaymentRef();
 		payment = Payment.builder()
 				.amount(Amount.of(15, 0))
 				.paymentProcessor(paymentProcessor)
