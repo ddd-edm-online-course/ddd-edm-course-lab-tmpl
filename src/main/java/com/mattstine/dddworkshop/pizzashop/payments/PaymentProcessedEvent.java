@@ -1,15 +1,15 @@
 package com.mattstine.dddworkshop.pizzashop.payments;
 
 import com.mattstine.dddworkshop.pizzashop.infrastructure.Event;
-import lombok.Data;
+import lombok.Value;
 
 /**
  * @author Matt Stine
  */
-@Data
+@Value
 public class PaymentProcessedEvent implements Event {
-	private final PaymentRef ref;
-	private final Status status;
+	PaymentRef ref;
+	Status status;
 
 	public boolean isSuccessful() {
 		return status == Status.SUCCESSFUL;

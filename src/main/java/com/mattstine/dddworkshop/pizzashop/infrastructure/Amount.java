@@ -1,17 +1,17 @@
 package com.mattstine.dddworkshop.pizzashop.infrastructure;
 
 import lombok.AccessLevel;
-import lombok.Data;
-import lombok.RequiredArgsConstructor;
+import lombok.AllArgsConstructor;
+import lombok.Value;
 
 /**
  * @author Matt Stine
  */
-@Data
-@RequiredArgsConstructor(access = AccessLevel.PRIVATE)
+@Value
+@AllArgsConstructor(access = AccessLevel.PRIVATE)
 public class Amount {
-	private final int dollars;
-	private final int cents;
+	int dollars;
+	int cents;
 
 	public static Amount of(int dollars, int cents) {
 		if (dollars < 0) {
@@ -33,7 +33,7 @@ public class Amount {
 		int centsTotal = this.cents + amount.cents;
 
 		if (centsTotal / 100 == 1) {
-			return new Amount(this.dollars + amount.dollars + 1,centsTotal % 100);
+			return new Amount(this.dollars + amount.dollars + 1, centsTotal % 100);
 		}
 
 		return new Amount(this.dollars + amount.dollars,

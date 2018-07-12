@@ -1,16 +1,12 @@
 package com.mattstine.dddworkshop.pizzashop.payments;
 
 import com.mattstine.dddworkshop.pizzashop.infrastructure.Event;
-import lombok.Data;
+import lombok.Value;
 
 /**
  * @author Matt Stine
  */
-@Data
+@Value
 public class PaymentSuccessfulEvent implements Event {
-	private final PaymentRef paymentRef;
-
-	public PaymentRef getPaymentRef() {
-		return paymentRef;
-	}
+	PaymentRef paymentRef;
 }

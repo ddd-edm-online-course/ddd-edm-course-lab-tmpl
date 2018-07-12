@@ -14,39 +14,39 @@ import java.util.List;
  */
 @Value
 public class Order {
-	OrderType type;
+	Type type;
 	EventLog eventLog;
-	OrderRef id;
+	OrderRef ref;
 	@NonFinal
-	OrderState state;
+	State state;
 	List<Pizza> pizzas;
 	@NonFinal
 	@Setter
 	PaymentRef paymentRef;
 
 	@Builder
-	private Order(@NonNull OrderType type, @NonNull EventLog eventLog, @NonNull OrderRef ref) {
+	private Order(@NonNull Type type, @NonNull EventLog eventLog, @NonNull OrderRef ref) {
 		this.type = type;
 		this.eventLog = eventLog;
-		this.id = ref;
+		this.ref = ref;
 		this.pizzas = new ArrayList<>();
 	}
 
 	public boolean isPickupOrder() {
-		return this.type == OrderType.PICKUP;
+		return this.type == Type.PICKUP;
 	}
 
 	public boolean isDeliveryOrder() {
-		return this.type == OrderType.DELIVERY;
+		return this.type == Type.DELIVERY;
 	}
 
 	public boolean isSubmitted() {
-		return this.state == OrderState.SUBMITTED;
+		return this.state == State.SUBMITTED;
 	}
 
 	public void addPizza(Pizza pizza) {
 		this.pizzas.add(pizza);
-		eventLog.publish(new PizzaAddedEvent(id, pizza));
+		eventLog.publish(new PizzaAddedEvent(ref, pizza));
 	}
 
 	public void submit() {
@@ -54,22 +54,29 @@ public class Order {
 			throw new IllegalStateException("Cannot submit Order without at least one Pizza");
 		}
 
-		this.state = OrderState.SUBMITTED;
+		this.state = State.SUBMITTED;
 		eventLog.publish(new OrderPlacedEvent());
 	}
 
 	public Amount calculatePrice() {
 		return this.pizzas.stream()
-				.map(Pizza::getPrice)
+				.map(Pizza::calculatePrice)
 				.reduce(Amount.of(0,0), Amount::plus);
 	}
 
 	public boolean isPaid() {
-		return state == OrderState.PAID;
+		return state == State.PAID;
 	}
 
 	public void markPaid() {
-		this.state = OrderState.PAID;
+		this.state = State.PAID;
 	}
 
+	public enum State {
+		PAID, SUBMITTED
+	}
+
+	public enum Type {
+		DELIVERY, PICKUP
+	}
 }

@@ -33,7 +33,7 @@ public class OrderServiceTests {
 	@Test
 	public void adds_new_order_to_repository() {
 		when(repository.nextIdentity()).thenReturn(new OrderRef());
-		orderService.createOrder(OrderType.PICKUP);
+		orderService.createOrder(Order.Type.PICKUP);
 		verify(repository).add(isA(Order.class));
 	}
 
@@ -41,7 +41,7 @@ public class OrderServiceTests {
 	public void returns_ref_to_new_order() {
 		OrderRef ref = new OrderRef();
 		when(repository.nextIdentity()).thenReturn(ref);
-		OrderRef orderRef = orderService.createOrder(OrderType.PICKUP);
+		OrderRef orderRef = orderService.createOrder(Order.Type.PICKUP);
 		assertThat(orderRef).isEqualTo(orderRef);
 	}
 
@@ -49,14 +49,14 @@ public class OrderServiceTests {
 	public void adds_pizza_to_order() {
 		OrderRef orderRef = new OrderRef();
 		Order order = Order.builder()
-				.type(OrderType.PICKUP)
+				.type(Order.Type.PICKUP)
 				.eventLog(eventLog)
 				.ref(orderRef)
 				.build();
 
 		when(repository.findById(orderRef)).thenReturn(order);
 
-		Pizza pizza = Pizza.ofSize(PizzaSize.MEDIUM).build();
+		Pizza pizza = Pizza.builder().size(Pizza.Size.MEDIUM).build();
 		orderService.addPizza(orderRef, pizza);
 
 		assertThat(order.getPizzas()).contains(pizza);
@@ -66,7 +66,7 @@ public class OrderServiceTests {
 	public void requests_payment_for_order() {
 		OrderRef orderRef = new OrderRef();
 		Order order = Order.builder()
-				.type(OrderType.PICKUP)
+				.type(Order.Type.PICKUP)
 				.eventLog(eventLog)
 				.ref(orderRef)
 				.build();
@@ -84,7 +84,7 @@ public class OrderServiceTests {
 	public void receives_payment_successful_event_and_updates_state() {
 		OrderRef orderRef = new OrderRef();
 		Order order = Order.builder()
-				.type(OrderType.PICKUP)
+				.type(Order.Type.PICKUP)
 				.eventLog(eventLog)
 				.ref(orderRef)
 				.build();

@@ -1,40 +1,36 @@
 package com.mattstine.dddworkshop.pizzashop.ordering;
 
 import com.mattstine.dddworkshop.pizzashop.infrastructure.Amount;
-import lombok.AccessLevel;
-import lombok.Data;
-import lombok.RequiredArgsConstructor;
+import lombok.*;
 
 /**
  * @author Matt Stine
  */
-@Data
-@RequiredArgsConstructor(access = AccessLevel.PRIVATE)
+@Value
 public class Pizza {
 
-	private final PizzaSize size;
+	Size size;
 
-	static PizzaBuilder ofSize(PizzaSize medium) {
-		return new PizzaBuilder(medium);
+	@Builder
+	private Pizza(@NonNull Size size) {
+		this.size = size;
 	}
 
-	public PizzaSize getSize() {
-		return size;
-	}
-
-	public Amount getPrice() {
+	public Amount calculatePrice() {
 		return size.getPrice();
 	}
 
-	static class PizzaBuilder {
-		private final PizzaSize size;
+	public enum Size {
+		MEDIUM(Amount.of(6,0));
 
-		private PizzaBuilder(PizzaSize size) {
-			this.size = size;
+		private Amount price;
+
+		Size(Amount price) {
+			this.price = price;
 		}
 
-		public Pizza build() {
-			return new Pizza(size);
+		public Amount getPrice() {
+			return price;
 		}
 	}
 }

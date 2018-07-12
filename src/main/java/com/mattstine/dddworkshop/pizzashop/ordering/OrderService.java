@@ -20,7 +20,7 @@ public class OrderService {
 		this.paymentService = paymentService;
 	}
 
-	public OrderRef createOrder(OrderType type) {
+	public OrderRef createOrder(Order.Type type) {
 		OrderRef orderRef = repository.nextIdentity();
 
 		Order order = Order.builder().type(type)

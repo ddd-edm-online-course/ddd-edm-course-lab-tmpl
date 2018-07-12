@@ -5,5 +5,5 @@ import com.mattstine.dddworkshop.pizzashop.infrastructure.Event;
 /**
  * @author Matt Stine
  */
-public class OrderPlacedEvent implements Event {
+class OrderPlacedEvent implements Event {
 }

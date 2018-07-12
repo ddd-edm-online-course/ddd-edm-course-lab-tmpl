@@ -20,10 +20,11 @@ public class PaymentService {
 	public PaymentRef requestPaymentFor(Amount amount) {
 		PaymentRef ref = repository.nextIdentity();
 
-		Payment payment = Payment.of(amount)
-				.withId(ref)
-				.withProcessor(processor)
-				.withEventLog(eventLog)
+		Payment payment = Payment.builder()
+				.amount(amount)
+				.ref(ref)
+				.paymentProcessor(processor)
+				.eventLog(eventLog)
 				.build();
 		repository.add(payment);
 

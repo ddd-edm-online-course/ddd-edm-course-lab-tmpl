@@ -25,10 +25,11 @@ public class PaymentTests {
 		paymentProcessor = mock(PaymentProcessor.class);
 		eventLog = mock(EventLog.class);
 		ref = new PaymentRef();
-		payment = Payment.of(Amount.of(15, 0))
-				.withProcessor(paymentProcessor)
-				.withEventLog(eventLog)
-				.withId(ref)
+		payment = Payment.builder()
+				.amount(Amount.of(15, 0))
+				.paymentProcessor(paymentProcessor)
+				.eventLog(eventLog)
+				.ref(ref)
 				.build();
 	}
 
@@ -78,27 +79,6 @@ public class PaymentTests {
 		verify(eventLog).publish(new PaymentRequestedEvent());
 		payment.markFailed();
 		verify(eventLog).publish(new PaymentFailedEvent());
-	}
-
-	@Test
-	public void build_requires_processor() {
-		assertThatIllegalStateException().isThrownBy(() -> Payment.of(Amount.of(15, 0)).withId(new PaymentRef()).build());
-	}
-
-	@Test
-	public void build_requires_amount() {
-		assertThatIllegalStateException().isThrownBy(() -> Payment.withProcessor(paymentProcessor).withId(new PaymentRef()).build());
-	}
-
-	@Test
-	public void build_requires_id() {
-		assertThatIllegalStateException().isThrownBy(() -> Payment.withProcessor(paymentProcessor).of(Amount.of(15, 0)).build());
-	}
-
-	@Test
-	public void build_requires_eventLog() {
-		assertThatIllegalStateException().isThrownBy(() -> Payment.withProcessor(paymentProcessor).of(Amount.of(15, 0)).withId(new PaymentRef()).build());
-
 	}
 
 	@Test

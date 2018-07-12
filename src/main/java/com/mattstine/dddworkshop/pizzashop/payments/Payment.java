@@ -2,148 +2,81 @@ package com.mattstine.dddworkshop.pizzashop.payments;
 
 import com.mattstine.dddworkshop.pizzashop.infrastructure.Amount;
 import com.mattstine.dddworkshop.pizzashop.infrastructure.EventLog;
-import lombok.Data;
+import lombok.Builder;
+import lombok.NonNull;
+import lombok.Value;
+import lombok.experimental.NonFinal;
 
 /**
  * @author Matt Stine
  */
-@Data
+@Value
 public class Payment {
-	private final Amount amount;
-	private final PaymentProcessor paymentProcessor;
-	private final PaymentRef id;
-	private final EventLog eventLog;
-	private PaymentState paymentState;
+	Amount amount;
+	PaymentProcessor paymentProcessor;
+	PaymentRef ref;
+	EventLog eventLog;
+	@NonFinal
+	State state;
 
-	private Payment(Amount amount, PaymentProcessor paymentProcessor, PaymentRef id, EventLog eventLog) {
+	@Builder
+	private Payment(@NonNull Amount amount,
+					@NonNull PaymentProcessor paymentProcessor,
+					@NonNull PaymentRef ref,
+					@NonNull EventLog eventLog) {
 		this.amount = amount;
 		this.paymentProcessor = paymentProcessor;
-		this.id = id;
+		this.ref = ref;
 		this.eventLog = eventLog;
 
-		this.paymentState = PaymentState.NEW;
-	}
-
-	public static PaymentBuilder of(Amount amount) {
-		return new PaymentBuilder(amount);
-	}
-
-	public static PaymentBuilder withId(PaymentRef ref) {
-		return new PaymentBuilder(ref);
-	}
-
-	public static PaymentBuilder withProcessor(PaymentProcessor paymentProcessor) {
-		return new PaymentBuilder(paymentProcessor);
-	}
-
-	public static PaymentBuilder withEventLog(EventLog eventLog) {
-		return new PaymentBuilder(eventLog);
+		this.state = State.NEW;
 	}
 
 	public void request() {
-		if (paymentState != PaymentState.NEW) {
+		if (state != State.NEW) {
 			throw new IllegalStateException("Payment must be NEW to request payment");
 		}
 
 		paymentProcessor.request(this);
-		paymentState = PaymentState.REQUESTED;
+		state = State.REQUESTED;
 		eventLog.publish(new PaymentRequestedEvent());
 	}
 
 	public void markSuccessful() {
-		if (paymentState != PaymentState.REQUESTED) {
+		if (state != State.REQUESTED) {
 			throw new IllegalStateException("Payment must be REQUESTED to mark successful");
 		}
 
-		paymentState = PaymentState.SUCCESSFUL;
-		eventLog.publish(new PaymentSuccessfulEvent(id));
+		state = State.SUCCESSFUL;
+		eventLog.publish(new PaymentSuccessfulEvent(ref));
 	}
 
 	public void markFailed() {
-		if (paymentState != PaymentState.REQUESTED) {
+		if (state != State.REQUESTED) {
 			throw new IllegalStateException("Payment must be REQUESTED to mark failed");
 		}
 
-		paymentState = PaymentState.FAILED;
+		state = State.FAILED;
 		eventLog.publish(new PaymentFailedEvent());
 	}
 
 	public boolean isNew() {
-		return paymentState == PaymentState.NEW;
+		return state == State.NEW;
 	}
 
 	public boolean isRequested() {
-		return paymentState == PaymentState.REQUESTED;
+		return state == State.REQUESTED;
 	}
 
 	public boolean isSuccessful() {
-		return paymentState == PaymentState.SUCCESSFUL;
+		return state == State.SUCCESSFUL;
 	}
 
 	public boolean isFailed() {
-		return paymentState == PaymentState.FAILED;
+		return state == State.FAILED;
 	}
 
-	public static class PaymentBuilder {
-		private Amount amount;
-		private PaymentProcessor paymentProcessor;
-		private PaymentRef id;
-		private EventLog eventLog;
-
-		PaymentBuilder(Amount amount) {
-			this.amount = amount;
-		}
-
-		PaymentBuilder(PaymentProcessor paymentProcessor) {
-			this.paymentProcessor = paymentProcessor;
-		}
-
-		PaymentBuilder(PaymentRef ref) {
-			this.id = ref;
-		}
-
-		PaymentBuilder(EventLog eventLog) {
-			this.eventLog = eventLog;
-		}
-
-		public PaymentBuilder of(Amount amount) {
-			this.amount = amount;
-			return this;
-		}
-
-		public PaymentBuilder withId(PaymentRef ref) {
-			this.id = ref;
-			return this;
-		}
-
-		public PaymentBuilder withProcessor(PaymentProcessor paymentProcessor) {
-			this.paymentProcessor = paymentProcessor;
-			return this;
-		}
-
-		public PaymentBuilder withEventLog(EventLog eventLog) {
-			this.eventLog = eventLog;
-			return this;
-		}
-
-		public Payment build() {
-			if (amount == null) {
-				throw new IllegalStateException("Cannot build Payment without Amount");
-			}
-
-			if (paymentProcessor == null) {
-				throw new IllegalStateException("Cannot build Payment without PaymentProcessor");
-			}
-
-			if (id == null) {
-				throw new IllegalStateException("Cannot build Payment without PaymentRef");
-			}
-
-			if (eventLog == null) {
-				throw new IllegalStateException("Cannot build Payment without EventLog");
-			}
-
-			return new Payment(amount, paymentProcessor, id, eventLog);
-		}
+	public enum State {
+		SUCCESSFUL, NEW, FAILED, REQUESTED
 	}
 }

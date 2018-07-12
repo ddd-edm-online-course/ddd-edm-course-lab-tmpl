@@ -1,10 +1,10 @@
 package com.mattstine.dddworkshop.pizzashop.ordering;
 
-import lombok.Data;
+import lombok.Value;
 
 /**
  * @author Matt Stine
  */
-@Data
-public class OrderRef {
+@Value
+class OrderRef {
 }

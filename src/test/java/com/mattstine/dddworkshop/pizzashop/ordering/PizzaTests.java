@@ -10,14 +10,9 @@ import static org.assertj.core.api.Assertions.assertThat;
 public class PizzaTests {
 
 	@Test
-	public void build_with_size() {
-		Pizza pizza = Pizza.ofSize(PizzaSize.MEDIUM).build();
-		assertThat(pizza.getSize()).isEqualTo(PizzaSize.MEDIUM);
+	public void calculates_price() {
+		Pizza pizza = Pizza.builder().size(Pizza.Size.MEDIUM).build();
+		assertThat(pizza.calculatePrice()).isEqualTo(Pizza.Size.MEDIUM.getPrice());
 	}
 
-	@Test
-	public void calculates_price() {
-		Pizza pizza = Pizza.ofSize(PizzaSize.MEDIUM).build();
-		assertThat(pizza.getPrice()).isEqualTo(PizzaSize.MEDIUM.getPrice());
-	}
 }

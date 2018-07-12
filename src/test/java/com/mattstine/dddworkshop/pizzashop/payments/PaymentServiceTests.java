@@ -20,7 +20,7 @@ public class PaymentServiceTests {
 	private PaymentService paymentService;
 
 	@Before
-	public void setUp() throws Exception {
+	public void setUp() {
 		processor = mock(PaymentProcessor.class);
 		repository = mock(PaymentRepository.class);
 		eventLog = mock(EventLog.class);
@@ -32,10 +32,11 @@ public class PaymentServiceTests {
 		PaymentRef ref = new PaymentRef();
 		when(repository.nextIdentity()).thenReturn(ref);
 
-		Payment payment = Payment.of(Amount.of(10, 0))
-				.withId(ref)
-				.withProcessor(processor)
-				.withEventLog(eventLog)
+		Payment payment = Payment.builder()
+				.amount(Amount.of(10, 0))
+				.ref(ref)
+				.paymentProcessor(processor)
+				.eventLog(eventLog)
 				.build();
 		payment.request();
 
@@ -50,10 +51,11 @@ public class PaymentServiceTests {
 		PaymentRef paymentRef = new PaymentRef();
 		PaymentProcessedEvent ppEvent = new PaymentProcessedEvent(paymentRef, PaymentProcessedEvent.Status.SUCCESSFUL);
 
-		Payment payment = Payment.of(Amount.of(10, 0))
-				.withId(paymentRef)
-				.withProcessor(processor)
-				.withEventLog(eventLog)
+		Payment payment = Payment.builder()
+				.amount(Amount.of(10, 0))
+				.ref(paymentRef)
+				.paymentProcessor(processor)
+				.eventLog(eventLog)
 				.build();
 		payment.request();
 
@@ -69,10 +71,11 @@ public class PaymentServiceTests {
 		PaymentRef paymentRef = new PaymentRef();
 		PaymentProcessedEvent ppEvent = new PaymentProcessedEvent(paymentRef, PaymentProcessedEvent.Status.FAILED);
 
-		Payment payment = Payment.of(Amount.of(10, 0))
-				.withId(paymentRef)
-				.withProcessor(processor)
-				.withEventLog(eventLog)
+		Payment payment = Payment.builder()
+				.amount(Amount.of(10, 0))
+				.ref(paymentRef)
+				.paymentProcessor(processor)
+				.eventLog(eventLog)
 				.build();
 		payment.request();
 
