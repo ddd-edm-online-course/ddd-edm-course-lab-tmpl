@@ -25,7 +25,7 @@ public class InProcessEventLog implements EventLog {
 	}
 
 	@Override
-	public int getNumberOfSubscribers() {
-		return topics.size();
+	public int getNumberOfSubscribers(Topic topic) {
+		return this.topics.computeIfAbsent(topic, k -> new HashSet<>()).size();
 	}
 }

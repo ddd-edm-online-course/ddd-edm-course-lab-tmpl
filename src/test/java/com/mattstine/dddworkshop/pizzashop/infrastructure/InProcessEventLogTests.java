@@ -18,9 +18,10 @@ public class InProcessEventLogTests {
 
 	@Test
 	public void shouldAddSubscriber() {
-		eventLog.subscribe(new Topic("some-topic"), System.out::println);
+		Topic topic = new Topic("some-topic");
+		eventLog.subscribe(topic, System.out::println);
 
-		assertThat(eventLog.getNumberOfSubscribers()).isEqualTo(1);
+		assertThat(eventLog.getNumberOfSubscribers(topic)).isEqualTo(1);
 	}
 
 	@Test
@@ -28,8 +29,9 @@ public class InProcessEventLogTests {
 		VerifiableEventHandler handler = VerifiableEventHandler.of(e -> {
 		});
 
-		eventLog.subscribe(new Topic("some-topic"), handler);
-		eventLog.publish(new Topic("some-topic"), new Event() {});
+		Topic topic = new Topic("some-topic");
+		eventLog.subscribe(topic, handler);
+		eventLog.publish(topic, new Event() {});
 
 		assertThat(handler.isInvoked()).isTrue();
 	}

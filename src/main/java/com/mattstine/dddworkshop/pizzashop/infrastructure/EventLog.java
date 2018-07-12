@@ -8,5 +8,5 @@ public interface EventLog {
 
 	void subscribe(Topic topic, EventHandler handler);
 
-	int getNumberOfSubscribers();
+	int getNumberOfSubscribers(Topic topic);
 }
