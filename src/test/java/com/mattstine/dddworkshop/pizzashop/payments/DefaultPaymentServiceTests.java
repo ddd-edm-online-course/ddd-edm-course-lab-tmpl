@@ -42,7 +42,6 @@ public class DefaultPaymentServiceTests {
 		assertThat(paymentService.requestPaymentFor(Amount.of(10, 0)))
 				.isEqualTo(ref);
 		verify(repository).add(eq(payment));
-		//TODO: this test is smelly...can't remember what I thought would fix it :-(
 	}
 
 	@Test
