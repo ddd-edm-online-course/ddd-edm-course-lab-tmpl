@@ -135,4 +135,21 @@ public class OrderTests {
 		assertThat(order.isPaid()).isTrue();
 	}
 
+	@Test
+	public void mark_paid_fires_event() {
+		Order order = Order.builder()
+				.type(Order.Type.PICKUP)
+				.eventLog(eventLog)
+				.ref(new OrderRef())
+				.build();
+		order.addPizza(Pizza.builder().size(Pizza.Size.MEDIUM).build());
+		verify(eventLog).publish(isA(PizzaAddedEvent.class));
+
+		order.submit();
+		verify(eventLog).publish(isA(OrderPlacedEvent.class));
+
+		order.markPaid();
+		verify(eventLog).publish(isA(OrderPaidEvent.class));
+	}
+
 }

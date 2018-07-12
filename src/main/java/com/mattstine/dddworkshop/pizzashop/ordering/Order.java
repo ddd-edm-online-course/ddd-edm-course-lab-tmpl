@@ -70,6 +70,7 @@ public class Order {
 
 	public void markPaid() {
 		this.state = State.PAID;
+		eventLog.publish(new OrderPaidEvent());
 	}
 
 	public enum State {
