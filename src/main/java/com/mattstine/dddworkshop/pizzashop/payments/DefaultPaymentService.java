@@ -2,6 +2,7 @@ package com.mattstine.dddworkshop.pizzashop.payments;
 
 import com.mattstine.dddworkshop.pizzashop.infrastructure.Amount;
 import com.mattstine.dddworkshop.pizzashop.infrastructure.EventLog;
+import com.mattstine.dddworkshop.pizzashop.infrastructure.Topic;
 
 /**
  * @author Matt Stine
@@ -15,6 +16,17 @@ final class DefaultPaymentService implements PaymentService {
 		this.processor = processor;
 		this.repository = repository;
 		this.eventLog = eventLog;
+
+		eventLog.subscribe(new Topic("payments"), (e) -> {
+			if (e instanceof PaymentProcessedEvent) {
+				PaymentProcessedEvent ppe = (PaymentProcessedEvent) e;
+				if (ppe.isSuccessful()) {
+					markPaymentSuccessful(ppe.getRef());
+				} else if (ppe.isFailed()) {
+					markPaymentFailed(ppe.getRef());
+				}
+			}
+		});
 	}
 
 	@Override
@@ -39,13 +51,13 @@ final class DefaultPaymentService implements PaymentService {
 		payment.request();
 	}
 
-	public void receivePaymentProcessedEvent(PaymentProcessedEvent ppEvent) {
-		Payment payment = repository.findById(ppEvent.getRef());
+	private void markPaymentSuccessful(PaymentRef ref) {
+		Payment payment = repository.findById(ref);
+		payment.markSuccessful();
+	}
 
-		if (ppEvent.isSuccessful()) {
-			payment.markSuccessful();
-		} else if (ppEvent.isFailed()) {
-			payment.markFailed();
-		}
+	private void markPaymentFailed(PaymentRef ref) {
+		Payment payment = repository.findById(ref);
+		payment.markFailed();
 	}
 }

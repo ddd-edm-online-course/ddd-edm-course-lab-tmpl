@@ -1,7 +1,9 @@
 package com.mattstine.dddworkshop.pizzashop.payments;
 
 import com.mattstine.dddworkshop.pizzashop.infrastructure.Amount;
+import com.mattstine.dddworkshop.pizzashop.infrastructure.EventHandler;
 import com.mattstine.dddworkshop.pizzashop.infrastructure.EventLog;
+import com.mattstine.dddworkshop.pizzashop.infrastructure.Topic;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -24,6 +26,11 @@ public class DefaultPaymentServiceTests {
 		repository = mock(PaymentRepository.class);
 		eventLog = mock(EventLog.class);
 		paymentService = new DefaultPaymentService(processor, repository, eventLog);
+	}
+
+	@Test
+	public void subscribes_to_payments_topic() {
+		verify(eventLog).subscribe(eq(new Topic("payments")), isA(EventHandler.class));
 	}
 
 	@Test
@@ -60,43 +67,4 @@ public class DefaultPaymentServiceTests {
 		assertThat(payment.isRequested()).isTrue();
 	}
 
-	@Test
-	public void receives_successful_payment_processed_event_and_updates_status() {
-		PaymentRef paymentRef = new PaymentRef();
-		PaymentProcessedEvent ppEvent = new PaymentProcessedEvent(paymentRef, PaymentProcessedEvent.Status.SUCCESSFUL);
-
-		Payment payment = Payment.builder()
-				.amount(Amount.of(10, 0))
-				.ref(paymentRef)
-				.paymentProcessor(processor)
-				.eventLog(eventLog)
-				.build();
-		payment.request();
-
-		when(repository.findById(eq(paymentRef))).thenReturn(payment);
-
-		paymentService.receivePaymentProcessedEvent(ppEvent);
-
-		assertThat(payment.isSuccessful()).isTrue();
-	}
-
-	@Test
-	public void received_failed_payment_processed_event_and_updates_status() {
-		PaymentRef paymentRef = new PaymentRef();
-		PaymentProcessedEvent ppEvent = new PaymentProcessedEvent(paymentRef, PaymentProcessedEvent.Status.FAILED);
-
-		Payment payment = Payment.builder()
-				.amount(Amount.of(10, 0))
-				.ref(paymentRef)
-				.paymentProcessor(processor)
-				.eventLog(eventLog)
-				.build();
-		payment.request();
-
-		when(repository.findById(eq(paymentRef))).thenReturn(payment);
-
-		paymentService.receivePaymentProcessedEvent(ppEvent);
-
-		assertThat(payment.isFailed()).isTrue();
-	}
 }
