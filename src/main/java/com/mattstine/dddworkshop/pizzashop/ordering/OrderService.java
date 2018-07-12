@@ -29,27 +29,27 @@ final class OrderService {
 	}
 
 	public OrderRef createOrder(Order.Type type) {
-		OrderRef orderRef = repository.nextIdentity();
+		OrderRef ref = repository.nextIdentity();
 
 		Order order = Order.builder().type(type)
 				.eventLog(eventLog)
-				.ref(orderRef)
+				.ref(ref)
 				.build();
 
 		repository.add(order);
 
-		return orderRef;
+		return ref;
 	}
 
-	public void addPizza(OrderRef orderRef, Pizza pizza) {
-		Order order = repository.findById(orderRef);
+	public void addPizza(OrderRef ref, Pizza pizza) {
+		Order order = repository.findByRef(ref);
 		order.addPizza(pizza);
 	}
 
-	public void requestPayment(OrderRef orderRef) {
+	public void requestPayment(OrderRef ref) {
 		PaymentRef paymentRef = paymentService.createPaymentOf(Amount.of(10, 0));
 		paymentService.requestPaymentFor(paymentRef);
-		Order order = repository.findById(orderRef);
+		Order order = repository.findByRef(ref);
 		order.setPaymentRef(paymentRef);
 	}
 

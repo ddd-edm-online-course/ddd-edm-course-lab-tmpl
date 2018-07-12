@@ -60,7 +60,7 @@ public class DefaultPaymentServiceTests {
 				.paymentProcessor(processor)
 				.eventLog(eventLog)
 				.build();
-		when(repository.findById(ref)).thenReturn(payment);
+		when(repository.findByRef(ref)).thenReturn(payment);
 
 		paymentService.requestPaymentFor(ref);
 

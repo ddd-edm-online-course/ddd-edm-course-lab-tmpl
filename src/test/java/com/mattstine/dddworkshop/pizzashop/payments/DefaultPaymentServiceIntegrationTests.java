@@ -41,7 +41,7 @@ public class DefaultPaymentServiceIntegrationTests {
 				.build();
 		payment.request();
 
-		when(repository.findById(ref)).thenReturn(payment);
+		when(repository.findByRef(ref)).thenReturn(payment);
 
 		eventLog.publish(new Topic("payments"), new PaymentProcessedEvent(ref, PaymentProcessedEvent.Status.SUCCESSFUL));
 
@@ -59,7 +59,7 @@ public class DefaultPaymentServiceIntegrationTests {
 				.build();
 		payment.request();
 
-		when(repository.findById(ref)).thenReturn(payment);
+		when(repository.findByRef(ref)).thenReturn(payment);
 
 		eventLog.publish(new Topic("payments"), new PaymentProcessedEvent(ref, PaymentProcessedEvent.Status.FAILED));
 

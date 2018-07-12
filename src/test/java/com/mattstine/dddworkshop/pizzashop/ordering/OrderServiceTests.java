@@ -59,7 +59,7 @@ public class OrderServiceTests {
 				.ref(orderRef)
 				.build();
 
-		when(repository.findById(orderRef)).thenReturn(order);
+		when(repository.findByRef(orderRef)).thenReturn(order);
 
 		Pizza pizza = Pizza.builder().size(Pizza.Size.MEDIUM).build();
 		orderService.addPizza(orderRef, pizza);
@@ -75,7 +75,7 @@ public class OrderServiceTests {
 				.eventLog(eventLog)
 				.ref(orderRef)
 				.build();
-		when(repository.findById(orderRef)).thenReturn(order);
+		when(repository.findByRef(orderRef)).thenReturn(order);
 
 		PaymentRef paymentRef = new PaymentRef();
 		when(paymentService.createPaymentOf(Amount.of(10, 0))).thenReturn(paymentRef);

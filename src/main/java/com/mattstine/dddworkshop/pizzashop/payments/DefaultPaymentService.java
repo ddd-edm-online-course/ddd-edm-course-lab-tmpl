@@ -47,17 +47,17 @@ final class DefaultPaymentService implements PaymentService {
 
 	@Override
 	public void requestPaymentFor(PaymentRef ref) {
-		Payment payment = repository.findById(ref);
+		Payment payment = repository.findByRef(ref);
 		payment.request();
 	}
 
 	private void markPaymentSuccessful(PaymentRef ref) {
-		Payment payment = repository.findById(ref);
+		Payment payment = repository.findByRef(ref);
 		payment.markSuccessful();
 	}
 
 	private void markPaymentFailed(PaymentRef ref) {
-		Payment payment = repository.findById(ref);
+		Payment payment = repository.findByRef(ref);
 		payment.markFailed();
 	}
 }

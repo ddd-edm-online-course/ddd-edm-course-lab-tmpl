@@ -8,7 +8,7 @@ interface OrderRepository {
 
 	OrderRef nextIdentity();
 
-	Order findById(OrderRef orderRef);
+	Order findByRef(OrderRef ref);
 
 	Order findByPaymentRef(PaymentRef paymentRef);
 }

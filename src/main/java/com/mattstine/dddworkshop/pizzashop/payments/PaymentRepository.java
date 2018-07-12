@@ -8,5 +8,5 @@ interface PaymentRepository {
 
 	void add(Payment payment);
 
-	Payment findById(PaymentRef id);
+	Payment findByRef(PaymentRef ref);
 }
