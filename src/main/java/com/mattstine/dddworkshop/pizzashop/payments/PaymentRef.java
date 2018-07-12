@@ -1,7 +1,6 @@
 package com.mattstine.dddworkshop.pizzashop.payments;
 
 import com.mattstine.dddworkshop.pizzashop.infrastructure.RefStringGenerator;
-import lombok.Data;
 import lombok.Value;
 
 /**
