@@ -33,6 +33,22 @@ public class Payment {
 		this.state = State.NEW;
 	}
 
+	public boolean isNew() {
+		return state == State.NEW;
+	}
+
+	public boolean isRequested() {
+		return state == State.REQUESTED;
+	}
+
+	public boolean isSuccessful() {
+		return state == State.SUCCESSFUL;
+	}
+
+	public boolean isFailed() {
+		return state == State.FAILED;
+	}
+
 	public void request() {
 		if (state != State.NEW) {
 			throw new IllegalStateException("Payment must be NEW to request payment");
@@ -61,23 +77,7 @@ public class Payment {
 		eventLog.publish(new Topic("payments"), new PaymentFailedEvent());
 	}
 
-	public boolean isNew() {
-		return state == State.NEW;
-	}
-
-	public boolean isRequested() {
-		return state == State.REQUESTED;
-	}
-
-	public boolean isSuccessful() {
-		return state == State.SUCCESSFUL;
-	}
-
-	public boolean isFailed() {
-		return state == State.FAILED;
-	}
-
 	public enum State {
-		SUCCESSFUL, NEW, FAILED, REQUESTED
+		NEW, REQUESTED, SUCCESSFUL, FAILED
 	}
 }
