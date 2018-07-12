@@ -31,6 +31,8 @@ public class Order {
 		this.eventLog = eventLog;
 		this.ref = ref;
 		this.pizzas = new ArrayList<>();
+
+		this.state = State.NEW;
 	}
 
 	public boolean isPickupOrder() {
@@ -46,17 +48,25 @@ public class Order {
 	}
 
 	public void addPizza(Pizza pizza) {
+		if (this.state != State.NEW) {
+			throw new IllegalStateException("Can only add Pizza to NEW Order");
+		}
+
 		this.pizzas.add(pizza);
 		eventLog.publish(new Topic("ordering"), new PizzaAddedEvent(ref, pizza));
 	}
 
 	public void submit() {
+		if (this.state != State.NEW) {
+			throw new IllegalStateException("Can only submit NEW Order");
+		}
+
 		if (this.pizzas.isEmpty()) {
 			throw new IllegalStateException("Cannot submit Order without at least one Pizza");
 		}
 
 		this.state = State.SUBMITTED;
-		eventLog.publish(new Topic("ordering"), new OrderPlacedEvent());
+		eventLog.publish(new Topic("ordering"), new OrderSubmittedEvent());
 	}
 
 	public Amount calculatePrice() {
@@ -70,15 +80,23 @@ public class Order {
 	}
 
 	public void markPaid() {
+		if (this.state != State.SUBMITTED) {
+			throw new IllegalStateException("Can only mark SUBMITTED Order as Paid");
+		}
+
 		this.state = State.PAID;
 		eventLog.publish(new Topic("ordering"), new OrderPaidEvent());
 	}
 
-	public enum State {
-		PAID, SUBMITTED
+	public boolean isNew() {
+		return state == State.NEW;
 	}
 
-	public enum Type {
+	enum State {
+		NEW, SUBMITTED, PAID
+	}
+
+	enum Type {
 		DELIVERY, PICKUP
 	}
 }

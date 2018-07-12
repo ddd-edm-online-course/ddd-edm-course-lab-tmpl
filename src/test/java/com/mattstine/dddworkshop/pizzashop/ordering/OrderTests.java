@@ -35,6 +35,11 @@ public class OrderTests {
 	}
 
 	@Test
+	public void new_order_is_new() {
+		assertThat(order.isNew()).isTrue();
+	}
+
+	@Test
 	public void should_create_pickup_order() {
 		assertThat(order.isPickupOrder()).isTrue();
 	}
@@ -70,12 +75,19 @@ public class OrderTests {
 	}
 
 	@Test
+	public void can_only_add_pizza_to_new_order() {
+		order.addPizza(pizza);
+		order.submit();
+		assertThatIllegalStateException().isThrownBy(() -> order.addPizza(pizza));
+	}
+
+	@Test
 	public void submit_order_fires_event() {
 		order.addPizza(Pizza.builder().size(Pizza.Size.MEDIUM).build());
 		order.submit();
 		verify(eventLog)
 				.publish(eq(new Topic("ordering")),
-						isA(OrderPlacedEvent.class));
+						isA(OrderSubmittedEvent.class));
 	}
 
 	@Test
@@ -83,6 +95,13 @@ public class OrderTests {
 		order.addPizza(pizza);
 		order.submit();
 		assertThat(order.isSubmitted()).isTrue();
+	}
+
+	@Test
+	public void can_only_submit_new_order() {
+		order.addPizza(pizza);
+		order.submit();
+		assertThatIllegalStateException().isThrownBy(order::submit);
 	}
 
 	@Test
@@ -104,9 +123,14 @@ public class OrderTests {
 		order.addPizza(pizza);
 		verify(eventLog).publish(eq(new Topic("ordering")), isA(PizzaAddedEvent.class));
 		order.submit();
-		verify(eventLog).publish(eq(new Topic("ordering")), isA(OrderPlacedEvent.class));
+		verify(eventLog).publish(eq(new Topic("ordering")), isA(OrderSubmittedEvent.class));
 		order.markPaid();
 		verify(eventLog).publish(eq(new Topic("ordering")), isA(OrderPaidEvent.class));
+	}
+
+	@Test
+	public void can_only_mark_submitted_order_paid() {
+		assertThatIllegalStateException().isThrownBy(order::markPaid);
 	}
 
 }

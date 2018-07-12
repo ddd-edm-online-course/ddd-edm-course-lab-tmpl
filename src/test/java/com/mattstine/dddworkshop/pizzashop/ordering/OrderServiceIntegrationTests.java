@@ -37,6 +37,8 @@ public class OrderServiceIntegrationTests {
 				.eventLog(eventLog)
 				.ref(orderRef)
 				.build();
+		order.addPizza(Pizza.builder().size(Pizza.Size.MEDIUM).build());
+		order.submit();
 		PaymentRef paymentRef = new PaymentRef();
 		order.setPaymentRef(paymentRef);
 

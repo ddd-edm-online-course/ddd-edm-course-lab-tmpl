@@ -7,5 +7,5 @@ import lombok.Value;
  * @author Matt Stine
  */
 @Value
-class OrderPlacedEvent implements Event {
+class OrderSubmittedEvent implements Event {
 }
