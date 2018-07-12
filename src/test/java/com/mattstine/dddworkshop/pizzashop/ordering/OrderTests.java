@@ -55,12 +55,6 @@ public class OrderTests {
 	}
 
 	@Test
-	public void submit_requires_at_least_one_pizza() {
-		assertThatIllegalStateException()
-				.isThrownBy(() -> order.submit());
-	}
-
-	@Test
 	public void should_add_pizza() {
 		order.addPizza(pizza);
 		assertThat(order.getPizzas()).contains(pizza);
@@ -82,6 +76,13 @@ public class OrderTests {
 	}
 
 	@Test
+	public void submit_order_updates_state() {
+		order.addPizza(pizza);
+		order.submit();
+		assertThat(order.isSubmitted()).isTrue();
+	}
+
+	@Test
 	public void submit_order_fires_event() {
 		order.addPizza(Pizza.builder().size(Pizza.Size.MEDIUM).build());
 		order.submit();
@@ -91,10 +92,9 @@ public class OrderTests {
 	}
 
 	@Test
-	public void submit_order_updates_state() {
-		order.addPizza(pizza);
-		order.submit();
-		assertThat(order.isSubmitted()).isTrue();
+	public void submit_requires_at_least_one_pizza() {
+		assertThatIllegalStateException()
+				.isThrownBy(() -> order.submit());
 	}
 
 	@Test

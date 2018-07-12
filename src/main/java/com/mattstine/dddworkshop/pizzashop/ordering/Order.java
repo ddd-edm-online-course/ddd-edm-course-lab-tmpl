@@ -43,8 +43,16 @@ public class Order {
 		return this.type == Type.DELIVERY;
 	}
 
+	public boolean isNew() {
+		return state == State.NEW;
+	}
+
 	public boolean isSubmitted() {
 		return this.state == State.SUBMITTED;
+	}
+
+	public boolean isPaid() {
+		return state == State.PAID;
 	}
 
 	public void addPizza(Pizza pizza) {
@@ -75,10 +83,6 @@ public class Order {
 				.reduce(Amount.of(0,0), Amount::plus);
 	}
 
-	public boolean isPaid() {
-		return state == State.PAID;
-	}
-
 	public void markPaid() {
 		if (this.state != State.SUBMITTED) {
 			throw new IllegalStateException("Can only mark SUBMITTED Order as Paid");
@@ -86,10 +90,6 @@ public class Order {
 
 		this.state = State.PAID;
 		eventLog.publish(new Topic("ordering"), new OrderPaidEvent());
-	}
-
-	public boolean isNew() {
-		return state == State.NEW;
 	}
 
 	enum State {
