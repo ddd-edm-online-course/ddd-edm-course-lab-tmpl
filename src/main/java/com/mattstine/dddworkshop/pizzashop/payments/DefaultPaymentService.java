@@ -18,7 +18,7 @@ final class DefaultPaymentService implements PaymentService {
 	}
 
 	@Override
-	public PaymentRef requestPaymentFor(Amount amount) {
+	public PaymentRef createPaymentOf(Amount amount) {
 		PaymentRef ref = repository.nextIdentity();
 
 		Payment payment = Payment.builder()
@@ -27,11 +27,16 @@ final class DefaultPaymentService implements PaymentService {
 				.paymentProcessor(processor)
 				.eventLog(eventLog)
 				.build();
+
 		repository.add(payment);
 
-		payment.request();
-
 		return ref;
+	}
+
+	@Override
+	public void requestPaymentFor(PaymentRef ref) {
+		Payment payment = repository.findById(ref);
+		payment.request();
 	}
 
 	public void receivePaymentProcessedEvent(PaymentProcessedEvent ppEvent) {

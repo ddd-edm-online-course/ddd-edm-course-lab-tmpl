@@ -48,7 +48,8 @@ final class OrderService {
 	}
 
 	public void requestPayment(OrderRef orderRef) {
-		PaymentRef paymentRef = paymentService.requestPaymentFor(Amount.of(10, 0));
+		PaymentRef paymentRef = paymentService.createPaymentOf(Amount.of(10, 0));
+		paymentService.requestPaymentFor(paymentRef);
 		Order order = repository.findById(orderRef);
 		order.setPaymentRef(paymentRef);
 	}

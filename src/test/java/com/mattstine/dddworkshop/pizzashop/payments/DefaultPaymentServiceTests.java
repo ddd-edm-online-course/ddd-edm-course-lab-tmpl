@@ -27,7 +27,7 @@ public class DefaultPaymentServiceTests {
 	}
 
 	@Test
-	public void creates_payment_and_requests_from_processor() {
+	public void creates_payment() {
 		PaymentRef ref = new PaymentRef();
 		when(repository.nextIdentity()).thenReturn(ref);
 
@@ -37,11 +37,27 @@ public class DefaultPaymentServiceTests {
 				.paymentProcessor(processor)
 				.eventLog(eventLog)
 				.build();
-		payment.request();
 
-		assertThat(paymentService.requestPaymentFor(Amount.of(10, 0)))
-				.isEqualTo(ref);
+		assertThat(ref)
+				.isEqualTo(paymentService.createPaymentOf(Amount.of(10, 0)));
+
 		verify(repository).add(eq(payment));
+	}
+
+	@Test
+	public void requests_from_processor() {
+		PaymentRef ref = new PaymentRef();
+		Payment payment = Payment.builder()
+				.amount(Amount.of(10, 0))
+				.ref(ref)
+				.paymentProcessor(processor)
+				.eventLog(eventLog)
+				.build();
+		when(repository.findById(ref)).thenReturn(payment);
+
+		paymentService.requestPaymentFor(ref);
+
+		assertThat(payment.isRequested()).isTrue();
 	}
 
 	@Test

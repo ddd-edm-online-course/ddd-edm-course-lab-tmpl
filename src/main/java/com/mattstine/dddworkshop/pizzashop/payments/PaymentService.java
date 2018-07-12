@@ -6,5 +6,7 @@ import com.mattstine.dddworkshop.pizzashop.infrastructure.Amount;
  * @author Matt Stine
  */
 public interface PaymentService {
-	PaymentRef requestPaymentFor(Amount amount);
+	PaymentRef createPaymentOf(Amount of);
+
+	void requestPaymentFor(PaymentRef ref);
 }
