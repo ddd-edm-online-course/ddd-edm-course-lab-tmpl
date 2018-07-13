@@ -1,5 +1,6 @@
 package com.mattstine.dddworkshop.pizzashop.infrastructure;
 
+import lombok.Value;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -24,6 +25,8 @@ public class InProcessEventLogTests {
 		assertThat(eventLog.getNumberOfSubscribers(topic)).isEqualTo(1);
 	}
 
+
+
 	@Test
 	public void shouldInvokeSubscribersOnPublish() {
 		VerifiableEventHandler handler = VerifiableEventHandler.of(e -> {
@@ -34,5 +37,17 @@ public class InProcessEventLogTests {
 		eventLog.publish(topic, new Event() {});
 
 		assertThat(handler.isInvoked()).isTrue();
+	}
+
+	@Value
+	static class TestEvent implements Event {
+	}
+
+	@Test
+	public void shouldAppendToTopicOnPublish() {
+		Topic topic = new Topic("some-topic");
+		TestEvent testEvent = new TestEvent();
+		eventLog.publish(topic, testEvent);
+		assertThat(eventLog.eventsBy(topic)).contains(testEvent);
 	}
 }

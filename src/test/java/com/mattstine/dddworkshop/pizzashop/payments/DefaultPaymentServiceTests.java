@@ -29,8 +29,8 @@ public class DefaultPaymentServiceTests {
 	}
 
 	@Test
-	public void subscribes_to_payments_topic() {
-		verify(eventLog).subscribe(eq(new Topic("payments")), isA(EventHandler.class));
+	public void subscribes_to_payment_processor_topic() {
+		verify(eventLog).subscribe(eq(new Topic("payment_processor")), isA(EventHandler.class));
 	}
 
 	@Test

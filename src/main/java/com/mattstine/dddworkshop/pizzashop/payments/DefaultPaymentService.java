@@ -17,7 +17,7 @@ final class DefaultPaymentService implements PaymentService {
 		this.repository = repository;
 		this.eventLog = eventLog;
 
-		eventLog.subscribe(new Topic("payments"), (e) -> {
+		eventLog.subscribe(new Topic("payment_processor"), (e) -> {
 			if (e instanceof PaymentProcessedEvent) {
 				PaymentProcessedEvent ppe = (PaymentProcessedEvent) e;
 				if (ppe.isSuccessful()) {

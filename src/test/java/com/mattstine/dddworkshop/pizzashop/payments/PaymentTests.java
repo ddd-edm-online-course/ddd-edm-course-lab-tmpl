@@ -21,12 +21,13 @@ public class PaymentTests {
 	private EventLog eventLog;
 	private PaymentProcessor paymentProcessor;
 	private Payment payment;
+	private PaymentRef ref;
 
 	@Before
 	public void setUp() {
 		paymentProcessor = mock(PaymentProcessor.class);
 		eventLog = mock(EventLog.class);
-		PaymentRef ref = new PaymentRef();
+		ref = new PaymentRef();
 		payment = Payment.builder()
 				.amount(Amount.of(15, 0))
 				.paymentProcessor(paymentProcessor)
@@ -99,4 +100,64 @@ public class PaymentTests {
 	public void can_only_mark_requested_payment_as_failed() {
 		assertThatIllegalStateException().isThrownBy(payment::markFailed);
 	}
+
+	@Test
+	public void accumulator_apply_with_paymentAddedEvent_returns_embedded_payment() {
+		PaymentAddedEvent paymentAddedEvent = new PaymentAddedEvent(ref, payment);
+
+		assertThat(Payment.ACCUMULATOR.apply(Payment.IDENTITY, paymentAddedEvent)).isEqualTo(payment);
+	}
+
+	@Test
+	public void accumulator_apply_with_paymentRequestedEvent_updates_state() {
+		Payment expectedPayment = Payment.builder()
+				.ref(ref)
+				.eventLog(eventLog)
+				.paymentProcessor(paymentProcessor)
+				.amount(Amount.of(10,0))
+				.build();
+		expectedPayment.request();
+
+		PaymentRequestedEvent pre = new PaymentRequestedEvent(ref);
+
+		assertThat(Payment.ACCUMULATOR.apply(payment, pre)).isEqualTo(payment);
+	}
+
+	@Test
+	public void accumulator_apply_with_paymentProcessedSuccessfulEvent_updates_state() {
+		Payment expectedPayment = Payment.builder()
+				.ref(ref)
+				.eventLog(eventLog)
+				.paymentProcessor(paymentProcessor)
+				.amount(Amount.of(10,0))
+				.build();
+		expectedPayment.request();
+		expectedPayment.markSuccessful();
+
+		PaymentProcessedEvent ppe = new PaymentProcessedEvent(ref, PaymentProcessedEvent.Status.SUCCESSFUL);
+
+		assertThat(Payment.ACCUMULATOR.apply(payment, ppe)).isEqualTo(payment);
+	}
+
+	@Test
+	public void accumulator_apply_with_paymentProcessedFailedEvent_updates_state() {
+		Payment expectedPayment = Payment.builder()
+				.ref(ref)
+				.eventLog(eventLog)
+				.paymentProcessor(paymentProcessor)
+				.amount(Amount.of(10,0))
+				.build();
+		expectedPayment.request();
+		expectedPayment.markFailed();
+
+		PaymentProcessedEvent ppe = new PaymentProcessedEvent(ref, PaymentProcessedEvent.Status.FAILED);
+
+		assertThat(Payment.ACCUMULATOR.apply(payment, ppe)).isEqualTo(payment);
+	}
+
+	@Test
+	public void accumulator_apply_with_unknown_event_throws() {
+		assertThatIllegalStateException().isThrownBy(() -> Payment.ACCUMULATOR.apply(payment, () -> null));
+	}
+
 }

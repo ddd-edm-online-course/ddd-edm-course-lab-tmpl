@@ -9,7 +9,6 @@ import org.junit.Test;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
 
 /**
  * @author Matt Stine
@@ -23,7 +22,7 @@ public class DefaultPaymentServiceIntegrationTests {
 	@Before
 	public void setUp() {
 		eventLog = new InProcessEventLog();
-		repository = mock(PaymentRepository.class);
+		repository = new InProcessEventSourcedPaymentRepository(eventLog);
 		processor = mock(PaymentProcessor.class);
 		new DefaultPaymentService(processor,
 				repository,
@@ -39,11 +38,10 @@ public class DefaultPaymentServiceIntegrationTests {
 				.amount(Amount.of(10, 0))
 				.ref(ref)
 				.build();
+		repository.add(payment);
 		payment.request();
 
-		when(repository.findByRef(ref)).thenReturn(payment);
-
-		eventLog.publish(new Topic("payments"), new PaymentProcessedEvent(ref, PaymentProcessedEvent.Status.SUCCESSFUL));
+		eventLog.publish(new Topic("payment_processor"), new PaymentProcessedEvent(ref, PaymentProcessedEvent.Status.SUCCESSFUL));
 
 		assertThat(payment.isSuccessful()).isTrue();
 	}
@@ -57,11 +55,10 @@ public class DefaultPaymentServiceIntegrationTests {
 				.amount(Amount.of(10, 0))
 				.ref(ref)
 				.build();
+		repository.add(payment);
 		payment.request();
 
-		when(repository.findByRef(ref)).thenReturn(payment);
-
-		eventLog.publish(new Topic("payments"), new PaymentProcessedEvent(ref, PaymentProcessedEvent.Status.FAILED));
+		eventLog.publish(new Topic("payment_processor"), new PaymentProcessedEvent(ref, PaymentProcessedEvent.Status.FAILED));
 
 		assertThat(payment.isFailed()).isTrue();
 	}

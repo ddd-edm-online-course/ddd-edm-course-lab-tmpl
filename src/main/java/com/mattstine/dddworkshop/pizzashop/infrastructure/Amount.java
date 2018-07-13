@@ -13,6 +13,8 @@ public class Amount {
 	int dollars;
 	int cents;
 
+	public static Amount IDENTITY = Amount.of(0,0);
+
 	public static Amount of(int dollars, int cents) {
 		if (dollars < 0) {
 			throw new IllegalArgumentException("Cannot build Amount with Dollars < 0");

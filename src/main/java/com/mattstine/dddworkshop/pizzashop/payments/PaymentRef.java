@@ -8,9 +8,14 @@ import lombok.Value;
  */
 @Value
 public class PaymentRef {
+	public static final PaymentRef IDENTITY = new PaymentRef("");
 	String reference;
 
 	public PaymentRef() {
 		reference = RefStringGenerator.generateRefString();
+	}
+
+	private PaymentRef(String reference) {
+		this.reference = reference;
 	}
 }

@@ -8,15 +8,17 @@ import lombok.NonNull;
 import lombok.Value;
 import lombok.experimental.NonFinal;
 
+import java.util.function.BiFunction;
+
 /**
  * @author Matt Stine
  */
 @Value
 public class Payment {
 	Amount amount;
-	PaymentProcessor paymentProcessor;
+	PaymentProcessor $paymentProcessor;
 	PaymentRef ref;
-	EventLog eventLog;
+	EventLog $eventLog;
 	@NonFinal
 	State state;
 
@@ -26,9 +28,9 @@ public class Payment {
 					@NonNull PaymentRef ref,
 					@NonNull EventLog eventLog) {
 		this.amount = amount;
-		this.paymentProcessor = paymentProcessor;
+		this.$paymentProcessor = paymentProcessor;
 		this.ref = ref;
-		this.eventLog = eventLog;
+		this.$eventLog = eventLog;
 
 		this.state = State.NEW;
 	}
@@ -54,9 +56,9 @@ public class Payment {
 			throw new IllegalStateException("Payment must be NEW to request payment");
 		}
 
-		paymentProcessor.request(this);
+		$paymentProcessor.request(this);
 		state = State.REQUESTED;
-		eventLog.publish(new Topic("payments"), new PaymentRequestedEvent());
+		$eventLog.publish(new Topic("payments"), new PaymentRequestedEvent(this.ref));
 	}
 
 	public void markSuccessful() {
@@ -65,7 +67,7 @@ public class Payment {
 		}
 
 		state = State.SUCCESSFUL;
-		eventLog.publish(new Topic("payments"), new PaymentSuccessfulEvent(ref));
+		$eventLog.publish(new Topic("payments"), new PaymentSuccessfulEvent(ref));
 	}
 
 	public void markFailed() {
@@ -74,10 +76,41 @@ public class Payment {
 		}
 
 		state = State.FAILED;
-		eventLog.publish(new Topic("payments"), new PaymentFailedEvent());
+		$eventLog.publish(new Topic("payments"), new PaymentFailedEvent());
 	}
 
 	public enum State {
 		NEW, REQUESTED, SUCCESSFUL, FAILED
 	}
+
+	static class Accumulator implements BiFunction<Payment, PaymentEvent, Payment> {
+		@Override
+		public Payment apply(Payment payment, PaymentEvent paymentEvent) {
+			if (paymentEvent instanceof PaymentAddedEvent) {
+				PaymentAddedEvent pae = (PaymentAddedEvent) paymentEvent;
+				return pae.getPayment();
+			} else if (paymentEvent instanceof PaymentRequestedEvent) {
+				payment.state = State.REQUESTED;
+				return payment;
+			} else if (paymentEvent instanceof PaymentProcessedEvent) {
+				PaymentProcessedEvent ppe = (PaymentProcessedEvent) paymentEvent;
+				if (ppe.isSuccessful()) {
+					payment.state = State.SUCCESSFUL;
+				} else {
+					payment.state = State.FAILED;
+				}
+				return payment;
+			}
+			throw new IllegalStateException("Unknown PaymentEvent");
+		}
+	}
+
+	public static final Payment IDENTITY = Payment.builder()
+			.amount(Amount.IDENTITY)
+			.eventLog(EventLog.IDENTITY)
+			.paymentProcessor(PaymentProcessor.IDENTITY)
+			.ref(PaymentRef.IDENTITY)
+			.build();
+
+	public static final Payment.Accumulator ACCUMULATOR = new Accumulator();
 }

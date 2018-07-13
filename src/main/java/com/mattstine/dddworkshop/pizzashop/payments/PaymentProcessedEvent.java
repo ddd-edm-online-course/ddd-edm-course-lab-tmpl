@@ -7,7 +7,7 @@ import lombok.Value;
  * @author Matt Stine
  */
 @Value
-public class PaymentProcessedEvent implements Event {
+public class PaymentProcessedEvent implements Event, PaymentEvent {
 	PaymentRef ref;
 	Status status;
 
