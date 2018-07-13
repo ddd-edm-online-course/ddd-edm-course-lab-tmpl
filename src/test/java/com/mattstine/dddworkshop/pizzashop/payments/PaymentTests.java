@@ -105,7 +105,7 @@ public class PaymentTests {
 	public void accumulator_apply_with_paymentAddedEvent_returns_embedded_payment() {
 		PaymentAddedEvent paymentAddedEvent = new PaymentAddedEvent(ref, payment);
 
-		assertThat(Payment.ACCUMULATOR.apply(Payment.IDENTITY, paymentAddedEvent)).isEqualTo(payment);
+		assertThat(payment.accumulatorFunction().apply(payment.identity(), paymentAddedEvent)).isEqualTo(payment);
 	}
 
 	@Test
@@ -120,7 +120,7 @@ public class PaymentTests {
 
 		PaymentRequestedEvent pre = new PaymentRequestedEvent(ref);
 
-		assertThat(Payment.ACCUMULATOR.apply(payment, pre)).isEqualTo(payment);
+		assertThat(payment.accumulatorFunction().apply(payment, pre)).isEqualTo(payment);
 	}
 
 	@Test
@@ -136,7 +136,7 @@ public class PaymentTests {
 
 		PaymentSuccessfulEvent pse = new PaymentSuccessfulEvent(ref);
 
-		assertThat(Payment.ACCUMULATOR.apply(payment, pse)).isEqualTo(payment);
+		assertThat(payment.accumulatorFunction().apply(payment, pse)).isEqualTo(payment);
 	}
 
 	@Test
@@ -152,12 +152,12 @@ public class PaymentTests {
 
 		PaymentFailedEvent pfe = new PaymentFailedEvent(ref);
 
-		assertThat(Payment.ACCUMULATOR.apply(payment, pfe)).isEqualTo(payment);
+		assertThat(payment.accumulatorFunction().apply(payment, pfe)).isEqualTo(payment);
 	}
 
 	@Test
 	public void accumulator_apply_with_unknown_event_throws() {
-		assertThatIllegalStateException().isThrownBy(() -> Payment.ACCUMULATOR.apply(payment, () -> null));
+		assertThatIllegalStateException().isThrownBy(() -> payment.accumulatorFunction().apply(payment, () -> null));
 	}
 
 }

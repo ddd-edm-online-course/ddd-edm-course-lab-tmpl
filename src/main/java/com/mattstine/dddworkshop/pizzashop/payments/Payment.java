@@ -1,11 +1,10 @@
 package com.mattstine.dddworkshop.pizzashop.payments;
 
+import com.mattstine.dddworkshop.pizzashop.infrastructure.Aggregate;
 import com.mattstine.dddworkshop.pizzashop.infrastructure.Amount;
 import com.mattstine.dddworkshop.pizzashop.infrastructure.EventLog;
 import com.mattstine.dddworkshop.pizzashop.infrastructure.Topic;
-import lombok.Builder;
-import lombok.NonNull;
-import lombok.Value;
+import lombok.*;
 import lombok.experimental.NonFinal;
 
 import java.util.function.BiFunction;
@@ -14,10 +13,15 @@ import java.util.function.BiFunction;
  * @author Matt Stine
  */
 @Value
-public class Payment {
+@NoArgsConstructor //TODO: Smelly...can I do reflection without this?
+public class Payment implements Aggregate {
+	@NonFinal
 	Amount amount;
+	@NonFinal
 	PaymentProcessor $paymentProcessor;
+	@NonFinal
 	PaymentRef ref;
+	@NonFinal
 	EventLog $eventLog;
 	@NonFinal
 	State state;
@@ -79,6 +83,21 @@ public class Payment {
 		$eventLog.publish(new Topic("payments"), new PaymentFailedEvent(ref));
 	}
 
+	@Override
+	public Payment identity() {
+		return Payment.builder()
+				.amount(Amount.IDENTITY)
+				.eventLog(EventLog.IDENTITY)
+				.paymentProcessor(PaymentProcessor.IDENTITY)
+				.ref(PaymentRef.IDENTITY)
+				.build();
+	}
+
+	@Override
+	public BiFunction<Payment, PaymentEvent, Payment> accumulatorFunction() {
+		return new Accumulator();
+	}
+
 	public enum State {
 		NEW, REQUESTED, SUCCESSFUL, FAILED
 	}
@@ -103,12 +122,4 @@ public class Payment {
 		}
 	}
 
-	public static final Payment IDENTITY = Payment.builder()
-			.amount(Amount.IDENTITY)
-			.eventLog(EventLog.IDENTITY)
-			.paymentProcessor(PaymentProcessor.IDENTITY)
-			.ref(PaymentRef.IDENTITY)
-			.build();
-
-	public static final Payment.Accumulator ACCUMULATOR = new Accumulator();
 }

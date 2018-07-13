@@ -22,7 +22,11 @@ public class DefaultPaymentServiceIntegrationTests {
 	@Before
 	public void setUp() {
 		eventLog = new InProcessEventLog();
-		repository = new InProcessEventSourcedPaymentRepository(eventLog);
+		repository = new InProcessEventSourcedPaymentRepository(eventLog,
+				PaymentRef.class,
+				Payment.class,
+				PaymentAddedEvent.class,
+				new Topic("payments"));
 		processor = mock(PaymentProcessor.class);
 		new DefaultPaymentService(processor,
 				repository,

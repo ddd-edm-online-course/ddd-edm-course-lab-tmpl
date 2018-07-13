@@ -7,7 +7,8 @@ import lombok.Value;
  * @author Matt Stine
  */
 @Value
-class PaymentAddedEvent implements Event, PaymentEvent {
+// TODO: Smelly... class needs to be public for reflection purposes.
+public class PaymentAddedEvent implements Event, PaymentEvent {
 	PaymentRef ref;
 	Payment payment;
 }
