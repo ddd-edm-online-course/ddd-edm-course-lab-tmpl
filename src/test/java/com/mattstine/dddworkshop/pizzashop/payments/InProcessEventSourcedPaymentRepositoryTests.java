@@ -79,7 +79,7 @@ public class InProcessEventSourcedPaymentRepositoryTests {
 		when(eventLog.eventsBy(new Topic("payments")))
 				.thenReturn(Arrays.asList(new PaymentAddedEvent(ref, payment),
 						new PaymentRequestedEvent(ref),
-						new PaymentProcessedEvent(ref, PaymentProcessedEvent.Status.SUCCESSFUL)));
+						new PaymentSuccessfulEvent(ref)));
 
 		assertThat(repository.findByRef(ref)).isEqualTo(payment);
 	}
@@ -93,7 +93,7 @@ public class InProcessEventSourcedPaymentRepositoryTests {
 		when(eventLog.eventsBy(new Topic("payments")))
 				.thenReturn(Arrays.asList(new PaymentAddedEvent(ref, payment),
 						new PaymentRequestedEvent(ref),
-						new PaymentProcessedEvent(ref, PaymentProcessedEvent.Status.FAILED)));
+						new PaymentFailedEvent(ref)));
 
 		assertThat(repository.findByRef(ref)).isEqualTo(payment);
 	}

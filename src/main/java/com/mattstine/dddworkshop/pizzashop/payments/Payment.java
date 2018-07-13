@@ -76,7 +76,7 @@ public class Payment {
 		}
 
 		state = State.FAILED;
-		$eventLog.publish(new Topic("payments"), new PaymentFailedEvent());
+		$eventLog.publish(new Topic("payments"), new PaymentFailedEvent(ref));
 	}
 
 	public enum State {
@@ -92,13 +92,11 @@ public class Payment {
 			} else if (paymentEvent instanceof PaymentRequestedEvent) {
 				payment.state = State.REQUESTED;
 				return payment;
-			} else if (paymentEvent instanceof PaymentProcessedEvent) {
-				PaymentProcessedEvent ppe = (PaymentProcessedEvent) paymentEvent;
-				if (ppe.isSuccessful()) {
-					payment.state = State.SUCCESSFUL;
-				} else {
-					payment.state = State.FAILED;
-				}
+			} else if (paymentEvent instanceof PaymentSuccessfulEvent) {
+				payment.state = State.SUCCESSFUL;
+				return payment;
+			} else if (paymentEvent instanceof PaymentFailedEvent) {
+				payment.state = State.FAILED;
 				return payment;
 			}
 			throw new IllegalStateException("Unknown PaymentEvent");

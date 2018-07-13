@@ -23,7 +23,7 @@ final class OrderService {
 		eventLog.subscribe(new Topic("payments"), e -> {
 			if (e instanceof PaymentSuccessfulEvent) {
 				PaymentSuccessfulEvent pse = (PaymentSuccessfulEvent) e;
-				this.markOrderPaid(pse.getPaymentRef());
+				this.markOrderPaid(pse.getRef());
 			}
 		});
 	}

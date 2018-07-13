@@ -124,7 +124,7 @@ public class PaymentTests {
 	}
 
 	@Test
-	public void accumulator_apply_with_paymentProcessedSuccessfulEvent_updates_state() {
+	public void accumulator_apply_with_paymentSuccessfulEvent_updates_state() {
 		Payment expectedPayment = Payment.builder()
 				.ref(ref)
 				.eventLog(eventLog)
@@ -134,13 +134,13 @@ public class PaymentTests {
 		expectedPayment.request();
 		expectedPayment.markSuccessful();
 
-		PaymentProcessedEvent ppe = new PaymentProcessedEvent(ref, PaymentProcessedEvent.Status.SUCCESSFUL);
+		PaymentSuccessfulEvent pse = new PaymentSuccessfulEvent(ref);
 
-		assertThat(Payment.ACCUMULATOR.apply(payment, ppe)).isEqualTo(payment);
+		assertThat(Payment.ACCUMULATOR.apply(payment, pse)).isEqualTo(payment);
 	}
 
 	@Test
-	public void accumulator_apply_with_paymentProcessedFailedEvent_updates_state() {
+	public void accumulator_apply_with_paymentFailedEvent_updates_state() {
 		Payment expectedPayment = Payment.builder()
 				.ref(ref)
 				.eventLog(eventLog)
@@ -150,9 +150,9 @@ public class PaymentTests {
 		expectedPayment.request();
 		expectedPayment.markFailed();
 
-		PaymentProcessedEvent ppe = new PaymentProcessedEvent(ref, PaymentProcessedEvent.Status.FAILED);
+		PaymentFailedEvent pfe = new PaymentFailedEvent(ref);
 
-		assertThat(Payment.ACCUMULATOR.apply(payment, ppe)).isEqualTo(payment);
+		assertThat(Payment.ACCUMULATOR.apply(payment, pfe)).isEqualTo(payment);
 	}
 
 	@Test
