@@ -1,6 +1,5 @@
 package com.mattstine.dddworkshop.pizzashop.ordering;
 
-import com.mattstine.dddworkshop.pizzashop.infrastructure.Event;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Value;
@@ -10,7 +9,7 @@ import lombok.Value;
  */
 @Value
 @AllArgsConstructor(access = AccessLevel.PACKAGE)
-class PizzaAddedEvent implements Event {
-	private final OrderRef orderRef;
+class PizzaAddedEvent implements OrderEvent {
+	private final OrderRef ref;
 	private final Pizza pizza;
 }

@@ -2,6 +2,7 @@ package com.mattstine.dddworkshop.pizzashop.ordering;
 
 import com.mattstine.dddworkshop.pizzashop.infrastructure.EventLog;
 import com.mattstine.dddworkshop.pizzashop.infrastructure.Topic;
+import com.mattstine.dddworkshop.pizzashop.payments.PaymentRef;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -131,6 +132,87 @@ public class OrderTests {
 	@Test
 	public void can_only_mark_submitted_order_paid() {
 		assertThatIllegalStateException().isThrownBy(order::markPaid);
+	}
+
+	@Test
+	public void setting_payment_ref_fires_event() {
+		PaymentRef paymentRef = new PaymentRef();
+		order.assignPaymentRef(paymentRef);
+
+		verify(eventLog).publish(eq(new Topic("ordering")), isA(PaymentRefAssignedEvent.class));
+	}
+
+	@Test
+	public void accumulator_apply_with_orderAddedEvent_returns_embedded_order() {
+		OrderAddedEvent orderAddedEvent = new OrderAddedEvent(ref, order);
+		assertThat(order.accumulatorFunction().apply(order.identity(), orderAddedEvent)).isEqualTo(order);
+	}
+
+	@Test
+	public void accumulator_apply_with_pizzaAddedEvent_updates_state() {
+		Order expectedOrder = Order.builder()
+				.ref(ref)
+				.type(Order.Type.PICKUP)
+				.eventLog(eventLog)
+				.build();
+		expectedOrder.addPizza(pizza);
+
+		PizzaAddedEvent pae = new PizzaAddedEvent(ref, pizza);
+
+		assertThat(order.accumulatorFunction().apply(order, pae)).isEqualTo(order);
+	}
+
+	@Test
+	public void accumulator_apply_with_orderSubmittedEvent_updates_state() {
+		Order expectedOrder = Order.builder()
+				.ref(ref)
+				.type(Order.Type.PICKUP)
+				.eventLog(eventLog)
+				.build();
+		expectedOrder.addPizza(pizza);
+		expectedOrder.submit();
+
+		OrderSubmittedEvent ose = new OrderSubmittedEvent(ref);
+
+		assertThat(order.accumulatorFunction().apply(order, ose)).isEqualTo(order);
+	}
+
+	@Test
+	public void accumulator_apply_with_paymentRefAssignedEvent_updates_state() {
+		Order expectedOrder = Order.builder()
+				.ref(ref)
+				.type(Order.Type.PICKUP)
+				.eventLog(eventLog)
+				.build();
+		expectedOrder.addPizza(pizza);
+		expectedOrder.submit();
+
+		PaymentRef paymentRef = new PaymentRef();
+		expectedOrder.assignPaymentRef(paymentRef);
+
+		PaymentRefAssignedEvent prae = new PaymentRefAssignedEvent(ref, paymentRef);
+
+		assertThat(order.accumulatorFunction().apply(order, prae)).isEqualTo(order);
+	}
+
+	@Test
+	public void accumulator_apply_with_orderPaidEvent_updates_state() {
+		Order expectedOrder = Order.builder()
+				.ref(ref)
+				.type(Order.Type.PICKUP)
+				.eventLog(eventLog)
+				.build();
+		expectedOrder.addPizza(pizza);
+		expectedOrder.submit();
+
+		PaymentRef paymentRef = new PaymentRef();
+		expectedOrder.assignPaymentRef(paymentRef);
+
+		expectedOrder.markPaid();
+
+		OrderPaidEvent ope = new OrderPaidEvent(ref);
+
+		assertThat(order.accumulatorFunction().apply(order, ope)).isEqualTo(order);
 	}
 
 }

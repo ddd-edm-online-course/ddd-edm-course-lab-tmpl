@@ -1,5 +1,6 @@
 package com.mattstine.dddworkshop.pizzashop.ordering;
 
+import com.mattstine.dddworkshop.pizzashop.infrastructure.Aggregate;
 import com.mattstine.dddworkshop.pizzashop.infrastructure.Amount;
 import com.mattstine.dddworkshop.pizzashop.infrastructure.EventLog;
 import com.mattstine.dddworkshop.pizzashop.infrastructure.Topic;
@@ -9,20 +10,25 @@ import lombok.experimental.NonFinal;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.function.BiFunction;
 
 /**
  * @author Matt Stine
  */
 @Value
-public class Order {
+@NoArgsConstructor //TODO: Smelly...can I do reflection without this?
+public class Order implements Aggregate {
+	@NonFinal
 	Type type;
+	@NonFinal
 	EventLog eventLog;
+	@NonFinal
 	OrderRef ref;
 	@NonFinal
 	State state;
+	@NonFinal
 	List<Pizza> pizzas;
 	@NonFinal
-	@Setter
 	PaymentRef paymentRef;
 
 	@Builder
@@ -74,7 +80,12 @@ public class Order {
 		}
 
 		this.state = State.SUBMITTED;
-		eventLog.publish(new Topic("ordering"), new OrderSubmittedEvent());
+		eventLog.publish(new Topic("ordering"), new OrderSubmittedEvent(ref));
+	}
+
+	public void assignPaymentRef(PaymentRef paymentRef) {
+		this.paymentRef = paymentRef;
+		eventLog.publish(new Topic("ordering"), new PaymentRefAssignedEvent(ref, paymentRef));
 	}
 
 	public Amount calculatePrice() {
@@ -89,7 +100,21 @@ public class Order {
 		}
 
 		this.state = State.PAID;
-		eventLog.publish(new Topic("ordering"), new OrderPaidEvent());
+		eventLog.publish(new Topic("ordering"), new OrderPaidEvent(ref));
+	}
+
+	@Override
+	public Order identity() {
+		return Order.builder()
+				.eventLog(EventLog.IDENTITY)
+				.ref(OrderRef.IDENTITY)
+				.type(Type.IDENTITY)
+				.build();
+	}
+
+	@Override
+	public BiFunction<Order, OrderEvent, Order> accumulatorFunction() {
+		return new Accumulator();
 	}
 
 	enum State {
@@ -97,6 +122,32 @@ public class Order {
 	}
 
 	enum Type {
-		DELIVERY, PICKUP
+		IDENTITY, DELIVERY, PICKUP
+	}
+
+	static class Accumulator implements BiFunction<Order, OrderEvent, Order> {
+
+		@Override
+		public Order apply(Order order, OrderEvent orderEvent) {
+			if (orderEvent instanceof OrderAddedEvent) {
+				OrderAddedEvent oae = (OrderAddedEvent) orderEvent;
+				return oae.getOrder();
+			} else if (orderEvent instanceof PizzaAddedEvent) {
+				PizzaAddedEvent pae = (PizzaAddedEvent) orderEvent;
+				order.pizzas.add(pae.getPizza());
+				return order;
+			} else if (orderEvent instanceof OrderSubmittedEvent) {
+				order.state = State.SUBMITTED;
+				return order;
+			} else if (orderEvent instanceof PaymentRefAssignedEvent) {
+				PaymentRefAssignedEvent prae = (PaymentRefAssignedEvent) orderEvent;
+				order.paymentRef = prae.getPaymentRef();
+				return order;
+			} else if (orderEvent instanceof OrderPaidEvent) {
+				order.state = State.PAID;
+				return order;
+			}
+			throw new IllegalStateException("Unknown OrderEvent");
+		}
 	}
 }
