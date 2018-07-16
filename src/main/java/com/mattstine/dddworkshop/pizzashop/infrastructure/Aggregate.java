@@ -5,11 +5,21 @@ import java.util.function.BiFunction;
 /**
  * @author Matt Stine
  */
-public interface Aggregate<E extends AggregateEvent> {
+public abstract class Aggregate<E extends AggregateEvent> {
 
-	Aggregate identity();
+	protected EventLog $eventLog;
 
-	BiFunction<Aggregate, E, Aggregate> accumulatorFunction();
+	public abstract Aggregate identity();
 
-	Ref getRef();
+	public abstract BiFunction<Aggregate, E, Aggregate> accumulatorFunction();
+
+	public abstract Ref getRef();
+
+	public abstract AggregateState state();
+
+	void setEventLog(EventLog eventLog) {
+		this.$eventLog = eventLog;
+	}
+
+
 }

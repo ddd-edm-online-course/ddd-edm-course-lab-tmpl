@@ -9,21 +9,24 @@ import java.util.function.BiFunction;
  * @author Matt Stine
  */
 @SuppressWarnings("unchecked")
-public class InProcessEventSourcedRepository<K extends Ref, T extends Aggregate, S extends AggregateEvent, U extends Event> {
+public class InProcessEventSourcedRepository<K extends Ref, T extends Aggregate, S extends AggregateState, U extends AggregateEvent, V extends RepositoryAddEvent> {
 	private final EventLog eventLog;
 	private final Class<K> refClass;
 	private final Class<T> aggregateClass;
-	private final Class<U> addEventClass;
+	private final Class<S> aggregateStateClass;
+	private final Class<V> addEventClass;
 	private final Topic topic;
 
 	protected InProcessEventSourcedRepository(EventLog eventLog,
 											  Class<K> refClass,
 											  Class<T> aggregateClass,
-											  Class<U> addEventClass,
+											  Class<S> aggregateStateClass,
+											  Class<V> addEventClass,
 											  Topic topic) {
 		this.eventLog = eventLog;
 		this.refClass = refClass;
 		this.aggregateClass = aggregateClass;
+		this.aggregateStateClass = aggregateStateClass;
 		this.addEventClass = addEventClass;
 		this.topic = topic;
 	}
@@ -36,12 +39,13 @@ public class InProcessEventSourcedRepository<K extends Ref, T extends Aggregate,
 		}
 	}
 
+	//TODO: add does not exhibit "collection-like" behavior...
 	public void add(T aggregateInstance) {
-		U addEvent;
+		V addEvent;
 
 		try {
-			Constructor<U> constructor = addEventClass.getConstructor(refClass, aggregateClass);
-			addEvent = constructor.newInstance(aggregateInstance.getRef(), aggregateInstance);
+			Constructor<V> constructor = addEventClass.getConstructor(refClass, aggregateStateClass);
+			addEvent = constructor.newInstance(aggregateInstance.getRef(), aggregateInstance.state());
 		} catch (NoSuchMethodException | IllegalAccessException | InstantiationException | InvocationTargetException e) {
 			throw new IllegalStateException("Cannot instantiate add event of type: " + addEventClass.getName());
 		}
@@ -52,11 +56,11 @@ public class InProcessEventSourcedRepository<K extends Ref, T extends Aggregate,
 	public T findByRef(K ref) {
 		//TODO: Smelly...so much reflection to get the accumulator and identity!
 
-		BiFunction<T, S, T> accumulatorFunction;
+		BiFunction<T, U, T> accumulatorFunction;
 		try {
 			T aggregateInstance = aggregateClass.newInstance();
 			Method accumulatorFunctionMethod = aggregateClass.getMethod("accumulatorFunction");
-			accumulatorFunction = (BiFunction<T, S, T>) accumulatorFunctionMethod.invoke(aggregateInstance);
+			accumulatorFunction = (BiFunction<T, U, T>) accumulatorFunctionMethod.invoke(aggregateInstance);
 		} catch (NoSuchMethodException | IllegalAccessException | InvocationTargetException e) {
 			throw new IllegalStateException("Cannot execute method: " + aggregateClass.getName() + ".accumulatorFunction", e);
 		} catch (InstantiationException e) {
@@ -75,12 +79,14 @@ public class InProcessEventSourcedRepository<K extends Ref, T extends Aggregate,
 			throw new IllegalStateException("Cannot instantiate class: " + aggregateClass.getName(), e);
 		}
 
-		return eventLog.eventsBy(topic)
+		T aggregate = eventLog.eventsBy(topic)
 				.stream()
-				.map(e -> (S) e)
+				.map(e -> (U) e)
 				.filter(e -> ref.equals(e.getRef()))
 				.reduce(identity,
 						accumulatorFunction,
 						(t, t2) -> null);
+		aggregate.setEventLog(eventLog);
+		return aggregate;
 	}
 }

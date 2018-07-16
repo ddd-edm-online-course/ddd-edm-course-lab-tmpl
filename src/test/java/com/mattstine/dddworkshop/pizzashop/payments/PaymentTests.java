@@ -103,7 +103,7 @@ public class PaymentTests {
 
 	@Test
 	public void accumulator_apply_with_paymentAddedEvent_returns_embedded_payment() {
-		PaymentAddedEvent paymentAddedEvent = new PaymentAddedEvent(ref, payment);
+		PaymentAddedEvent paymentAddedEvent = new PaymentAddedEvent(ref, payment.state());
 
 		assertThat(payment.accumulatorFunction().apply(payment.identity(), paymentAddedEvent)).isEqualTo(payment);
 	}

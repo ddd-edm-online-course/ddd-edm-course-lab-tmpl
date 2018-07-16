@@ -25,6 +25,7 @@ public class DefaultPaymentServiceIntegrationTests {
 		repository = new InProcessEventSourcedPaymentRepository(eventLog,
 				PaymentRef.class,
 				Payment.class,
+				Payment.PaymentState.class,
 				PaymentAddedEvent.class,
 				new Topic("payments"));
 		processor = mock(PaymentProcessor.class);
@@ -47,6 +48,7 @@ public class DefaultPaymentServiceIntegrationTests {
 
 		eventLog.publish(new Topic("payment_processor"), new PaymentProcessedEvent(ref, PaymentProcessedEvent.Status.SUCCESSFUL));
 
+		payment = repository.findByRef(ref);
 		assertThat(payment.isSuccessful()).isTrue();
 	}
 
@@ -64,6 +66,7 @@ public class DefaultPaymentServiceIntegrationTests {
 
 		eventLog.publish(new Topic("payment_processor"), new PaymentProcessedEvent(ref, PaymentProcessedEvent.Status.FAILED));
 
+		payment = repository.findByRef(ref);
 		assertThat(payment.isFailed()).isTrue();
 	}
 }

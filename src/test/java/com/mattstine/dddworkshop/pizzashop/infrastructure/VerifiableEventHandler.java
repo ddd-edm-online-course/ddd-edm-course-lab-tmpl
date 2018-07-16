@@ -4,6 +4,7 @@ package com.mattstine.dddworkshop.pizzashop.infrastructure;
  * @author Matt Stine
  */
 public abstract class VerifiableEventHandler implements EventHandler {
+	@SuppressWarnings("WeakerAccess")
 	protected boolean invoked = false;
 
 	public static VerifiableEventHandler of(EventHandler eventHandler) {

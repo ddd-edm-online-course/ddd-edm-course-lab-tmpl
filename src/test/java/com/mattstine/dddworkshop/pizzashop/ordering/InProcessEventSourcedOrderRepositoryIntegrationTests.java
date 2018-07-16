@@ -4,51 +4,47 @@ import com.mattstine.dddworkshop.pizzashop.infrastructure.EventLog;
 import com.mattstine.dddworkshop.pizzashop.infrastructure.InProcessEventLog;
 import com.mattstine.dddworkshop.pizzashop.infrastructure.Topic;
 import com.mattstine.dddworkshop.pizzashop.payments.PaymentRef;
-import com.mattstine.dddworkshop.pizzashop.payments.PaymentService;
-import com.mattstine.dddworkshop.pizzashop.payments.PaymentSuccessfulEvent;
 import org.junit.Before;
 import org.junit.Test;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.mockito.Mockito.mock;
 
 /**
  * @author Matt Stine
  */
-public class OrderServiceIntegrationTests {
+public class InProcessEventSourcedOrderRepositoryIntegrationTests {
 
-	private EventLog eventLog;
 	private OrderRepository repository;
+	private Order order;
+	private Pizza pizza;
 
 	@Before
 	public void setUp() {
-		eventLog = new InProcessEventLog();
+		EventLog eventLog = new InProcessEventLog();
 		repository = new InProcessEventSourcedOrderRepository(eventLog,
 				OrderRef.class,
 				Order.class,
 				Order.OrderState.class,
 				OrderAddedEvent.class,
 				new Topic("ordering"));
-		new OrderService(eventLog, repository, mock(PaymentService.class));
+		OrderRef ref = repository.nextIdentity();
+		order = Order.builder()
+				.ref(ref)
+				.type(Order.Type.PICKUP)
+				.eventLog(eventLog)
+				.build();
+		pizza = Pizza.builder().size(Pizza.Size.MEDIUM).build();
 	}
 
 	@Test
-	public void on_successful_payment_mark_paid() {
-		OrderRef orderRef = new OrderRef();
-		Order order = Order.builder()
-				.type(Order.Type.PICKUP)
-				.eventLog(eventLog)
-				.ref(orderRef)
-				.build();
+	public void find_by_paymentRef_hydrates_order() {
 		repository.add(order);
-		order.addPizza(Pizza.builder().size(Pizza.Size.MEDIUM).build());
+		order.addPizza(pizza);
 		order.submit();
+
 		PaymentRef paymentRef = new PaymentRef();
 		order.assignPaymentRef(paymentRef);
 
-		eventLog.publish(new Topic("payments"), new PaymentSuccessfulEvent(paymentRef));
-
-		order = repository.findByRef(orderRef);
-		assertThat(order.isPaid()).isTrue();
+		assertThat(repository.findByPaymentRef(paymentRef)).isEqualTo(order);
 	}
 }

@@ -5,5 +5,5 @@ import com.mattstine.dddworkshop.pizzashop.infrastructure.AggregateEvent;
 /**
  * @author Matt Stine
  */
-public interface OrderEvent extends AggregateEvent {
+interface OrderEvent extends AggregateEvent {
 }

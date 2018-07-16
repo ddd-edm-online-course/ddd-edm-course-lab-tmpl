@@ -1,9 +1,6 @@
 package com.mattstine.dddworkshop.pizzashop.payments;
 
-import com.mattstine.dddworkshop.pizzashop.infrastructure.Aggregate;
-import com.mattstine.dddworkshop.pizzashop.infrastructure.Amount;
-import com.mattstine.dddworkshop.pizzashop.infrastructure.EventLog;
-import com.mattstine.dddworkshop.pizzashop.infrastructure.Topic;
+import com.mattstine.dddworkshop.pizzashop.infrastructure.*;
 import lombok.*;
 import lombok.experimental.NonFinal;
 
@@ -12,17 +9,19 @@ import java.util.function.BiFunction;
 /**
  * @author Matt Stine
  */
+@SuppressWarnings("DefaultAnnotationParam")
 @Value
+@EqualsAndHashCode(callSuper = false)
 @NoArgsConstructor //TODO: Smelly...can I do reflection without this?
-public class Payment implements Aggregate {
+public class Payment extends Aggregate {
 	@NonFinal
 	Amount amount;
 	@NonFinal
 	PaymentProcessor $paymentProcessor;
 	@NonFinal
 	PaymentRef ref;
-	@NonFinal
-	EventLog $eventLog;
+//	@NonFinal
+//	EventLog $eventLog;
 	@NonFinal
 	State state;
 
@@ -98,6 +97,11 @@ public class Payment implements Aggregate {
 		return new Accumulator();
 	}
 
+	@Override
+	public PaymentState state() {
+		return new PaymentState(state, amount, ref);
+	}
+
 	public enum State {
 		NEW, REQUESTED, SUCCESSFUL, FAILED
 	}
@@ -107,7 +111,7 @@ public class Payment implements Aggregate {
 		public Payment apply(Payment payment, PaymentEvent paymentEvent) {
 			if (paymentEvent instanceof PaymentAddedEvent) {
 				PaymentAddedEvent pae = (PaymentAddedEvent) paymentEvent;
-				return pae.getPayment();
+				return Payment.from(pae.getRef(), pae.getPaymentState());
 			} else if (paymentEvent instanceof PaymentRequestedEvent) {
 				payment.state = State.REQUESTED;
 				return payment;
@@ -119,6 +123,40 @@ public class Payment implements Aggregate {
 				return payment;
 			}
 			throw new IllegalStateException("Unknown PaymentEvent");
+		}
+	}
+
+	private static Payment from(PaymentRef ref, PaymentState paymentState) {
+		Payment payment = new Payment();
+		payment.state = paymentState.getState();
+		payment.amount = paymentState.getAmount();
+		payment.ref = paymentState.getRef();
+		return payment;
+	}
+
+	@Value
+	static class PaymentState implements AggregateState {
+
+		private State state;
+		private Amount amount;
+		private PaymentRef ref;
+
+		public PaymentState(State state, Amount amount, PaymentRef ref) {
+			this.state = state;
+			this.amount = amount;
+			this.ref = ref;
+		}
+
+		State getState() {
+			return state;
+		}
+
+		Amount getAmount() {
+			return amount;
+		}
+
+		PaymentRef getRef() {
+			return ref;
 		}
 	}
 

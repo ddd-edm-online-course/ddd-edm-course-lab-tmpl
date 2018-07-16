@@ -1,9 +1,6 @@
 package com.mattstine.dddworkshop.pizzashop.ordering;
 
-import com.mattstine.dddworkshop.pizzashop.infrastructure.Aggregate;
-import com.mattstine.dddworkshop.pizzashop.infrastructure.Amount;
-import com.mattstine.dddworkshop.pizzashop.infrastructure.EventLog;
-import com.mattstine.dddworkshop.pizzashop.infrastructure.Topic;
+import com.mattstine.dddworkshop.pizzashop.infrastructure.*;
 import com.mattstine.dddworkshop.pizzashop.payments.PaymentRef;
 import lombok.*;
 import lombok.experimental.NonFinal;
@@ -15,13 +12,13 @@ import java.util.function.BiFunction;
 /**
  * @author Matt Stine
  */
+@SuppressWarnings("DefaultAnnotationParam")
 @Value
+@EqualsAndHashCode(callSuper = false)
 @NoArgsConstructor //TODO: Smelly...can I do reflection without this?
-public class Order implements Aggregate {
+public class Order extends Aggregate {
 	@NonFinal
 	Type type;
-	@NonFinal
-	EventLog eventLog;
 	@NonFinal
 	OrderRef ref;
 	@NonFinal
@@ -34,7 +31,7 @@ public class Order implements Aggregate {
 	@Builder
 	private Order(@NonNull Type type, @NonNull EventLog eventLog, @NonNull OrderRef ref) {
 		this.type = type;
-		this.eventLog = eventLog;
+		this.$eventLog = eventLog;
 		this.ref = ref;
 		this.pizzas = new ArrayList<>();
 
@@ -67,7 +64,7 @@ public class Order implements Aggregate {
 		}
 
 		this.pizzas.add(pizza);
-		eventLog.publish(new Topic("ordering"), new PizzaAddedEvent(ref, pizza));
+		$eventLog.publish(new Topic("ordering"), new PizzaAddedEvent(ref, pizza));
 	}
 
 	public void submit() {
@@ -80,12 +77,12 @@ public class Order implements Aggregate {
 		}
 
 		this.state = State.SUBMITTED;
-		eventLog.publish(new Topic("ordering"), new OrderSubmittedEvent(ref));
+		$eventLog.publish(new Topic("ordering"), new OrderSubmittedEvent(ref));
 	}
 
 	public void assignPaymentRef(PaymentRef paymentRef) {
 		this.paymentRef = paymentRef;
-		eventLog.publish(new Topic("ordering"), new PaymentRefAssignedEvent(ref, paymentRef));
+		$eventLog.publish(new Topic("ordering"), new PaymentRefAssignedEvent(ref, paymentRef));
 	}
 
 	public Amount calculatePrice() {
@@ -100,7 +97,7 @@ public class Order implements Aggregate {
 		}
 
 		this.state = State.PAID;
-		eventLog.publish(new Topic("ordering"), new OrderPaidEvent(ref));
+		$eventLog.publish(new Topic("ordering"), new OrderPaidEvent(ref));
 	}
 
 	@Override
@@ -117,6 +114,11 @@ public class Order implements Aggregate {
 		return new Accumulator();
 	}
 
+	@Override
+	public OrderState state() {
+		return new OrderState(state, type);
+	}
+
 	enum State {
 		NEW, SUBMITTED, PAID
 	}
@@ -131,7 +133,7 @@ public class Order implements Aggregate {
 		public Order apply(Order order, OrderEvent orderEvent) {
 			if (orderEvent instanceof OrderAddedEvent) {
 				OrderAddedEvent oae = (OrderAddedEvent) orderEvent;
-				return oae.getOrder();
+				return Order.from(oae.getRef(), oae.getOrderState());
 			} else if (orderEvent instanceof PizzaAddedEvent) {
 				PizzaAddedEvent pae = (PizzaAddedEvent) orderEvent;
 				order.pizzas.add(pae.getPizza());
@@ -148,6 +150,35 @@ public class Order implements Aggregate {
 				return order;
 			}
 			throw new IllegalStateException("Unknown OrderEvent");
+		}
+	}
+
+	private static Order from(OrderRef ref, OrderState state) {
+		Order order = new Order();
+		order.ref = ref;
+		order.state = state.getState();
+		order.type = state.getType();
+		order.pizzas = new ArrayList<>();
+		return order;
+	}
+
+	@Value
+	public static class OrderState implements AggregateState {
+
+		private State state;
+		private Type type;
+
+		public OrderState(State state, Type type) {
+			this.state = state;
+			this.type = type;
+		}
+
+		State getState() {
+			return state;
+		}
+
+		Type getType() {
+			return type;
 		}
 	}
 }

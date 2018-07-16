@@ -1,5 +1,6 @@
 package com.mattstine.dddworkshop.pizzashop.ordering;
 
+import com.mattstine.dddworkshop.pizzashop.infrastructure.EventHandler;
 import com.mattstine.dddworkshop.pizzashop.infrastructure.EventLog;
 import com.mattstine.dddworkshop.pizzashop.infrastructure.Topic;
 import com.mattstine.dddworkshop.pizzashop.payments.PaymentRef;
@@ -10,7 +11,6 @@ import java.util.Arrays;
 import java.util.Collections;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.*;
 
 /**
@@ -30,6 +30,7 @@ public class InProcessEventSourcedOrderRepositoryTests {
 		repository = new InProcessEventSourcedOrderRepository(eventLog,
 				OrderRef.class,
 				Order.class,
+				Order.OrderState.class,
 				OrderAddedEvent.class,
 				new Topic("ordering"));
 		ref = repository.nextIdentity();
@@ -49,7 +50,7 @@ public class InProcessEventSourcedOrderRepositoryTests {
 	@Test
 	public void add_fires_event() {
 		repository.add(order);
-		OrderAddedEvent event = new OrderAddedEvent(order.getRef(), order);
+		OrderAddedEvent event = new OrderAddedEvent(order.getRef(), order.state());
 		verify(eventLog).publish(eq(new Topic("ordering")), eq(event));
 	}
 
@@ -58,7 +59,7 @@ public class InProcessEventSourcedOrderRepositoryTests {
 		repository.add(order);
 
 		when(eventLog.eventsBy(new Topic("ordering")))
-				.thenReturn(Collections.singletonList(new OrderAddedEvent(ref, order)));
+				.thenReturn(Collections.singletonList(new OrderAddedEvent(ref, order.state())));
 
 		assertThat(repository.findByRef(ref)).isEqualTo(order);
 	}
@@ -70,7 +71,7 @@ public class InProcessEventSourcedOrderRepositoryTests {
 		order.submit();
 
 		when(eventLog.eventsBy(new Topic("ordering")))
-				.thenReturn(Arrays.asList(new OrderAddedEvent(ref, order),
+				.thenReturn(Arrays.asList(new OrderAddedEvent(ref, order.state()),
 						new PizzaAddedEvent(ref, pizza)));
 
 		assertThat(repository.findByRef(ref)).isEqualTo(order);
@@ -83,7 +84,7 @@ public class InProcessEventSourcedOrderRepositoryTests {
 		order.submit();
 
 		when(eventLog.eventsBy(new Topic("ordering")))
-				.thenReturn(Arrays.asList(new OrderAddedEvent(ref, order),
+				.thenReturn(Arrays.asList(new OrderAddedEvent(ref, order.state()),
 						new PizzaAddedEvent(ref, pizza),
 						new OrderSubmittedEvent(ref)));
 
@@ -100,7 +101,7 @@ public class InProcessEventSourcedOrderRepositoryTests {
 		order.assignPaymentRef(paymentRef);
 
 		when(eventLog.eventsBy(new Topic("ordering")))
-				.thenReturn(Arrays.asList(new OrderAddedEvent(ref, order),
+				.thenReturn(Arrays.asList(new OrderAddedEvent(ref, order.state()),
 						new PizzaAddedEvent(ref, pizza),
 						new OrderSubmittedEvent(ref),
 						new PaymentRefAssignedEvent(ref, paymentRef)));
@@ -120,7 +121,7 @@ public class InProcessEventSourcedOrderRepositoryTests {
 		order.markPaid();
 
 		when(eventLog.eventsBy(new Topic("ordering")))
-				.thenReturn(Arrays.asList(new OrderAddedEvent(ref, order),
+				.thenReturn(Arrays.asList(new OrderAddedEvent(ref, order.state()),
 						new PizzaAddedEvent(ref, pizza),
 						new OrderSubmittedEvent(ref),
 						new PaymentRefAssignedEvent(ref, paymentRef),
@@ -128,4 +129,10 @@ public class InProcessEventSourcedOrderRepositoryTests {
 
 		assertThat(repository.findByRef(ref)).isEqualTo(order);
 	}
+
+	@Test
+	public void subscribes_to_ordering_topic() {
+		verify(eventLog).subscribe(eq(new Topic("ordering")), isA(EventHandler.class));
+	}
+
 }

@@ -28,6 +28,7 @@ public class InProcessEventSourcedPaymentRepositoryTests {
 		repository = new InProcessEventSourcedPaymentRepository(eventLog,
 				PaymentRef.class,
 				Payment.class,
+				Payment.PaymentState.class,
 				PaymentAddedEvent.class,
 				new Topic("payments"));
 		ref = repository.nextIdentity();
@@ -47,7 +48,7 @@ public class InProcessEventSourcedPaymentRepositoryTests {
 	@Test
 	public void add_fires_event() {
 		repository.add(payment);
-		PaymentAddedEvent event = new PaymentAddedEvent(payment.getRef(), payment);
+		PaymentAddedEvent event = new PaymentAddedEvent(payment.getRef(), payment.state());
 		verify(eventLog).publish(eq(new Topic("payments")), eq(event));
 	}
 
@@ -56,7 +57,7 @@ public class InProcessEventSourcedPaymentRepositoryTests {
 		repository.add(payment);
 
 		when(eventLog.eventsBy(new Topic("payments")))
-				.thenReturn(Collections.singletonList(new PaymentAddedEvent(ref, payment)));
+				.thenReturn(Collections.singletonList(new PaymentAddedEvent(ref, payment.state())));
 
 
 		assertThat(repository.findByRef(ref)).isEqualTo(payment);
@@ -68,7 +69,7 @@ public class InProcessEventSourcedPaymentRepositoryTests {
 		payment.request();
 
 		when(eventLog.eventsBy(new Topic("payments")))
-				.thenReturn(Arrays.asList(new PaymentAddedEvent(ref, payment),
+				.thenReturn(Arrays.asList(new PaymentAddedEvent(ref, payment.state()),
 						new PaymentRequestedEvent(ref)));
 
 		assertThat(repository.findByRef(ref)).isEqualTo(payment);
@@ -81,7 +82,7 @@ public class InProcessEventSourcedPaymentRepositoryTests {
 		payment.markSuccessful();
 
 		when(eventLog.eventsBy(new Topic("payments")))
-				.thenReturn(Arrays.asList(new PaymentAddedEvent(ref, payment),
+				.thenReturn(Arrays.asList(new PaymentAddedEvent(ref, payment.state()),
 						new PaymentRequestedEvent(ref),
 						new PaymentSuccessfulEvent(ref)));
 
@@ -95,7 +96,7 @@ public class InProcessEventSourcedPaymentRepositoryTests {
 		payment.markFailed();
 
 		when(eventLog.eventsBy(new Topic("payments")))
-				.thenReturn(Arrays.asList(new PaymentAddedEvent(ref, payment),
+				.thenReturn(Arrays.asList(new PaymentAddedEvent(ref, payment.state()),
 						new PaymentRequestedEvent(ref),
 						new PaymentFailedEvent(ref)));
 

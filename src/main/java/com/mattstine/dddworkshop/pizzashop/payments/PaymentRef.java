@@ -16,6 +16,7 @@ public class PaymentRef implements Ref {
 		reference = RefStringGenerator.generateRefString();
 	}
 
+	@SuppressWarnings("SameParameterValue")
 	private PaymentRef(String reference) {
 		this.reference = reference;
 	}
