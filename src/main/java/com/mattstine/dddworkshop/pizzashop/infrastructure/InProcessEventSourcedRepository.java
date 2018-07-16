@@ -44,7 +44,8 @@ public class InProcessEventSourcedRepository<K extends Ref, T extends Aggregate,
 		V addEvent;
 
 		try {
-			Constructor<V> constructor = addEventClass.getConstructor(refClass, aggregateStateClass);
+			Constructor<V> constructor = addEventClass.getDeclaredConstructor(refClass, aggregateStateClass);
+			constructor.setAccessible(true);
 			addEvent = constructor.newInstance(aggregateInstance.getRef(), aggregateInstance.state());
 		} catch (NoSuchMethodException | IllegalAccessException | InstantiationException | InvocationTargetException e) {
 			throw new IllegalStateException("Cannot instantiate add event of type: " + addEventClass.getName());
@@ -68,7 +69,9 @@ public class InProcessEventSourcedRepository<K extends Ref, T extends Aggregate,
 	private BiFunction<T, U, T> retrieveAccumulatorFunction() {
 		BiFunction<T, U, T> accumulatorFunction;
 		try {
-			T aggregateInstance = aggregateClass.newInstance();
+			Constructor ctor = aggregateClass.getDeclaredConstructor();
+			ctor.setAccessible(true);
+			T aggregateInstance = (T) ctor.newInstance();
 			Method accumulatorFunctionMethod = aggregateClass.getMethod("accumulatorFunction");
 			accumulatorFunction = (BiFunction<T, U, T>) accumulatorFunctionMethod.invoke(aggregateInstance);
 		} catch (NoSuchMethodException | IllegalAccessException | InvocationTargetException e) {
@@ -82,10 +85,13 @@ public class InProcessEventSourcedRepository<K extends Ref, T extends Aggregate,
 	private T retrieveIdentityValue() {
 		T identity;
 		try {
-			T aggregateInstance = aggregateClass.newInstance();
+			Constructor ctor = aggregateClass.getDeclaredConstructor();
+			ctor.setAccessible(true);
+			T aggregateInstance = (T) ctor.newInstance();
 			Method identityMethod = aggregateClass.getMethod("identity");
 			identity = (T) identityMethod.invoke(aggregateInstance);
-		} catch (NoSuchMethodException | IllegalAccessException | InvocationTargetException e) {
+		} catch (IllegalArgumentException | NoSuchMethodException | IllegalAccessException | InvocationTargetException e) {
+			e.printStackTrace();
 			throw new IllegalStateException("Cannot execute method: " + aggregateClass.getName() + ".identity", e);
 		} catch (InstantiationException e) {
 			e.printStackTrace();

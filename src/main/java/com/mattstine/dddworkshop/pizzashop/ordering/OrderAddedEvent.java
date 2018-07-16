@@ -6,10 +6,8 @@ import lombok.Value;
 /**
  * @author Matt Stine
  */
-@SuppressWarnings("WeakerAccess")
 @Value
-//TODO: Smelly... class needs to be public for reflection purposes
-public class OrderAddedEvent implements OrderEvent, RepositoryAddEvent {
+class OrderAddedEvent implements OrderEvent, RepositoryAddEvent {
 	OrderRef ref;
 	Order.OrderState orderState;
 }

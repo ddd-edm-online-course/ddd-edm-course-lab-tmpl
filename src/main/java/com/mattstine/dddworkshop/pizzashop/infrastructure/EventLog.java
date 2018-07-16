@@ -8,6 +8,7 @@ import java.util.List;
  * @author Matt Stine
  */
 public interface EventLog {
+
 	void publish(Topic topic, Event event);
 
 	void subscribe(Topic topic, EventHandler handler);

@@ -1,5 +1,7 @@
 package com.mattstine.dddworkshop.pizzashop.infrastructure;
 
+import lombok.experimental.NonFinal;
+
 import java.util.function.BiFunction;
 
 /**

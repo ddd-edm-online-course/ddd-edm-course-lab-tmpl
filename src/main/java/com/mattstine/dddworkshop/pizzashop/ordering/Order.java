@@ -12,18 +12,12 @@ import java.util.function.BiFunction;
 /**
  * @author Matt Stine
  */
-@SuppressWarnings("DefaultAnnotationParam")
 @Value
-@EqualsAndHashCode(callSuper = false)
-@NoArgsConstructor //TODO: Smelly...can I do reflection without this?
 public class Order extends Aggregate {
-	@NonFinal
 	Type type;
-	@NonFinal
 	OrderRef ref;
 	@NonFinal
 	State state;
-	@NonFinal
 	List<Pizza> pizzas;
 	@NonFinal
 	PaymentRef paymentRef;
@@ -36,6 +30,16 @@ public class Order extends Aggregate {
 		this.pizzas = new ArrayList<>();
 
 		this.state = State.NEW;
+	}
+
+	/**
+	 * Private no-args ctor to support reflection ONLY.
+	 */
+	private Order() {
+		this.type = null;
+		this.ref = null;
+		this.pizzas = null;
+		this.$eventLog = null;
 	}
 
 	public boolean isPickupOrder() {
@@ -154,11 +158,8 @@ public class Order extends Aggregate {
 	}
 
 	private static Order from(OrderRef ref, OrderState state) {
-		Order order = new Order();
-		order.ref = ref;
+		Order order = new Order(state.getType(), new InProcessEventLog(), ref);
 		order.state = state.getState();
-		order.type = state.getType();
-		order.pizzas = new ArrayList<>();
 		return order;
 	}
 

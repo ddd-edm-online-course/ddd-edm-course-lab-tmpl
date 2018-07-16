@@ -9,19 +9,11 @@ import java.util.function.BiFunction;
 /**
  * @author Matt Stine
  */
-@SuppressWarnings("DefaultAnnotationParam")
 @Value
-@EqualsAndHashCode(callSuper = false)
-@NoArgsConstructor //TODO: Smelly...can I do reflection without this?
 public class Payment extends Aggregate {
-	@NonFinal
 	Amount amount;
-	@NonFinal
 	PaymentProcessor $paymentProcessor;
-	@NonFinal
 	PaymentRef ref;
-//	@NonFinal
-//	EventLog $eventLog;
 	@NonFinal
 	State state;
 
@@ -36,6 +28,15 @@ public class Payment extends Aggregate {
 		this.$eventLog = eventLog;
 
 		this.state = State.NEW;
+	}
+
+	/**
+	 * Private no-args ctor to support reflection ONLY.
+	 */
+	private Payment() {
+		this.amount = null;
+		this.$paymentProcessor = null;
+		this.ref = null;
 	}
 
 	public boolean isNew() {
@@ -127,10 +128,16 @@ public class Payment extends Aggregate {
 	}
 
 	private static Payment from(PaymentRef ref, PaymentState paymentState) {
-		Payment payment = new Payment();
+		//TODO: cleanup
+		PaymentProcessor dummy = new PaymentProcessor() {
+			@Override
+			public void request(Payment payment) {
+
+			}
+		};
+
+		Payment payment = new Payment(paymentState.getAmount(), dummy, paymentState.getRef(), new InProcessEventLog());
 		payment.state = paymentState.getState();
-		payment.amount = paymentState.getAmount();
-		payment.ref = paymentState.getRef();
 		return payment;
 	}
 
