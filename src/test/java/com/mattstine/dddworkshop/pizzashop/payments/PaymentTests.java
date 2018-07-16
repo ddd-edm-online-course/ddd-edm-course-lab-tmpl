@@ -114,13 +114,13 @@ public class PaymentTests {
 				.ref(ref)
 				.eventLog(eventLog)
 				.paymentProcessor(paymentProcessor)
-				.amount(Amount.of(10,0))
+				.amount(Amount.of(15,0))
 				.build();
 		expectedPayment.request();
 
 		PaymentRequestedEvent pre = new PaymentRequestedEvent(ref);
 
-		assertThat(payment.accumulatorFunction().apply(payment, pre)).isEqualTo(payment);
+		assertThat(payment.accumulatorFunction().apply(payment, pre)).isEqualTo(expectedPayment);
 	}
 
 	@Test
@@ -129,14 +129,14 @@ public class PaymentTests {
 				.ref(ref)
 				.eventLog(eventLog)
 				.paymentProcessor(paymentProcessor)
-				.amount(Amount.of(10,0))
+				.amount(Amount.of(15,0))
 				.build();
 		expectedPayment.request();
 		expectedPayment.markSuccessful();
 
 		PaymentSuccessfulEvent pse = new PaymentSuccessfulEvent(ref);
 
-		assertThat(payment.accumulatorFunction().apply(payment, pse)).isEqualTo(payment);
+		assertThat(payment.accumulatorFunction().apply(payment, pse)).isEqualTo(expectedPayment);
 	}
 
 	@Test
@@ -145,14 +145,14 @@ public class PaymentTests {
 				.ref(ref)
 				.eventLog(eventLog)
 				.paymentProcessor(paymentProcessor)
-				.amount(Amount.of(10,0))
+				.amount(Amount.of(15,0))
 				.build();
 		expectedPayment.request();
 		expectedPayment.markFailed();
 
 		PaymentFailedEvent pfe = new PaymentFailedEvent(ref);
 
-		assertThat(payment.accumulatorFunction().apply(payment, pfe)).isEqualTo(payment);
+		assertThat(payment.accumulatorFunction().apply(payment, pfe)).isEqualTo(expectedPayment);
 	}
 
 	@Test
