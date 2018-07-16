@@ -159,7 +159,7 @@ public class OrderTests {
 
 		PizzaAddedEvent pae = new PizzaAddedEvent(ref, pizza);
 
-		assertThat(order.accumulatorFunction().apply(order, pae)).isEqualTo(order);
+		assertThat(order.accumulatorFunction().apply(order, pae)).isEqualTo(expectedOrder);
 	}
 
 	@Test
@@ -172,9 +172,12 @@ public class OrderTests {
 		expectedOrder.addPizza(pizza);
 		expectedOrder.submit();
 
+		PizzaAddedEvent pae = new PizzaAddedEvent(ref, pizza);
+		order.accumulatorFunction().apply(order, pae);
+
 		OrderSubmittedEvent ose = new OrderSubmittedEvent(ref);
 
-		assertThat(order.accumulatorFunction().apply(order, ose)).isEqualTo(order);
+		assertThat(order.accumulatorFunction().apply(order, ose)).isEqualTo(expectedOrder);
 	}
 
 	@Test
@@ -190,9 +193,14 @@ public class OrderTests {
 		PaymentRef paymentRef = new PaymentRef();
 		expectedOrder.assignPaymentRef(paymentRef);
 
-		PaymentRefAssignedEvent prae = new PaymentRefAssignedEvent(ref, paymentRef);
+		PizzaAddedEvent pae = new PizzaAddedEvent(ref, pizza);
+		order.accumulatorFunction().apply(order, pae);
 
-		assertThat(order.accumulatorFunction().apply(order, prae)).isEqualTo(order);
+		OrderSubmittedEvent ose = new OrderSubmittedEvent(ref);
+		order.accumulatorFunction().apply(order, ose);
+
+		PaymentRefAssignedEvent prae = new PaymentRefAssignedEvent(ref, paymentRef);
+		assertThat(order.accumulatorFunction().apply(order, prae)).isEqualTo(expectedOrder);
 	}
 
 	@Test
@@ -210,9 +218,18 @@ public class OrderTests {
 
 		expectedOrder.markPaid();
 
+		PizzaAddedEvent pae = new PizzaAddedEvent(ref, pizza);
+		order.accumulatorFunction().apply(order, pae);
+
+		OrderSubmittedEvent ose = new OrderSubmittedEvent(ref);
+		order.accumulatorFunction().apply(order, ose);
+
+		PaymentRefAssignedEvent prae = new PaymentRefAssignedEvent(ref, paymentRef);
+		order.accumulatorFunction().apply(order, prae);
+
 		OrderPaidEvent ope = new OrderPaidEvent(ref);
 
-		assertThat(order.accumulatorFunction().apply(order, ope)).isEqualTo(order);
+		assertThat(order.accumulatorFunction().apply(order, ope)).isEqualTo(expectedOrder);
 	}
 
 }
