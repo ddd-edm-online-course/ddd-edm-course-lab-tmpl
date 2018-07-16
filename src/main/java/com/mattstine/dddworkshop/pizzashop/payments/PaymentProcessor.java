@@ -10,5 +10,6 @@ interface PaymentProcessor {
         throw new NotImplementedException();
     };
 
+    @SuppressWarnings("EmptyMethod")
     void request(Payment payment);
 }

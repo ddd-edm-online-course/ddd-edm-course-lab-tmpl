@@ -45,13 +45,9 @@ public class Payment extends Aggregate {
         this.ref = null;
     }
 
+    // TODO: direct reference to singleton factories...
     private static Payment from(PaymentState paymentState) {
-        //TODO: cleanup
-        PaymentProcessor dummy = payment -> {
-
-        };
-
-        Payment payment = new Payment(paymentState.getAmount(), dummy, paymentState.getRef(), InProcessEventLog.instance());
+        Payment payment = new Payment(paymentState.getAmount(), DummyPaymentProcessor.instance(), paymentState.getRef(), InProcessEventLog.instance());
         payment.state = paymentState.getState();
         return payment;
     }

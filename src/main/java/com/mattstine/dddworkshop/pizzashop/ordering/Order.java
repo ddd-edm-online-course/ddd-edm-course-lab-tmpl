@@ -48,6 +48,7 @@ public class Order extends Aggregate {
         this.$eventLog = null;
     }
 
+    //TODO: direct reference to singleton factory...
     private static Order from(OrderRef ref, OrderState state) {
         Order order = new Order(state.getType(), InProcessEventLog.instance(), ref);
         order.state = state.getState();
