@@ -17,38 +17,38 @@ import static org.mockito.Mockito.mock;
  */
 public class OrderServiceIntegrationTests {
 
-	private EventLog eventLog;
-	private OrderRepository repository;
+    private EventLog eventLog;
+    private OrderRepository repository;
 
-	@Before
-	public void setUp() {
-		eventLog = new InProcessEventLog();
-		repository = new InProcessEventSourcedOrderRepository(eventLog,
-				OrderRef.class,
-				Order.class,
-				Order.OrderState.class,
-				OrderAddedEvent.class,
-				new Topic("ordering"));
-		new OrderService(eventLog, repository, mock(PaymentService.class));
-	}
+    @Before
+    public void setUp() {
+        eventLog = new InProcessEventLog();
+        repository = new InProcessEventSourcedOrderRepository(eventLog,
+                OrderRef.class,
+                Order.class,
+                Order.OrderState.class,
+                OrderAddedEvent.class,
+                new Topic("ordering"));
+        new OrderService(eventLog, repository, mock(PaymentService.class));
+    }
 
-	@Test
-	public void on_successful_payment_mark_paid() {
-		OrderRef orderRef = new OrderRef();
-		Order order = Order.builder()
-				.type(Order.Type.PICKUP)
-				.eventLog(eventLog)
-				.ref(orderRef)
-				.build();
-		repository.add(order);
-		order.addPizza(Pizza.builder().size(Pizza.Size.MEDIUM).build());
-		order.submit();
-		PaymentRef paymentRef = new PaymentRef();
-		order.assignPaymentRef(paymentRef);
+    @Test
+    public void on_successful_payment_mark_paid() {
+        OrderRef orderRef = new OrderRef();
+        Order order = Order.builder()
+                .type(Order.Type.PICKUP)
+                .eventLog(eventLog)
+                .ref(orderRef)
+                .build();
+        repository.add(order);
+        order.addPizza(Pizza.builder().size(Pizza.Size.MEDIUM).build());
+        order.submit();
+        PaymentRef paymentRef = new PaymentRef();
+        order.assignPaymentRef(paymentRef);
 
-		eventLog.publish(new Topic("payments"), new PaymentSuccessfulEvent(paymentRef));
+        eventLog.publish(new Topic("payments"), new PaymentSuccessfulEvent(paymentRef));
 
-		order = repository.findByRef(orderRef);
-		assertThat(order.isPaid()).isTrue();
-	}
+        order = repository.findByRef(orderRef);
+        assertThat(order.isPaid()).isTrue();
+    }
 }

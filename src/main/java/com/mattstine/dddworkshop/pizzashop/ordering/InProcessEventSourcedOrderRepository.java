@@ -13,32 +13,32 @@ import java.util.Map;
  */
 public class InProcessEventSourcedOrderRepository extends InProcessEventSourcedRepository<OrderRef, Order, Order.OrderState, OrderEvent, OrderAddedEvent> implements OrderRepository {
 
-	private final Map<PaymentRef, OrderRef> paymentRefToOrderRef;
+    private final Map<PaymentRef, OrderRef> paymentRefToOrderRef;
 
-	InProcessEventSourcedOrderRepository(EventLog eventLog,
-										 Class<OrderRef> refClass,
-										 Class<Order> aggregateClass,
-										 Class<Order.OrderState> aggregateStateClass,
-										 Class<OrderAddedEvent> addEventClass,
-										 Topic topic) {
-		super(eventLog, refClass, aggregateClass, aggregateStateClass, addEventClass, topic);
+    InProcessEventSourcedOrderRepository(EventLog eventLog,
+                                         Class<OrderRef> refClass,
+                                         Class<Order> aggregateClass,
+                                         Class<Order.OrderState> aggregateStateClass,
+                                         Class<OrderAddedEvent> addEventClass,
+                                         Topic topic) {
+        super(eventLog, refClass, aggregateClass, aggregateStateClass, addEventClass, topic);
 
-		paymentRefToOrderRef = new HashMap<>();
+        paymentRefToOrderRef = new HashMap<>();
 
-		eventLog.subscribe(topic, (e) -> {
-			if (e instanceof PaymentRefAssignedEvent) {
-				PaymentRefAssignedEvent prae = (PaymentRefAssignedEvent) e;
-				this.paymentRefToOrderRef.put(prae.getPaymentRef(), prae.getRef());
-			}
-		});
-	}
+        eventLog.subscribe(topic, (e) -> {
+            if (e instanceof PaymentRefAssignedEvent) {
+                PaymentRefAssignedEvent prae = (PaymentRefAssignedEvent) e;
+                this.paymentRefToOrderRef.put(prae.getPaymentRef(), prae.getRef());
+            }
+        });
+    }
 
-	@Override
-	public Order findByPaymentRef(PaymentRef paymentRef) {
-		OrderRef ref = paymentRefToOrderRef.get(paymentRef);
-		if (ref != null) {
-			return this.findByRef(ref);
-		}
-		return null;
-	}
+    @Override
+    public Order findByPaymentRef(PaymentRef paymentRef) {
+        OrderRef ref = paymentRefToOrderRef.get(paymentRef);
+        if (ref != null) {
+            return this.findByRef(ref);
+        }
+        return null;
+    }
 }

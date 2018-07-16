@@ -10,6 +10,6 @@ import lombok.Value;
 @Value
 @AllArgsConstructor(access = AccessLevel.PACKAGE)
 class PizzaAddedEvent implements OrderEvent {
-	private final OrderRef ref;
-	private final Pizza pizza;
+    private final OrderRef ref;
+    private final Pizza pizza;
 }

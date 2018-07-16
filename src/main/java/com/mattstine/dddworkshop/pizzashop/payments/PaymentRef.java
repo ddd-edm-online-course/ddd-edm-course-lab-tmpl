@@ -9,15 +9,15 @@ import lombok.Value;
  */
 @Value
 public class PaymentRef implements Ref {
-	public static final PaymentRef IDENTITY = new PaymentRef("");
-	String reference;
+    public static final PaymentRef IDENTITY = new PaymentRef("");
+    String reference;
 
-	public PaymentRef() {
-		reference = RefStringGenerator.generateRefString();
-	}
+    public PaymentRef() {
+        reference = RefStringGenerator.generateRefString();
+    }
 
-	@SuppressWarnings("SameParameterValue")
-	private PaymentRef(String reference) {
-		this.reference = reference;
-	}
+    @SuppressWarnings("SameParameterValue")
+    private PaymentRef(String reference) {
+        this.reference = reference;
+    }
 }

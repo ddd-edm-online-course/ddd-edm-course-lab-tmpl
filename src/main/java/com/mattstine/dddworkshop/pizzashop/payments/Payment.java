@@ -1,7 +1,9 @@
 package com.mattstine.dddworkshop.pizzashop.payments;
 
 import com.mattstine.dddworkshop.pizzashop.infrastructure.*;
-import lombok.*;
+import lombok.Builder;
+import lombok.NonNull;
+import lombok.Value;
 import lombok.experimental.NonFinal;
 
 import java.util.function.BiFunction;
@@ -11,160 +13,160 @@ import java.util.function.BiFunction;
  */
 @Value
 public class Payment extends Aggregate {
-	Amount amount;
-	PaymentProcessor $paymentProcessor;
-	PaymentRef ref;
-	@NonFinal
-	State state;
+    Amount amount;
+    PaymentProcessor $paymentProcessor;
+    PaymentRef ref;
+    @NonFinal
+    State state;
 
-	@Builder
-	private Payment(@NonNull Amount amount,
-					@NonNull PaymentProcessor paymentProcessor,
-					@NonNull PaymentRef ref,
-					@NonNull EventLog eventLog) {
-		this.amount = amount;
-		this.$paymentProcessor = paymentProcessor;
-		this.ref = ref;
-		this.$eventLog = eventLog;
+    @Builder
+    private Payment(@NonNull Amount amount,
+                    @NonNull PaymentProcessor paymentProcessor,
+                    @NonNull PaymentRef ref,
+                    @NonNull EventLog eventLog) {
+        this.amount = amount;
+        this.$paymentProcessor = paymentProcessor;
+        this.ref = ref;
+        this.$eventLog = eventLog;
 
-		this.state = State.NEW;
-	}
+        this.state = State.NEW;
+    }
 
-	/**
-	 * Private no-args ctor to support reflection ONLY.
-	 */
-	private Payment() {
-		this.amount = null;
-		this.$paymentProcessor = null;
-		this.ref = null;
-	}
+    /**
+     * Private no-args ctor to support reflection ONLY.
+     */
+    private Payment() {
+        this.amount = null;
+        this.$paymentProcessor = null;
+        this.ref = null;
+    }
 
-	public boolean isNew() {
-		return state == State.NEW;
-	}
+    private static Payment from(PaymentRef ref, PaymentState paymentState) {
+        //TODO: cleanup
+        PaymentProcessor dummy = new PaymentProcessor() {
+            @Override
+            public void request(Payment payment) {
 
-	public boolean isRequested() {
-		return state == State.REQUESTED;
-	}
+            }
+        };
 
-	public boolean isSuccessful() {
-		return state == State.SUCCESSFUL;
-	}
+        Payment payment = new Payment(paymentState.getAmount(), dummy, paymentState.getRef(), new InProcessEventLog());
+        payment.state = paymentState.getState();
+        return payment;
+    }
 
-	public boolean isFailed() {
-		return state == State.FAILED;
-	}
+    public boolean isNew() {
+        return state == State.NEW;
+    }
 
-	public void request() {
-		if (state != State.NEW) {
-			throw new IllegalStateException("Payment must be NEW to request payment");
-		}
+    public boolean isRequested() {
+        return state == State.REQUESTED;
+    }
 
-		$paymentProcessor.request(this);
-		state = State.REQUESTED;
-		$eventLog.publish(new Topic("payments"), new PaymentRequestedEvent(this.ref));
-	}
+    public boolean isSuccessful() {
+        return state == State.SUCCESSFUL;
+    }
 
-	public void markSuccessful() {
-		if (state != State.REQUESTED) {
-			throw new IllegalStateException("Payment must be REQUESTED to mark successful");
-		}
+    public boolean isFailed() {
+        return state == State.FAILED;
+    }
 
-		state = State.SUCCESSFUL;
-		$eventLog.publish(new Topic("payments"), new PaymentSuccessfulEvent(ref));
-	}
+    public void request() {
+        if (state != State.NEW) {
+            throw new IllegalStateException("Payment must be NEW to request payment");
+        }
 
-	public void markFailed() {
-		if (state != State.REQUESTED) {
-			throw new IllegalStateException("Payment must be REQUESTED to mark failed");
-		}
+        $paymentProcessor.request(this);
+        state = State.REQUESTED;
+        $eventLog.publish(new Topic("payments"), new PaymentRequestedEvent(this.ref));
+    }
 
-		state = State.FAILED;
-		$eventLog.publish(new Topic("payments"), new PaymentFailedEvent(ref));
-	}
+    public void markSuccessful() {
+        if (state != State.REQUESTED) {
+            throw new IllegalStateException("Payment must be REQUESTED to mark successful");
+        }
 
-	@Override
-	public Payment identity() {
-		return Payment.builder()
-				.amount(Amount.IDENTITY)
-				.eventLog(EventLog.IDENTITY)
-				.paymentProcessor(PaymentProcessor.IDENTITY)
-				.ref(PaymentRef.IDENTITY)
-				.build();
-	}
+        state = State.SUCCESSFUL;
+        $eventLog.publish(new Topic("payments"), new PaymentSuccessfulEvent(ref));
+    }
 
-	@Override
-	public BiFunction<Payment, PaymentEvent, Payment> accumulatorFunction() {
-		return new Accumulator();
-	}
+    public void markFailed() {
+        if (state != State.REQUESTED) {
+            throw new IllegalStateException("Payment must be REQUESTED to mark failed");
+        }
 
-	@Override
-	public PaymentState state() {
-		return new PaymentState(state, amount, ref);
-	}
+        state = State.FAILED;
+        $eventLog.publish(new Topic("payments"), new PaymentFailedEvent(ref));
+    }
 
-	public enum State {
-		NEW, REQUESTED, SUCCESSFUL, FAILED
-	}
+    @Override
+    public Payment identity() {
+        return Payment.builder()
+                .amount(Amount.IDENTITY)
+                .eventLog(EventLog.IDENTITY)
+                .paymentProcessor(PaymentProcessor.IDENTITY)
+                .ref(PaymentRef.IDENTITY)
+                .build();
+    }
 
-	static class Accumulator implements BiFunction<Payment, PaymentEvent, Payment> {
-		@Override
-		public Payment apply(Payment payment, PaymentEvent paymentEvent) {
-			if (paymentEvent instanceof PaymentAddedEvent) {
-				PaymentAddedEvent pae = (PaymentAddedEvent) paymentEvent;
-				return Payment.from(pae.getRef(), pae.getPaymentState());
-			} else if (paymentEvent instanceof PaymentRequestedEvent) {
-				payment.state = State.REQUESTED;
-				return payment;
-			} else if (paymentEvent instanceof PaymentSuccessfulEvent) {
-				payment.state = State.SUCCESSFUL;
-				return payment;
-			} else if (paymentEvent instanceof PaymentFailedEvent) {
-				payment.state = State.FAILED;
-				return payment;
-			}
-			throw new IllegalStateException("Unknown PaymentEvent");
-		}
-	}
+    @Override
+    public BiFunction<Payment, PaymentEvent, Payment> accumulatorFunction() {
+        return new Accumulator();
+    }
 
-	private static Payment from(PaymentRef ref, PaymentState paymentState) {
-		//TODO: cleanup
-		PaymentProcessor dummy = new PaymentProcessor() {
-			@Override
-			public void request(Payment payment) {
+    @Override
+    public PaymentState state() {
+        return new PaymentState(state, amount, ref);
+    }
 
-			}
-		};
+    public enum State {
+        NEW, REQUESTED, SUCCESSFUL, FAILED
+    }
 
-		Payment payment = new Payment(paymentState.getAmount(), dummy, paymentState.getRef(), new InProcessEventLog());
-		payment.state = paymentState.getState();
-		return payment;
-	}
+    static class Accumulator implements BiFunction<Payment, PaymentEvent, Payment> {
+        @Override
+        public Payment apply(Payment payment, PaymentEvent paymentEvent) {
+            if (paymentEvent instanceof PaymentAddedEvent) {
+                PaymentAddedEvent pae = (PaymentAddedEvent) paymentEvent;
+                return Payment.from(pae.getRef(), pae.getPaymentState());
+            } else if (paymentEvent instanceof PaymentRequestedEvent) {
+                payment.state = State.REQUESTED;
+                return payment;
+            } else if (paymentEvent instanceof PaymentSuccessfulEvent) {
+                payment.state = State.SUCCESSFUL;
+                return payment;
+            } else if (paymentEvent instanceof PaymentFailedEvent) {
+                payment.state = State.FAILED;
+                return payment;
+            }
+            throw new IllegalStateException("Unknown PaymentEvent");
+        }
+    }
 
-	@Value
-	static class PaymentState implements AggregateState {
+    @Value
+    static class PaymentState implements AggregateState {
 
-		private State state;
-		private Amount amount;
-		private PaymentRef ref;
+        private State state;
+        private Amount amount;
+        private PaymentRef ref;
 
-		public PaymentState(State state, Amount amount, PaymentRef ref) {
-			this.state = state;
-			this.amount = amount;
-			this.ref = ref;
-		}
+        public PaymentState(State state, Amount amount, PaymentRef ref) {
+            this.state = state;
+            this.amount = amount;
+            this.ref = ref;
+        }
 
-		State getState() {
-			return state;
-		}
+        State getState() {
+            return state;
+        }
 
-		Amount getAmount() {
-			return amount;
-		}
+        Amount getAmount() {
+            return amount;
+        }
 
-		PaymentRef getRef() {
-			return ref;
-		}
-	}
+        PaymentRef getRef() {
+            return ref;
+        }
+    }
 
 }

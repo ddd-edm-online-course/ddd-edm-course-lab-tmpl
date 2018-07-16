@@ -7,5 +7,5 @@ import lombok.Value;
  */
 @Value
 class OrderPaidEvent implements OrderEvent {
-	OrderRef ref;
+    OrderRef ref;
 }

@@ -8,18 +8,18 @@ import lombok.Value;
  */
 @Value
 public class PaymentProcessedEvent implements Event, PaymentEvent {
-	PaymentRef ref;
-	Status status;
+    PaymentRef ref;
+    Status status;
 
-	public boolean isSuccessful() {
-		return status == Status.SUCCESSFUL;
-	}
+    public boolean isSuccessful() {
+        return status == Status.SUCCESSFUL;
+    }
 
-	public boolean isFailed() {
-		return status == Status.FAILED;
-	}
+    public boolean isFailed() {
+        return status == Status.FAILED;
+    }
 
-	public enum Status {
-		SUCCESSFUL, FAILED
-	}
+    public enum Status {
+        SUCCESSFUL, FAILED
+    }
 }

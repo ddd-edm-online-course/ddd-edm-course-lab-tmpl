@@ -1,14 +1,16 @@
 package com.mattstine.dddworkshop.pizzashop.ordering;
 
-import com.mattstine.dddworkshop.pizzashop.payments.PaymentRef; /**
+import com.mattstine.dddworkshop.pizzashop.payments.PaymentRef;
+
+/**
  * @author Matt Stine
  */
 interface OrderRepository {
-	void add(Order order);
+    void add(Order order);
 
-	OrderRef nextIdentity();
+    OrderRef nextIdentity();
 
-	Order findByRef(OrderRef ref);
+    Order findByRef(OrderRef ref);
 
-	Order findByPaymentRef(PaymentRef paymentRef);
+    Order findByPaymentRef(PaymentRef paymentRef);
 }

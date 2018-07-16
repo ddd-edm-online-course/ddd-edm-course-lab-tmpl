@@ -8,5 +8,5 @@ import lombok.Value;
  */
 @Value
 class PaymentFailedEvent implements Event, PaymentEvent {
-	PaymentRef ref;
+    PaymentRef ref;
 }

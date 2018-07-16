@@ -9,19 +9,19 @@ import lombok.Value;
  */
 @Value
 public class OrderRef implements Ref {
-	public static final OrderRef IDENTITY = new OrderRef("");
-	String reference;
+    public static final OrderRef IDENTITY = new OrderRef("");
+    String reference;
 
-	public OrderRef() {
-		reference = RefStringGenerator.generateRefString();
-	}
+    public OrderRef() {
+        reference = RefStringGenerator.generateRefString();
+    }
 
-	public OrderRef(String reference) {
-		this.reference = reference;
-	}
+    public OrderRef(String reference) {
+        this.reference = reference;
+    }
 
-	@Override
-	public String getReference() {
-		return reference;
-	}
+    @Override
+    public String getReference() {
+        return reference;
+    }
 }

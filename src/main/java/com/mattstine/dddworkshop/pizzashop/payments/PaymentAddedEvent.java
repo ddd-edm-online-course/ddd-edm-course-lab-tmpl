@@ -8,6 +8,6 @@ import lombok.Value;
  */
 @Value
 class PaymentAddedEvent implements PaymentEvent, RepositoryAddEvent {
-	PaymentRef ref;
-	Payment.PaymentState paymentState;
+    PaymentRef ref;
+    Payment.PaymentState paymentState;
 }

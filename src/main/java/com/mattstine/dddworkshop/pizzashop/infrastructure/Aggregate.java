@@ -1,7 +1,5 @@
 package com.mattstine.dddworkshop.pizzashop.infrastructure;
 
-import lombok.experimental.NonFinal;
-
 import java.util.function.BiFunction;
 
 /**
@@ -9,19 +7,19 @@ import java.util.function.BiFunction;
  */
 public abstract class Aggregate<E extends AggregateEvent> {
 
-	protected EventLog $eventLog;
+    protected EventLog $eventLog;
 
-	public abstract Aggregate identity();
+    public abstract Aggregate identity();
 
-	public abstract BiFunction<Aggregate, E, Aggregate> accumulatorFunction();
+    public abstract BiFunction<Aggregate, E, Aggregate> accumulatorFunction();
 
-	public abstract Ref getRef();
+    public abstract Ref getRef();
 
-	public abstract AggregateState state();
+    public abstract AggregateState state();
 
-	void setEventLog(EventLog eventLog) {
-		this.$eventLog = eventLog;
-	}
+    void setEventLog(EventLog eventLog) {
+        this.$eventLog = eventLog;
+    }
 
 
 }

@@ -9,33 +9,33 @@ import java.util.List;
  */
 public interface EventLog {
 
-	void publish(Topic topic, Event event);
+    EventLog IDENTITY = new EventLog() {
+        @Override
+        public void publish(Topic topic, Event event) {
+            throw new NotImplementedException();
+        }
 
-	void subscribe(Topic topic, EventHandler handler);
+        @Override
+        public void subscribe(Topic topic, EventHandler handler) {
+            throw new NotImplementedException();
+        }
 
-	int getNumberOfSubscribers(Topic topic);
+        @Override
+        public int getNumberOfSubscribers(Topic topic) {
+            return -1;
+        }
 
-	List<Event> eventsBy(Topic topic);
+        @Override
+        public List<Event> eventsBy(Topic topic) {
+            return null;
+        }
+    };
 
-	EventLog IDENTITY = new EventLog() {
-		@Override
-		public void publish(Topic topic, Event event) {
-			throw new NotImplementedException();
-		}
+    void publish(Topic topic, Event event);
 
-		@Override
-		public void subscribe(Topic topic, EventHandler handler) {
-			throw new NotImplementedException();
-		}
+    void subscribe(Topic topic, EventHandler handler);
 
-		@Override
-		public int getNumberOfSubscribers(Topic topic) {
-			return -1;
-		}
+    int getNumberOfSubscribers(Topic topic);
 
-		@Override
-		public List<Event> eventsBy(Topic topic) {
-			return null;
-		}
-	};
+    List<Event> eventsBy(Topic topic);
 }

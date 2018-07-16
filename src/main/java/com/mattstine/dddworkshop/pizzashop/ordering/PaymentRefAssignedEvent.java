@@ -8,6 +8,6 @@ import lombok.Value;
  */
 @Value
 class PaymentRefAssignedEvent implements OrderEvent {
-	OrderRef ref;
-	PaymentRef paymentRef;
+    OrderRef ref;
+    PaymentRef paymentRef;
 }

@@ -1,7 +1,9 @@
 package com.mattstine.dddworkshop.pizzashop.ordering;
 
 import com.mattstine.dddworkshop.pizzashop.infrastructure.Amount;
-import lombok.*;
+import lombok.Builder;
+import lombok.NonNull;
+import lombok.Value;
 
 /**
  * @author Matt Stine
@@ -9,28 +11,28 @@ import lombok.*;
 @Value
 public class Pizza {
 
-	Size size;
+    Size size;
 
-	@Builder
-	private Pizza(@NonNull Size size) {
-		this.size = size;
-	}
+    @Builder
+    private Pizza(@NonNull Size size) {
+        this.size = size;
+    }
 
-	public Amount calculatePrice() {
-		return size.getPrice();
-	}
+    public Amount calculatePrice() {
+        return size.getPrice();
+    }
 
-	public enum Size {
-		MEDIUM(Amount.of(6,0));
+    public enum Size {
+        MEDIUM(Amount.of(6, 0));
 
-		final Amount price;
+        final Amount price;
 
-		Size(Amount price) {
-			this.price = price;
-		}
+        Size(Amount price) {
+            this.price = price;
+        }
 
-		public Amount getPrice() {
-			return price;
-		}
-	}
+        public Amount getPrice() {
+            return price;
+        }
+    }
 }

@@ -8,6 +8,6 @@ import lombok.Value;
  */
 @Value
 class OrderAddedEvent implements OrderEvent, RepositoryAddEvent {
-	OrderRef ref;
-	Order.OrderState orderState;
+    OrderRef ref;
+    Order.OrderState orderState;
 }
