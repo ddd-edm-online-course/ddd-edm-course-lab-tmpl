@@ -1,13 +1,25 @@
 package com.mattstine.dddworkshop.pizzashop.infrastructure;
 
+import lombok.AccessLevel;
+import lombok.NoArgsConstructor;
+
 import java.util.*;
 
 /**
  * @author Matt Stine
  */
+@NoArgsConstructor(access = AccessLevel.PRIVATE)
 public class InProcessEventLog implements EventLog {
     private final Map<Topic, Set<EventHandler>> topics = new HashMap<>();
     private final Map<Topic, List<Event>> events = new HashMap<>();
+    private static InProcessEventLog singleton;
+
+    public static InProcessEventLog instance() {
+        if (singleton == null) {
+            singleton = new InProcessEventLog();
+        }
+        return singleton;
+    }
 
     @Override
     public void publish(Topic topic, Event event) {
@@ -32,5 +44,9 @@ public class InProcessEventLog implements EventLog {
     @Override
     public List<Event> eventsBy(Topic topic) {
         return this.events.computeIfAbsent(topic, k -> new ArrayList<>());
+    }
+
+    public void purgeSubscribers() {
+        this.topics.clear();
     }
 }

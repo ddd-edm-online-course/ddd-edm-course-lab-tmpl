@@ -1,6 +1,7 @@
 package com.mattstine.dddworkshop.pizzashop.infrastructure;
 
 import lombok.Value;
+import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -10,11 +11,16 @@ import static org.assertj.core.api.Assertions.assertThat;
  * @author Matt Stine
  */
 public class InProcessEventLogTests {
-    private EventLog eventLog;
+    private InProcessEventLog eventLog;
 
     @Before
     public void setUp() {
-        this.eventLog = new InProcessEventLog();
+        this.eventLog = InProcessEventLog.instance();
+    }
+
+    @After
+    public void tearDown() {
+        this.eventLog.purgeSubscribers();
     }
 
     @Test

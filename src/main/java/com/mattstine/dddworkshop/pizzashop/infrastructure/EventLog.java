@@ -1,5 +1,6 @@
 package com.mattstine.dddworkshop.pizzashop.infrastructure;
 
+
 import sun.reflect.generics.reflectiveObjects.NotImplementedException;
 
 import java.util.List;
@@ -38,4 +39,5 @@ public interface EventLog {
     int getNumberOfSubscribers(Topic topic);
 
     List<Event> eventsBy(Topic topic);
+
 }

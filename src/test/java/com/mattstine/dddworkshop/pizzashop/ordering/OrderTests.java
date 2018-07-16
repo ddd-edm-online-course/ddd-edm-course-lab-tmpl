@@ -143,7 +143,7 @@ public class OrderTests {
     }
 
     @Test
-    public void accumulator_apply_with_orderAddedEvent_returns_embedded_order() {
+    public void accumulator_apply_with_orderAddedEvent_returns_order() {
         OrderAddedEvent orderAddedEvent = new OrderAddedEvent(ref, order.state());
         assertThat(order.accumulatorFunction().apply(order.identity(), orderAddedEvent)).isEqualTo(order);
     }

@@ -3,6 +3,7 @@ package com.mattstine.dddworkshop.pizzashop.ordering;
 import com.mattstine.dddworkshop.pizzashop.infrastructure.*;
 import com.mattstine.dddworkshop.pizzashop.payments.PaymentRef;
 import lombok.Builder;
+import lombok.EqualsAndHashCode;
 import lombok.NonNull;
 import lombok.Value;
 import lombok.experimental.NonFinal;
@@ -14,7 +15,9 @@ import java.util.function.BiFunction;
 /**
  * @author Matt Stine
  */
+@SuppressWarnings("DefaultAnnotationParam")
 @Value
+@EqualsAndHashCode(callSuper = false)
 public class Order extends Aggregate {
     Type type;
     OrderRef ref;
@@ -37,6 +40,7 @@ public class Order extends Aggregate {
     /**
      * Private no-args ctor to support reflection ONLY.
      */
+    @SuppressWarnings("unused")
     private Order() {
         this.type = null;
         this.ref = null;
@@ -45,7 +49,7 @@ public class Order extends Aggregate {
     }
 
     private static Order from(OrderRef ref, OrderState state) {
-        Order order = new Order(state.getType(), new InProcessEventLog(), ref);
+        Order order = new Order(state.getType(), InProcessEventLog.instance(), ref);
         order.state = state.getState();
         return order;
     }
@@ -75,7 +79,13 @@ public class Order extends Aggregate {
             throw new IllegalStateException("Can only add Pizza to NEW Order");
         }
 
+        /*
+         * condition only occurs if reflection supporting
+         * private no-args constructor is used
+         */
+        assert this.pizzas != null;
         this.pizzas.add(pizza);
+
         $eventLog.publish(new Topic("ordering"), new PizzaAddedEvent(ref, pizza));
     }
 
@@ -84,6 +94,11 @@ public class Order extends Aggregate {
             throw new IllegalStateException("Can only submit NEW Order");
         }
 
+        /*
+         * condition only occurs if reflection supporting
+         * private no-args constructor is used
+         */
+        assert this.pizzas != null;
         if (this.pizzas.isEmpty()) {
             throw new IllegalStateException("Cannot submit Order without at least one Pizza");
         }
@@ -98,6 +113,11 @@ public class Order extends Aggregate {
     }
 
     public Amount calculatePrice() {
+        /*
+         * condition only occurs if reflection supporting
+         * private no-args constructor is used
+         */
+        assert this.pizzas != null;
         return this.pizzas.stream()
                 .map(Pizza::calculatePrice)
                 .reduce(Amount.of(0, 0), Amount::plus);
@@ -148,7 +168,14 @@ public class Order extends Aggregate {
                 return Order.from(oae.getRef(), oae.getOrderState());
             } else if (orderEvent instanceof PizzaAddedEvent) {
                 PizzaAddedEvent pae = (PizzaAddedEvent) orderEvent;
+
+                /*
+                 * condition only occurs if reflection supporting
+                 * private no-args constructor is used
+                 */
+                assert order.pizzas != null;
                 order.pizzas.add(pae.getPizza());
+
                 return order;
             } else if (orderEvent instanceof OrderSubmittedEvent) {
                 order.state = State.SUBMITTED;
@@ -166,12 +193,12 @@ public class Order extends Aggregate {
     }
 
     @Value
-    public static class OrderState implements AggregateState {
+    static class OrderState implements AggregateState {
 
         private State state;
         private Type type;
 
-        public OrderState(State state, Type type) {
+        OrderState(State state, Type type) {
             this.state = state;
             this.type = type;
         }

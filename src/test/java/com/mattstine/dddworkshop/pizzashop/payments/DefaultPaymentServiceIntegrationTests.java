@@ -1,9 +1,9 @@
 package com.mattstine.dddworkshop.pizzashop.payments;
 
 import com.mattstine.dddworkshop.pizzashop.infrastructure.Amount;
-import com.mattstine.dddworkshop.pizzashop.infrastructure.EventLog;
 import com.mattstine.dddworkshop.pizzashop.infrastructure.InProcessEventLog;
 import com.mattstine.dddworkshop.pizzashop.infrastructure.Topic;
+import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -15,13 +15,13 @@ import static org.mockito.Mockito.mock;
  */
 public class DefaultPaymentServiceIntegrationTests {
 
-    private EventLog eventLog;
+    private InProcessEventLog eventLog;
     private PaymentRepository repository;
     private PaymentProcessor processor;
 
     @Before
     public void setUp() {
-        eventLog = new InProcessEventLog();
+        eventLog = InProcessEventLog.instance();
         repository = new InProcessEventSourcedPaymentRepository(eventLog,
                 PaymentRef.class,
                 Payment.class,
@@ -32,6 +32,11 @@ public class DefaultPaymentServiceIntegrationTests {
         new DefaultPaymentService(processor,
                 repository,
                 eventLog);
+    }
+
+    @After
+    public void tearDown() {
+        this.eventLog.purgeSubscribers();
     }
 
     @Test

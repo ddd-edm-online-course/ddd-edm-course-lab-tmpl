@@ -2,6 +2,7 @@ package com.mattstine.dddworkshop.pizzashop.payments;
 
 import com.mattstine.dddworkshop.pizzashop.infrastructure.*;
 import lombok.Builder;
+import lombok.EqualsAndHashCode;
 import lombok.NonNull;
 import lombok.Value;
 import lombok.experimental.NonFinal;
@@ -11,7 +12,9 @@ import java.util.function.BiFunction;
 /**
  * @author Matt Stine
  */
+@SuppressWarnings("DefaultAnnotationParam")
 @Value
+@EqualsAndHashCode(callSuper = false)
 public class Payment extends Aggregate {
     Amount amount;
     PaymentProcessor $paymentProcessor;
@@ -35,22 +38,20 @@ public class Payment extends Aggregate {
     /**
      * Private no-args ctor to support reflection ONLY.
      */
+    @SuppressWarnings("unused")
     private Payment() {
         this.amount = null;
         this.$paymentProcessor = null;
         this.ref = null;
     }
 
-    private static Payment from(PaymentRef ref, PaymentState paymentState) {
+    private static Payment from(PaymentState paymentState) {
         //TODO: cleanup
-        PaymentProcessor dummy = new PaymentProcessor() {
-            @Override
-            public void request(Payment payment) {
+        PaymentProcessor dummy = payment -> {
 
-            }
         };
 
-        Payment payment = new Payment(paymentState.getAmount(), dummy, paymentState.getRef(), new InProcessEventLog());
+        Payment payment = new Payment(paymentState.getAmount(), dummy, paymentState.getRef(), InProcessEventLog.instance());
         payment.state = paymentState.getState();
         return payment;
     }
@@ -76,7 +77,13 @@ public class Payment extends Aggregate {
             throw new IllegalStateException("Payment must be NEW to request payment");
         }
 
+        /*
+         * condition only occurs if reflection supporting
+         * private no-args constructor is used
+         */
+        assert $paymentProcessor != null;
         $paymentProcessor.request(this);
+
         state = State.REQUESTED;
         $eventLog.publish(new Topic("payments"), new PaymentRequestedEvent(this.ref));
     }
@@ -128,7 +135,7 @@ public class Payment extends Aggregate {
         public Payment apply(Payment payment, PaymentEvent paymentEvent) {
             if (paymentEvent instanceof PaymentAddedEvent) {
                 PaymentAddedEvent pae = (PaymentAddedEvent) paymentEvent;
-                return Payment.from(pae.getRef(), pae.getPaymentState());
+                return Payment.from(pae.getPaymentState());
             } else if (paymentEvent instanceof PaymentRequestedEvent) {
                 payment.state = State.REQUESTED;
                 return payment;
@@ -150,7 +157,7 @@ public class Payment extends Aggregate {
         private Amount amount;
         private PaymentRef ref;
 
-        public PaymentState(State state, Amount amount, PaymentRef ref) {
+        PaymentState(State state, Amount amount, PaymentRef ref) {
             this.state = state;
             this.amount = amount;
             this.ref = ref;

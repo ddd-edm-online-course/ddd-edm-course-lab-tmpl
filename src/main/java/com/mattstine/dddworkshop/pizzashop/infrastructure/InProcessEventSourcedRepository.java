@@ -8,7 +8,7 @@ import java.util.function.BiFunction;
 /**
  * @author Matt Stine
  */
-@SuppressWarnings("unchecked")
+@SuppressWarnings({"unchecked", "unused"})
 public class InProcessEventSourcedRepository<K extends Ref, T extends Aggregate, S extends AggregateState, U extends AggregateEvent, V extends RepositoryAddEvent> {
     private final EventLog eventLog;
     private final Class<K> refClass;
@@ -39,7 +39,6 @@ public class InProcessEventSourcedRepository<K extends Ref, T extends Aggregate,
         }
     }
 
-    //TODO: add does not exhibit "collection-like" behavior...
     public void add(T aggregateInstance) {
         V addEvent;
 

@@ -22,7 +22,7 @@ public class OrderServiceIntegrationTests {
 
     @Before
     public void setUp() {
-        eventLog = new InProcessEventLog();
+        eventLog = InProcessEventLog.instance();
         repository = new InProcessEventSourcedOrderRepository(eventLog,
                 OrderRef.class,
                 Order.class,

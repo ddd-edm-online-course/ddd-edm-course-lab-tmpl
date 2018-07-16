@@ -13,6 +13,7 @@ public class Pizza {
 
     Size size;
 
+    @SuppressWarnings("unused")
     @Builder
     private Pizza(@NonNull Size size) {
         this.size = size;

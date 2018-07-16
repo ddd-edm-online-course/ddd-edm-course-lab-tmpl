@@ -1,9 +1,9 @@
 package com.mattstine.dddworkshop.pizzashop.ordering;
 
-import com.mattstine.dddworkshop.pizzashop.infrastructure.EventLog;
 import com.mattstine.dddworkshop.pizzashop.infrastructure.InProcessEventLog;
 import com.mattstine.dddworkshop.pizzashop.infrastructure.Topic;
 import com.mattstine.dddworkshop.pizzashop.payments.PaymentRef;
+import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -17,10 +17,11 @@ public class InProcessEventSourcedOrderRepositoryIntegrationTests {
     private OrderRepository repository;
     private Order order;
     private Pizza pizza;
+    private InProcessEventLog eventLog;
 
     @Before
     public void setUp() {
-        EventLog eventLog = new InProcessEventLog();
+        eventLog = InProcessEventLog.instance();
         repository = new InProcessEventSourcedOrderRepository(eventLog,
                 OrderRef.class,
                 Order.class,
@@ -34,6 +35,11 @@ public class InProcessEventSourcedOrderRepositoryIntegrationTests {
                 .eventLog(eventLog)
                 .build();
         pizza = Pizza.builder().size(Pizza.Size.MEDIUM).build();
+    }
+
+    @After
+    public void tearDown() {
+        this.eventLog.purgeSubscribers();
     }
 
     @Test
