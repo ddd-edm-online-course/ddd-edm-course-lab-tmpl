@@ -54,8 +54,18 @@ public class InProcessEventSourcedRepository<K extends Ref, T extends Aggregate,
 	}
 
 	public T findByRef(K ref) {
-		//TODO: Smelly...so much reflection to get the accumulator and identity!
+		T aggregate = eventLog.eventsBy(topic)
+				.stream()
+				.map(e -> (U) e)
+				.filter(e -> ref.equals(e.getRef()))
+				.reduce(retrieveIdentityValue(),
+						retrieveAccumulatorFunction(),
+						(t, t2) -> null);
+		aggregate.setEventLog(eventLog);
+		return aggregate;
+	}
 
+	private BiFunction<T, U, T> retrieveAccumulatorFunction() {
 		BiFunction<T, U, T> accumulatorFunction;
 		try {
 			T aggregateInstance = aggregateClass.newInstance();
@@ -66,7 +76,10 @@ public class InProcessEventSourcedRepository<K extends Ref, T extends Aggregate,
 		} catch (InstantiationException e) {
 			throw new IllegalStateException("Cannot instantiate class: " + aggregateClass.getName(), e);
 		}
+		return accumulatorFunction;
+	}
 
+	private T retrieveIdentityValue() {
 		T identity;
 		try {
 			T aggregateInstance = aggregateClass.newInstance();
@@ -78,15 +91,6 @@ public class InProcessEventSourcedRepository<K extends Ref, T extends Aggregate,
 			e.printStackTrace();
 			throw new IllegalStateException("Cannot instantiate class: " + aggregateClass.getName(), e);
 		}
-
-		T aggregate = eventLog.eventsBy(topic)
-				.stream()
-				.map(e -> (U) e)
-				.filter(e -> ref.equals(e.getRef()))
-				.reduce(identity,
-						accumulatorFunction,
-						(t, t2) -> null);
-		aggregate.setEventLog(eventLog);
-		return aggregate;
+		return identity;
 	}
 }
