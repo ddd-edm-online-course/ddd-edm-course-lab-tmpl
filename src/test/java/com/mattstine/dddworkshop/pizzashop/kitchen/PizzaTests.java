@@ -17,14 +17,18 @@ public class PizzaTests {
 
     private Pizza pizza;
     private EventLog eventLog;
+    private PizzaRef ref;
+    private OrderRef orderRef;
 
     @Before
     public void setUp() {
         eventLog = mock(EventLog.class);
+        ref = new PizzaRef();
+        orderRef = new OrderRef();
         pizza = Pizza.builder()
-                .ref(new PizzaRef())
+                .ref(ref)
                 .eventLog(eventLog)
-                .orderRef(new OrderRef())
+                .orderRef(orderRef)
                 .size(Pizza.Size.MEDIUM)
                 .build();
     }
@@ -128,6 +132,104 @@ public class PizzaTests {
         verify(eventLog).publish(eq(new Topic("pizzas")), isA(PizzaPrepFinishedEvent.class));
         verify(eventLog).publish(eq(new Topic("pizzas")), isA(PizzaBakeStartedEvent.class));
         verify(eventLog).publish(eq(new Topic("pizzas")), isA(PizzaBakeFinishedEvent.class));
+    }
+
+    @Test
+    public void accumulator_apply_with_pizzaAddedEvent_returns_pizza() {
+        PizzaAddedEvent pizzaAddedEvent = new PizzaAddedEvent(ref, pizza.state());
+        assertThat(pizza.accumulatorFunction().apply(pizza.identity(), pizzaAddedEvent)).isEqualTo(pizza);
+    }
+
+    @Test
+    public void accumulator_apply_with_pizzaPrepStartedEvent_returns_pizza() {
+        Pizza expectedPizza = Pizza.builder()
+                .ref(ref)
+                .eventLog(eventLog)
+                .orderRef(orderRef)
+                .size(Pizza.Size.MEDIUM)
+                .build();
+        expectedPizza.startPrep();
+
+        PizzaAddedEvent pizzaAddedEvent = new PizzaAddedEvent(ref, pizza.state());
+        pizza.accumulatorFunction().apply(pizza.identity(), pizzaAddedEvent);
+
+        PizzaPrepStartedEvent pizzaPrepStartedEvent = new PizzaPrepStartedEvent(ref);
+        assertThat(pizza.accumulatorFunction().apply(pizza, pizzaPrepStartedEvent)).isEqualTo(expectedPizza);
+    }
+
+    @Test
+    public void accumulator_apply_with_pizzaPrepFinishedEvent_returns_pizza() {
+        Pizza expectedPizza = Pizza.builder()
+                .ref(ref)
+                .eventLog(eventLog)
+                .orderRef(orderRef)
+                .size(Pizza.Size.MEDIUM)
+                .build();
+        expectedPizza.startPrep();
+        expectedPizza.finishPrep();
+
+        PizzaAddedEvent pizzaAddedEvent = new PizzaAddedEvent(ref, pizza.state());
+        pizza.accumulatorFunction().apply(pizza.identity(), pizzaAddedEvent);
+
+        PizzaPrepStartedEvent pizzaPrepStartedEvent = new PizzaPrepStartedEvent(ref);
+        pizza.accumulatorFunction().apply(pizza, pizzaPrepStartedEvent);
+
+        PizzaPrepFinishedEvent pizzaPrepFinishedEvent = new PizzaPrepFinishedEvent(ref);
+        assertThat(pizza.accumulatorFunction().apply(pizza, pizzaPrepFinishedEvent)).isEqualTo(expectedPizza);
+    }
+
+    @Test
+    public void accumulator_apply_with_pizzaBakeStartedEvent_returns_pizza() {
+        Pizza expectedPizza = Pizza.builder()
+                .ref(ref)
+                .eventLog(eventLog)
+                .orderRef(orderRef)
+                .size(Pizza.Size.MEDIUM)
+                .build();
+        expectedPizza.startPrep();
+        expectedPizza.finishPrep();
+        expectedPizza.startBake();
+
+        PizzaAddedEvent pizzaAddedEvent = new PizzaAddedEvent(ref, pizza.state());
+        pizza.accumulatorFunction().apply(pizza.identity(), pizzaAddedEvent);
+
+        PizzaPrepStartedEvent pizzaPrepStartedEvent = new PizzaPrepStartedEvent(ref);
+        pizza.accumulatorFunction().apply(pizza, pizzaPrepStartedEvent);
+
+        PizzaPrepFinishedEvent pizzaPrepFinishedEvent = new PizzaPrepFinishedEvent(ref);
+        pizza.accumulatorFunction().apply(pizza, pizzaPrepFinishedEvent);
+
+        PizzaBakeStartedEvent pizzaBakeStartedEvent = new PizzaBakeStartedEvent(ref);
+        assertThat(pizza.accumulatorFunction().apply(pizza, pizzaBakeStartedEvent)).isEqualTo(expectedPizza);
+    }
+
+    @Test
+    public void accumulator_apply_with_pizzaBakeFinishedEvent_returns_pizza() {
+        Pizza expectedPizza = Pizza.builder()
+                .ref(ref)
+                .eventLog(eventLog)
+                .orderRef(orderRef)
+                .size(Pizza.Size.MEDIUM)
+                .build();
+        expectedPizza.startPrep();
+        expectedPizza.finishPrep();
+        expectedPizza.startBake();
+        expectedPizza.finishBake();
+
+        PizzaAddedEvent pizzaAddedEvent = new PizzaAddedEvent(ref, pizza.state());
+        pizza.accumulatorFunction().apply(pizza.identity(), pizzaAddedEvent);
+
+        PizzaPrepStartedEvent pizzaPrepStartedEvent = new PizzaPrepStartedEvent(ref);
+        pizza.accumulatorFunction().apply(pizza, pizzaPrepStartedEvent);
+
+        PizzaPrepFinishedEvent pizzaPrepFinishedEvent = new PizzaPrepFinishedEvent(ref);
+        pizza.accumulatorFunction().apply(pizza, pizzaPrepFinishedEvent);
+
+        PizzaBakeStartedEvent pizzaBakeStartedEvent = new PizzaBakeStartedEvent(ref);
+        pizza.accumulatorFunction().apply(pizza, pizzaBakeStartedEvent);
+
+        PizzaBakeFinishedEvent pizzaBakeFinishedEvent = new PizzaBakeFinishedEvent(ref);
+        assertThat(pizza.accumulatorFunction().apply(pizza, pizzaBakeFinishedEvent)).isEqualTo(expectedPizza);
     }
 }
 

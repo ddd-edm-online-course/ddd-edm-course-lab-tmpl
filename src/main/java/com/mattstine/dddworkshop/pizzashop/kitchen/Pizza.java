@@ -1,5 +1,6 @@
 package com.mattstine.dddworkshop.pizzashop.kitchen;
 
+import com.mattstine.dddworkshop.pizzashop.infrastructure.events.adapters.InProcessEventLog;
 import com.mattstine.dddworkshop.pizzashop.infrastructure.events.ports.EventLog;
 import com.mattstine.dddworkshop.pizzashop.infrastructure.events.ports.Topic;
 import com.mattstine.dddworkshop.pizzashop.infrastructure.repository.ports.Aggregate;
@@ -34,6 +35,16 @@ public final class Pizza implements Aggregate {
         this.state = State.NEW;
     }
 
+    /**
+     * Private no-args ctor to support reflection ONLY.
+     */
+    private Pizza() {
+        this.ref = null;
+        this.orderRef = null;
+        this.size = null;
+        this.$eventLog = null;
+    }
+
     public boolean isNew() {
         return this.state == State.NEW;
     }
@@ -44,7 +55,7 @@ public final class Pizza implements Aggregate {
         }
 
         this.state = State.PREPPING;
-        $eventLog.publish(new Topic("pizzas"), new PizzaPrepStartedEvent());
+        $eventLog.publish(new Topic("pizzas"), new PizzaPrepStartedEvent(ref));
     }
 
     public boolean isPrepping() {
@@ -57,7 +68,7 @@ public final class Pizza implements Aggregate {
         }
 
         this.state = State.PREPPED;
-        $eventLog.publish(new Topic("pizzas"), new PizzaPrepFinishedEvent());
+        $eventLog.publish(new Topic("pizzas"), new PizzaPrepFinishedEvent(ref));
     }
 
     public boolean hasFinishedPrep() {
@@ -70,7 +81,7 @@ public final class Pizza implements Aggregate {
         }
 
         this.state = State.BAKING;
-        $eventLog.publish(new Topic("pizzas"), new PizzaBakeStartedEvent());
+        $eventLog.publish(new Topic("pizzas"), new PizzaBakeStartedEvent(ref));
     }
 
     public boolean isBaking() {
@@ -83,7 +94,7 @@ public final class Pizza implements Aggregate {
         }
 
         this.state = State.BAKED;
-        $eventLog.publish(new Topic("pizzas"), new PizzaBakeFinishedEvent());
+        $eventLog.publish(new Topic("pizzas"), new PizzaBakeFinishedEvent(ref));
     }
 
     public boolean hasFinishedBaking() {
@@ -91,13 +102,18 @@ public final class Pizza implements Aggregate {
     }
 
     @Override
-    public Aggregate identity() {
-        return null;
+    public Pizza identity() {
+        return Pizza.builder()
+                .ref(PizzaRef.IDENTITY)
+                .eventLog(EventLog.IDENTITY)
+                .orderRef(OrderRef.IDENTITY)
+                .size(Size.IDENTITY)
+                .build();
     }
 
     @Override
-    public BiFunction accumulatorFunction() {
-        return null;
+    public BiFunction<Pizza, PizzaEvent, Pizza> accumulatorFunction() {
+        return new Accumulator();
     }
 
     @Override
@@ -107,11 +123,11 @@ public final class Pizza implements Aggregate {
 
     @Override
     public PizzaState state() {
-        return new PizzaState(ref, orderRef, size, state);
+        return new PizzaState(ref, orderRef, size);
     }
 
     enum Size {
-        SMALL, MEDIUM, LARGE
+        IDENTITY, SMALL, MEDIUM, LARGE
     }
 
     enum State {
@@ -122,12 +138,40 @@ public final class Pizza implements Aggregate {
         BAKED
     }
 
+    static class Accumulator implements BiFunction<Pizza, PizzaEvent, Pizza> {
+
+        @Override
+        public Pizza apply(Pizza pizza, PizzaEvent pizzaEvent) {
+            if (pizzaEvent instanceof PizzaAddedEvent) {
+                PizzaAddedEvent pae = (PizzaAddedEvent) pizzaEvent;
+                PizzaState pizzaState = pae.getState();
+                return Pizza.builder()
+                        .size(pizzaState.getSize())
+                        .ref(pizzaState.getRef())
+                        .orderRef(pizzaState.getOrderRef())
+                        .eventLog(InProcessEventLog.instance())
+                        .build();
+            } else if (pizzaEvent instanceof PizzaPrepStartedEvent) {
+                pizza.state = State.PREPPING;
+                return pizza;
+            } else if (pizzaEvent instanceof PizzaPrepFinishedEvent) {
+                pizza.state = State.PREPPED;
+                return pizza;
+            } else if (pizzaEvent instanceof PizzaBakeStartedEvent) {
+                pizza.state = State.BAKING;
+                return pizza;
+            } else if (pizzaEvent instanceof PizzaBakeFinishedEvent) {
+                pizza.state = State.BAKED;
+                return pizza;
+            }
+            throw new IllegalStateException("Unknown PizzaEvent");
+        }
+    }
 
     @Value
     static class PizzaState implements AggregateState {
         PizzaRef ref;
         OrderRef orderRef;
         Size size;
-        State state;
     }
 }

@@ -13,6 +13,7 @@ public final class KitchenOrderRef implements Ref {
         reference = RefStringGenerator.generateRefString();
     }
 
+    @SuppressWarnings("SameParameterValue")
     private KitchenOrderRef(String reference) {
         this.reference = reference;
     }

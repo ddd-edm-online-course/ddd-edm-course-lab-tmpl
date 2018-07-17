@@ -4,7 +4,7 @@ import com.mattstine.dddworkshop.pizzashop.infrastructure.repository.ports.Repos
 import lombok.Value;
 
 @Value
-final class PizzaAddedEvent implements RepositoryAddEvent {
+final class PizzaAddedEvent implements PizzaEvent, RepositoryAddEvent {
     PizzaRef ref;
     Pizza.PizzaState state;
 }
