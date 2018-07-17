@@ -23,7 +23,7 @@ import java.util.function.BiFunction;
 @SuppressWarnings("DefaultAnnotationParam")
 @Value
 @EqualsAndHashCode(callSuper = false)
-public class Order implements Aggregate {
+public final class Order implements Aggregate {
     Type type;
     EventLog $eventLog;
     OrderRef ref;

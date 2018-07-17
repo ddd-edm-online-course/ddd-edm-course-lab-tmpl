@@ -9,7 +9,7 @@ import lombok.Value;
  * @author Matt Stine
  */
 @Value
-public class Pizza {
+final class Pizza {
 
     Size size;
 

@@ -6,6 +6,6 @@ import lombok.Value;
  * @author Matt Stine
  */
 @Value
-public class Topic {
+public final class Topic {
     String name;
 }

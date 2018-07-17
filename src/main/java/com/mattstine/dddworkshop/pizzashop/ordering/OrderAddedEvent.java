@@ -7,7 +7,7 @@ import lombok.Value;
  * @author Matt Stine
  */
 @Value
-class OrderAddedEvent implements OrderEvent, RepositoryAddEvent {
+final class OrderAddedEvent implements OrderEvent, RepositoryAddEvent {
     OrderRef ref;
     Order.OrderState orderState;
 }

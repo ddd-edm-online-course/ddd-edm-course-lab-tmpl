@@ -20,7 +20,7 @@ import java.util.function.BiFunction;
 @SuppressWarnings("DefaultAnnotationParam")
 @Value
 @EqualsAndHashCode(callSuper = false)
-public class Payment implements Aggregate {
+public final class Payment implements Aggregate {
     Amount amount;
     PaymentProcessor $paymentProcessor;
     PaymentRef ref;

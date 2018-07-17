@@ -36,7 +36,7 @@ public abstract class InProcessEventSourcedRepository<K extends Ref, T extends A
     }
 
     @Override
-    public K nextIdentity() {
+    public final K nextIdentity() {
         try {
             Constructor ctor = refClass.getConstructor();
             return (K) ctor.newInstance();
@@ -46,7 +46,7 @@ public abstract class InProcessEventSourcedRepository<K extends Ref, T extends A
     }
 
     @Override
-    public void add(T aggregateInstance) {
+    public final void add(T aggregateInstance) {
         V addEvent;
 
         try {
@@ -61,7 +61,7 @@ public abstract class InProcessEventSourcedRepository<K extends Ref, T extends A
     }
 
     @Override
-    public T findByRef(K ref) {
+    public final T findByRef(K ref) {
         return eventLog.eventsBy(topic)
                 .stream()
                 .map(e -> (U) e)

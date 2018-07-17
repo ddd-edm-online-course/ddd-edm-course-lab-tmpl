@@ -11,7 +11,7 @@ import java.util.Map;
 /**
  * @author Matt Stine
  */
-public class InProcessEventSourcedOrderRepository extends InProcessEventSourcedRepository<OrderRef, Order, Order.OrderState, OrderEvent, OrderAddedEvent> implements OrderRepository {
+final class InProcessEventSourcedOrderRepository extends InProcessEventSourcedRepository<OrderRef, Order, Order.OrderState, OrderEvent, OrderAddedEvent> implements OrderRepository {
 
     private final Map<PaymentRef, OrderRef> paymentRefToOrderRef;
 

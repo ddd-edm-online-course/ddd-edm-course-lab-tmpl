@@ -6,6 +6,6 @@ import lombok.Value;
  * @author Matt Stine
  */
 @Value
-public class PaymentSuccessfulEvent implements PaymentEvent {
+public final class PaymentSuccessfulEvent implements PaymentEvent {
     PaymentRef ref;
 }

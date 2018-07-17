@@ -8,7 +8,7 @@ import lombok.Value;
  * @author Matt Stine
  */
 @Value
-public class PaymentRef implements Ref {
+public final class PaymentRef implements Ref {
     public static final PaymentRef IDENTITY = new PaymentRef("");
     String reference;
 

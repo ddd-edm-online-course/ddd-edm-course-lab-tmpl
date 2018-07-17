@@ -7,7 +7,7 @@ import lombok.Value;
  * @author Matt Stine
  */
 @Value
-class PaymentAddedEvent implements PaymentEvent, RepositoryAddEvent {
+final class PaymentAddedEvent implements PaymentEvent, RepositoryAddEvent {
     PaymentRef ref;
     Payment.PaymentState paymentState;
 }

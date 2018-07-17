@@ -13,7 +13,7 @@ import java.util.*;
  * @author Matt Stine
  */
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
-public class InProcessEventLog implements EventLog {
+public final class InProcessEventLog implements EventLog {
     private final Map<Topic, Set<EventHandler>> topics = new HashMap<>();
     private final Map<Topic, List<Event>> events = new HashMap<>();
     private static InProcessEventLog singleton;

@@ -9,7 +9,7 @@ import lombok.Value;
  */
 @Value
 @AllArgsConstructor(access = AccessLevel.PRIVATE)
-public class Amount {
+public final class Amount {
     public static Amount IDENTITY = Amount.of(0, 0);
     int dollars;
     int cents;

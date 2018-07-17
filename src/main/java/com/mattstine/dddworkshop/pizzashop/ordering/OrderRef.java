@@ -8,7 +8,7 @@ import lombok.Value;
  * @author Matt Stine
  */
 @Value
-public class OrderRef implements Ref {
+public final class OrderRef implements Ref {
     public static final OrderRef IDENTITY = new OrderRef("");
     String reference;
 
