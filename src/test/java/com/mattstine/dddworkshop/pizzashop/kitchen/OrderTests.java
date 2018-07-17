@@ -264,4 +264,106 @@ public class OrderTests {
         OrderBakeStartedEvent orderBakeStartedEvent = new OrderBakeStartedEvent(ref);
         assertThat(order.accumulatorFunction().apply(order, orderBakeStartedEvent)).isEqualTo(expectedOrder);
     }
+
+    @Test
+    public void accumulator_apply_with_orderBakeStartedFinished_returns_order() {
+        Order expectedOrder = Order.builder()
+                .ref(ref)
+                .orderRef(orderRef)
+                .eventLog(eventLog)
+                .pizza(Order.Pizza.builder().size(Order.Pizza.Size.SMALL).build())
+                .pizza(Order.Pizza.builder().size(Order.Pizza.Size.MEDIUM).build())
+                .build();
+        expectedOrder.startPrep();
+        expectedOrder.finishPrep();
+        expectedOrder.startBake();
+        expectedOrder.finishBake();
+
+        OrderAddedEvent orderAddedEvent = new OrderAddedEvent(ref, order.state());
+        order.accumulatorFunction().apply(order.identity(), orderAddedEvent);
+
+        OrderPrepStartedEvent orderPrepStartedEvent = new OrderPrepStartedEvent(ref);
+        order.accumulatorFunction().apply(order, orderPrepStartedEvent);
+
+        OrderPrepFinishedEvent orderPrepFinishedEvent = new OrderPrepFinishedEvent(ref);
+        order.accumulatorFunction().apply(order, orderPrepFinishedEvent);
+
+        OrderBakeStartedEvent orderBakeStartedEvent = new OrderBakeStartedEvent(ref);
+        order.accumulatorFunction().apply(order, orderBakeStartedEvent);
+
+        OrderBakeFinishedEvent orderBakeFinishedEvent = new OrderBakeFinishedEvent(ref);
+        assertThat(order.accumulatorFunction().apply(order, orderBakeFinishedEvent)).isEqualTo(expectedOrder);
+    }
+
+    @Test
+    public void accumulator_apply_with_orderAssemblyStartedEvent_returns_order() {
+        Order expectedOrder = Order.builder()
+                .ref(ref)
+                .orderRef(orderRef)
+                .eventLog(eventLog)
+                .pizza(Order.Pizza.builder().size(Order.Pizza.Size.SMALL).build())
+                .pizza(Order.Pizza.builder().size(Order.Pizza.Size.MEDIUM).build())
+                .build();
+        expectedOrder.startPrep();
+        expectedOrder.finishPrep();
+        expectedOrder.startBake();
+        expectedOrder.finishBake();
+        expectedOrder.startAssembly();
+
+        OrderAddedEvent orderAddedEvent = new OrderAddedEvent(ref, order.state());
+        order.accumulatorFunction().apply(order.identity(), orderAddedEvent);
+
+        OrderPrepStartedEvent orderPrepStartedEvent = new OrderPrepStartedEvent(ref);
+        order.accumulatorFunction().apply(order, orderPrepStartedEvent);
+
+        OrderPrepFinishedEvent orderPrepFinishedEvent = new OrderPrepFinishedEvent(ref);
+        order.accumulatorFunction().apply(order, orderPrepFinishedEvent);
+
+        OrderBakeStartedEvent orderBakeStartedEvent = new OrderBakeStartedEvent(ref);
+        order.accumulatorFunction().apply(order, orderBakeStartedEvent);
+
+        OrderBakeFinishedEvent orderBakeFinishedEvent = new OrderBakeFinishedEvent(ref);
+        order.accumulatorFunction().apply(order, orderBakeFinishedEvent);
+
+        OrderAssemblyStartedEvent orderAssemblyStartedEvent = new OrderAssemblyStartedEvent(ref);
+        assertThat(order.accumulatorFunction().apply(order, orderAssemblyStartedEvent)).isEqualTo(expectedOrder);
+    }
+
+    @Test
+    public void accumulator_apply_with_orderAssemblyFinishedEvent_returns_order() {
+        Order expectedOrder = Order.builder()
+                .ref(ref)
+                .orderRef(orderRef)
+                .eventLog(eventLog)
+                .pizza(Order.Pizza.builder().size(Order.Pizza.Size.SMALL).build())
+                .pizza(Order.Pizza.builder().size(Order.Pizza.Size.MEDIUM).build())
+                .build();
+        expectedOrder.startPrep();
+        expectedOrder.finishPrep();
+        expectedOrder.startBake();
+        expectedOrder.finishBake();
+        expectedOrder.startAssembly();
+        expectedOrder.finishAssembly();
+
+        OrderAddedEvent orderAddedEvent = new OrderAddedEvent(ref, order.state());
+        order.accumulatorFunction().apply(order.identity(), orderAddedEvent);
+
+        OrderPrepStartedEvent orderPrepStartedEvent = new OrderPrepStartedEvent(ref);
+        order.accumulatorFunction().apply(order, orderPrepStartedEvent);
+
+        OrderPrepFinishedEvent orderPrepFinishedEvent = new OrderPrepFinishedEvent(ref);
+        order.accumulatorFunction().apply(order, orderPrepFinishedEvent);
+
+        OrderBakeStartedEvent orderBakeStartedEvent = new OrderBakeStartedEvent(ref);
+        order.accumulatorFunction().apply(order, orderBakeStartedEvent);
+
+        OrderBakeFinishedEvent orderBakeFinishedEvent = new OrderBakeFinishedEvent(ref);
+        order.accumulatorFunction().apply(order, orderBakeFinishedEvent);
+
+        OrderAssemblyStartedEvent orderAssemblyStartedEvent = new OrderAssemblyStartedEvent(ref);
+        order.accumulatorFunction().apply(order, orderAssemblyStartedEvent);
+
+        OrderAssemblyFinishedEvent orderAssemblyFinishedEvent = new OrderAssemblyFinishedEvent(ref);
+        assertThat(order.accumulatorFunction().apply(order, orderAssemblyFinishedEvent)).isEqualTo(expectedOrder);
+    }
 }

@@ -10,7 +10,6 @@ import java.util.Arrays;
 import java.util.Collections;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.*;
 
 public class InProcessEventSourcedOrderRepositoryTests {
@@ -73,4 +72,93 @@ public class InProcessEventSourcedOrderRepositoryTests {
         assertThat(repository.findByRef(ref)).isEqualTo(order);
     }
 
+    @Test
+    public void find_by_ref_hydrates_prepped_order() {
+        repository.add(order);
+        order.startPrep();
+        order.finishPrep();
+
+        when(eventLog.eventsBy(new Topic("kitchen_orders")))
+                .thenReturn(Arrays.asList(new OrderAddedEvent(ref, order.state()),
+                        new OrderPrepStartedEvent(ref),
+                        new OrderPrepFinishedEvent(ref)));
+
+        assertThat(repository.findByRef(ref)).isEqualTo(order);
+    }
+
+    @Test
+    public void find_by_ref_hydrates_baking_order() {
+        repository.add(order);
+        order.startPrep();
+        order.finishPrep();
+        order.startBake();
+
+        when(eventLog.eventsBy(new Topic("kitchen_orders")))
+                .thenReturn(Arrays.asList(new OrderAddedEvent(ref, order.state()),
+                        new OrderPrepStartedEvent(ref),
+                        new OrderPrepFinishedEvent(ref),
+                        new OrderBakeStartedEvent(ref)));
+
+        assertThat(repository.findByRef(ref)).isEqualTo(order);
+    }
+
+    @Test
+    public void find_by_ref_hydrates_baked_order() {
+        repository.add(order);
+        order.startPrep();
+        order.finishPrep();
+        order.startBake();
+        order.finishBake();
+
+        when(eventLog.eventsBy(new Topic("kitchen_orders")))
+                .thenReturn(Arrays.asList(new OrderAddedEvent(ref, order.state()),
+                        new OrderPrepStartedEvent(ref),
+                        new OrderPrepFinishedEvent(ref),
+                        new OrderBakeStartedEvent(ref),
+                        new OrderBakeFinishedEvent(ref)));
+
+        assertThat(repository.findByRef(ref)).isEqualTo(order);
+    }
+
+    @Test
+    public void find_by_ref_hydrates_assembling_order() {
+        repository.add(order);
+        order.startPrep();
+        order.finishPrep();
+        order.startBake();
+        order.finishBake();
+        order.startAssembly();
+
+        when(eventLog.eventsBy(new Topic("kitchen_orders")))
+                .thenReturn(Arrays.asList(new OrderAddedEvent(ref, order.state()),
+                        new OrderPrepStartedEvent(ref),
+                        new OrderPrepFinishedEvent(ref),
+                        new OrderBakeStartedEvent(ref),
+                        new OrderBakeFinishedEvent(ref),
+                        new OrderAssemblyStartedEvent(ref)));
+
+        assertThat(repository.findByRef(ref)).isEqualTo(order);
+    }
+
+    @Test
+    public void find_by_ref_hydrates_assembled_order() {
+        repository.add(order);
+        order.startPrep();
+        order.finishPrep();
+        order.startBake();
+        order.finishBake();
+        order.startAssembly();
+        order.finishAssembly();
+
+        when(eventLog.eventsBy(new Topic("kitchen_orders")))
+                .thenReturn(Arrays.asList(new OrderAddedEvent(ref, order.state()),
+                        new OrderPrepStartedEvent(ref),
+                        new OrderPrepFinishedEvent(ref),
+                        new OrderBakeStartedEvent(ref),
+                        new OrderBakeFinishedEvent(ref),
+                        new OrderAssemblyStartedEvent(ref),
+                        new OrderAssemblyFinishedEvent(ref)));
+
+        assertThat(repository.findByRef(ref)).isEqualTo(order);
+    }
 }
