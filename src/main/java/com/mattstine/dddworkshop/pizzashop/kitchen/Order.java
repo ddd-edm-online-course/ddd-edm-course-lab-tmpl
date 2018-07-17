@@ -109,4 +109,21 @@ public final class Order {
         ASSEMBLING,
         ASSEMBLED
     }
+
+    /*
+     * Pizza Value Object for Order Details Only
+     */
+    @Value
+    static final class Pizza {
+        Size size;
+
+        @Builder
+        private Pizza(@NonNull Size size) {
+            this.size = size;
+        }
+
+        enum Size {
+            SMALL, MEDIUM, LARGE
+        }
+    }
 }

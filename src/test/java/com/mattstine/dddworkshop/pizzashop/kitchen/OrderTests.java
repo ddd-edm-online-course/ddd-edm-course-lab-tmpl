@@ -15,8 +15,8 @@ public class OrderTests {
     public void setUp() {
         order = Order.builder()
                 .ref(new OrderRef())
-                .pizza(Pizza.builder().size(Pizza.Size.SMALL).build())
-                .pizza(Pizza.builder().size(Pizza.Size.MEDIUM).build())
+                .pizza(Order.Pizza.builder().size(Order.Pizza.Size.SMALL).build())
+                .pizza(Order.Pizza.builder().size(Order.Pizza.Size.MEDIUM).build())
                 .build();
     }
 
@@ -67,6 +67,7 @@ public class OrderTests {
         assertThatIllegalStateException().isThrownBy(order::startBake);
     }
 
+    @SuppressWarnings("Duplicates")
     @Test
     public void finish_order_bake_updates_state() {
         order.startPrep();
