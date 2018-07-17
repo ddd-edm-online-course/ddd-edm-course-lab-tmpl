@@ -1,13 +1,17 @@
 package com.mattstine.dddworkshop.pizzashop.kitchen;
 
 import com.mattstine.dddworkshop.pizzashop.infrastructure.events.ports.EventLog;
+import com.mattstine.dddworkshop.pizzashop.infrastructure.events.ports.Topic;
 import com.mattstine.dddworkshop.pizzashop.ordering.OrderRef;
 import org.junit.Before;
 import org.junit.Test;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatIllegalStateException;
+import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.ArgumentMatchers.isA;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.verify;
 
 public class OrderTests {
 
@@ -116,5 +120,71 @@ public class OrderTests {
     @Test
     public void only_assembling_order_can_finish_assembly() {
         assertThatIllegalStateException().isThrownBy(order::finishAssembly);
+    }
+
+    @Test
+    public void start_order_prep_fires_event() {
+        order.startPrep();
+        verify(eventLog).publish(eq(new Topic("kitchen_orders")), isA(OrderPrepStartedEvent.class));
+    }
+
+    @Test
+    public void finish_order_prep_fires_event() {
+        order.startPrep();
+        order.finishPrep();
+        verify(eventLog).publish(eq(new Topic("kitchen_orders")), isA(OrderPrepStartedEvent.class));
+        verify(eventLog).publish(eq(new Topic("kitchen_orders")), isA(OrderPrepFinishedEvent.class));
+    }
+
+    @Test
+    public void start_order_bake_fires_event() {
+        order.startPrep();
+        order.finishPrep();
+        order.startBake();
+        verify(eventLog).publish(eq(new Topic("kitchen_orders")), isA(OrderPrepStartedEvent.class));
+        verify(eventLog).publish(eq(new Topic("kitchen_orders")), isA(OrderPrepFinishedEvent.class));
+        verify(eventLog).publish(eq(new Topic("kitchen_orders")), isA(OrderBakeStartedEvent.class));
+    }
+
+    @Test
+    public void finish_order_bake_fires_event() {
+        order.startPrep();
+        order.finishPrep();
+        order.startBake();
+        order.finishBake();
+        verify(eventLog).publish(eq(new Topic("kitchen_orders")), isA(OrderPrepStartedEvent.class));
+        verify(eventLog).publish(eq(new Topic("kitchen_orders")), isA(OrderPrepFinishedEvent.class));
+        verify(eventLog).publish(eq(new Topic("kitchen_orders")), isA(OrderBakeStartedEvent.class));
+        verify(eventLog).publish(eq(new Topic("kitchen_orders")), isA(OrderBakeFinishedEvent.class));
+    }
+
+    @Test
+    public void start_order_assembly_fires_event() {
+        order.startPrep();
+        order.finishPrep();
+        order.startBake();
+        order.finishBake();
+        order.startAssembly();
+        verify(eventLog).publish(eq(new Topic("kitchen_orders")), isA(OrderPrepStartedEvent.class));
+        verify(eventLog).publish(eq(new Topic("kitchen_orders")), isA(OrderPrepFinishedEvent.class));
+        verify(eventLog).publish(eq(new Topic("kitchen_orders")), isA(OrderBakeStartedEvent.class));
+        verify(eventLog).publish(eq(new Topic("kitchen_orders")), isA(OrderBakeFinishedEvent.class));
+        verify(eventLog).publish(eq(new Topic("kitchen_orders")), isA(OrderAssemblyStartedEvent.class));
+    }
+
+    @Test
+    public void finish_order_assembly_fires_event() {
+        order.startPrep();
+        order.finishPrep();
+        order.startBake();
+        order.finishBake();
+        order.startAssembly();
+        order.finishAssembly();
+        verify(eventLog).publish(eq(new Topic("kitchen_orders")), isA(OrderPrepStartedEvent.class));
+        verify(eventLog).publish(eq(new Topic("kitchen_orders")), isA(OrderPrepFinishedEvent.class));
+        verify(eventLog).publish(eq(new Topic("kitchen_orders")), isA(OrderBakeStartedEvent.class));
+        verify(eventLog).publish(eq(new Topic("kitchen_orders")), isA(OrderBakeFinishedEvent.class));
+        verify(eventLog).publish(eq(new Topic("kitchen_orders")), isA(OrderAssemblyStartedEvent.class));
+        verify(eventLog).publish(eq(new Topic("kitchen_orders")), isA(OrderAssemblyFinishedEvent.class));
     }
 }

@@ -1,6 +1,7 @@
 package com.mattstine.dddworkshop.pizzashop.kitchen;
 
 import com.mattstine.dddworkshop.pizzashop.infrastructure.events.ports.EventLog;
+import com.mattstine.dddworkshop.pizzashop.infrastructure.events.ports.Topic;
 import com.mattstine.dddworkshop.pizzashop.ordering.OrderRef;
 import lombok.Builder;
 import lombok.NonNull;
@@ -37,6 +38,7 @@ public final class Order {
         }
 
         this.state = State.PREPPING;
+        $eventLog.publish(new Topic("kitchen_orders"), new OrderPrepStartedEvent());
     }
 
     public boolean isPrepping() {
@@ -49,6 +51,7 @@ public final class Order {
         }
 
         this.state = State.PREPPED;
+        $eventLog.publish(new Topic("kitchen_orders"), new OrderPrepFinishedEvent());
     }
 
     public boolean hasFinishedPrep() {
@@ -61,6 +64,7 @@ public final class Order {
         }
 
         this.state = State.BAKING;
+        $eventLog.publish(new Topic("kitchen_orders"), new OrderBakeStartedEvent());
     }
 
     public boolean isBaking() {
@@ -73,6 +77,7 @@ public final class Order {
         }
 
         this.state = State.BAKED;
+        $eventLog.publish(new Topic("kitchen_orders"), new OrderBakeFinishedEvent());
     }
 
     public boolean hasFinishedBaking() {
@@ -85,6 +90,7 @@ public final class Order {
         }
 
         this.state = State.ASSEMBLING;
+        $eventLog.publish(new Topic("kitchen_orders"), new OrderAssemblyStartedEvent());
     }
 
     public boolean hasStartedAssembly() {
@@ -97,6 +103,7 @@ public final class Order {
         }
 
         this.state = State.ASSEMBLED;
+        $eventLog.publish(new Topic("kitchen_orders"), new OrderAssemblyFinishedEvent());
     }
 
     public boolean hasFinishedAssembly() {
