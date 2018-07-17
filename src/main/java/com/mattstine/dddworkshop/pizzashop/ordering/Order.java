@@ -48,13 +48,6 @@ public class Order extends Aggregate {
         this.$eventLog = null;
     }
 
-    //TODO: direct reference to singleton factory...
-    private static Order from(OrderRef ref, OrderState state) {
-        Order order = new Order(state.getType(), InProcessEventLog.instance(), ref);
-        order.state = state.getState();
-        return order;
-    }
-
     public boolean isPickupOrder() {
         return this.type == Type.PICKUP;
     }
@@ -149,7 +142,7 @@ public class Order extends Aggregate {
 
     @Override
     public OrderState state() {
-        return new OrderState(state, type);
+        return new OrderState(ref, state, type);
     }
 
     enum State {
@@ -166,7 +159,12 @@ public class Order extends Aggregate {
         public Order apply(Order order, OrderEvent orderEvent) {
             if (orderEvent instanceof OrderAddedEvent) {
                 OrderAddedEvent oae = (OrderAddedEvent) orderEvent;
-                return Order.from(oae.getRef(), oae.getOrderState());
+                OrderState orderState = oae.getOrderState();
+                return Order.builder()
+                        .eventLog(InProcessEventLog.instance())
+                        .ref(orderState.getOrderRef())
+                        .type(orderState.getType())
+                        .build();
             } else if (orderEvent instanceof PizzaAddedEvent) {
                 PizzaAddedEvent pae = (PizzaAddedEvent) orderEvent;
 
@@ -195,21 +193,8 @@ public class Order extends Aggregate {
 
     @Value
     static class OrderState implements AggregateState {
-
-        private State state;
-        private Type type;
-
-        OrderState(State state, Type type) {
-            this.state = state;
-            this.type = type;
-        }
-
-        State getState() {
-            return state;
-        }
-
-        Type getType() {
-            return type;
-        }
+        OrderRef orderRef;
+        State state;
+        Type type;
     }
 }

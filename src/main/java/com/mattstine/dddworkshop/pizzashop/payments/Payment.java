@@ -45,13 +45,6 @@ public class Payment extends Aggregate {
         this.ref = null;
     }
 
-    // TODO: direct reference to singleton factories...
-    private static Payment from(PaymentState paymentState) {
-        Payment payment = new Payment(paymentState.getAmount(), DummyPaymentProcessor.instance(), paymentState.getRef(), InProcessEventLog.instance());
-        payment.state = paymentState.getState();
-        return payment;
-    }
-
     public boolean isNew() {
         return state == State.NEW;
     }
@@ -131,7 +124,13 @@ public class Payment extends Aggregate {
         public Payment apply(Payment payment, PaymentEvent paymentEvent) {
             if (paymentEvent instanceof PaymentAddedEvent) {
                 PaymentAddedEvent pae = (PaymentAddedEvent) paymentEvent;
-                return Payment.from(pae.getPaymentState());
+                PaymentState paymentState = pae.getPaymentState();
+                return Payment.builder()
+                        .amount(paymentState.getAmount())
+                        .paymentProcessor(DummyPaymentProcessor.instance())
+                        .ref(paymentState.getRef())
+                        .eventLog(InProcessEventLog.instance())
+                        .build();
             } else if (paymentEvent instanceof PaymentRequestedEvent) {
                 payment.state = State.REQUESTED;
                 return payment;
@@ -148,28 +147,9 @@ public class Payment extends Aggregate {
 
     @Value
     static class PaymentState implements AggregateState {
-
-        private State state;
-        private Amount amount;
-        private PaymentRef ref;
-
-        PaymentState(State state, Amount amount, PaymentRef ref) {
-            this.state = state;
-            this.amount = amount;
-            this.ref = ref;
-        }
-
-        State getState() {
-            return state;
-        }
-
-        Amount getAmount() {
-            return amount;
-        }
-
-        PaymentRef getRef() {
-            return ref;
-        }
+        State state;
+        Amount amount;
+        PaymentRef ref;
     }
 
 }

@@ -68,7 +68,6 @@ public class InProcessEventSourcedOrderRepositoryTests {
     public void find_by_ref_hydrates_order_with_added_pizza() {
         repository.add(order);
         order.addPizza(pizza);
-        order.submit();
 
         when(eventLog.eventsBy(new Topic("ordering")))
                 .thenReturn(Arrays.asList(new OrderAddedEvent(ref, order.state()),
