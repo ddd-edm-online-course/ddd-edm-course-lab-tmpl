@@ -22,6 +22,7 @@ public class PizzaTests {
     public void setUp() {
         eventLog = mock(EventLog.class);
         pizza = Pizza.builder()
+                .ref(new PizzaRef())
                 .eventLog(eventLog)
                 .orderRef(new OrderRef())
                 .size(Pizza.Size.MEDIUM)

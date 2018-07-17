@@ -2,14 +2,19 @@ package com.mattstine.dddworkshop.pizzashop.kitchen;
 
 import com.mattstine.dddworkshop.pizzashop.infrastructure.events.ports.EventLog;
 import com.mattstine.dddworkshop.pizzashop.infrastructure.events.ports.Topic;
+import com.mattstine.dddworkshop.pizzashop.infrastructure.repository.ports.Aggregate;
+import com.mattstine.dddworkshop.pizzashop.infrastructure.repository.ports.AggregateState;
 import com.mattstine.dddworkshop.pizzashop.ordering.OrderRef;
 import lombok.Builder;
 import lombok.NonNull;
 import lombok.Value;
 import lombok.experimental.NonFinal;
 
+import java.util.function.BiFunction;
+
 @Value
-public final class Pizza {
+public final class Pizza implements Aggregate {
+    PizzaRef ref;
     OrderRef orderRef;
     Size size;
     EventLog $eventLog;
@@ -17,9 +22,11 @@ public final class Pizza {
     State state;
 
     @Builder
-    private Pizza(@NonNull OrderRef orderRef,
+    private Pizza(@NonNull PizzaRef ref,
+                  @NonNull OrderRef orderRef,
                   @NonNull Size size,
                   @NonNull EventLog eventLog) {
+        this.ref = ref;
         this.orderRef = orderRef;
         this.size = size;
         this.$eventLog = eventLog;
@@ -83,6 +90,26 @@ public final class Pizza {
         return this.state == State.BAKED;
     }
 
+    @Override
+    public Aggregate identity() {
+        return null;
+    }
+
+    @Override
+    public BiFunction accumulatorFunction() {
+        return null;
+    }
+
+    @Override
+    public PizzaRef getRef() {
+        return ref;
+    }
+
+    @Override
+    public PizzaState state() {
+        return new PizzaState(ref, orderRef, size, state);
+    }
+
     enum Size {
         SMALL, MEDIUM, LARGE
     }
@@ -93,5 +120,14 @@ public final class Pizza {
         PREPPED,
         BAKING,
         BAKED
+    }
+
+
+    @Value
+    static class PizzaState implements AggregateState {
+        PizzaRef ref;
+        OrderRef orderRef;
+        Size size;
+        State state;
     }
 }
