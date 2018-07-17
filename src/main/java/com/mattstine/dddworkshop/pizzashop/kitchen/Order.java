@@ -1,5 +1,6 @@
 package com.mattstine.dddworkshop.pizzashop.kitchen;
 
+import com.mattstine.dddworkshop.pizzashop.infrastructure.events.adapters.InProcessEventLog;
 import com.mattstine.dddworkshop.pizzashop.infrastructure.events.ports.EventLog;
 import com.mattstine.dddworkshop.pizzashop.infrastructure.events.ports.Topic;
 import com.mattstine.dddworkshop.pizzashop.infrastructure.repository.ports.Aggregate;
@@ -31,6 +32,16 @@ public final class Order implements Aggregate {
         this.$eventLog = eventLog;
 
         this.state = State.NEW;
+    }
+
+    /**
+     * Private no-args ctor to support reflection ONLY.
+     */
+    private Order() {
+        this.ref = null;
+        this.orderRef = null;
+        this.pizzas = null;
+        this.$eventLog = null;
     }
 
     public boolean isNew() {
@@ -117,17 +128,21 @@ public final class Order implements Aggregate {
 
     @Override
     public Order identity() {
-        return null;
+        return Order.builder()
+                .ref(KitchenOrderRef.IDENTITY)
+                .orderRef(OrderRef.IDENTITY)
+                .eventLog(EventLog.IDENTITY)
+                .build();
     }
 
     @Override
-    public BiFunction accumulatorFunction() {
-        return null;
+    public BiFunction<Order, OrderEvent, Order> accumulatorFunction() {
+        return new Accumulator();
     }
 
     @Override
     public OrderState state() {
-        return new OrderState(ref, orderRef, pizzas, state);
+        return new OrderState(ref, orderRef, pizzas);
     }
 
     enum State {
@@ -138,6 +153,24 @@ public final class Order implements Aggregate {
         BAKED,
         ASSEMBLING,
         ASSEMBLED
+    }
+
+    static class Accumulator implements BiFunction<Order, OrderEvent, Order> {
+
+        @Override
+        public Order apply(Order order, OrderEvent orderEvent) {
+            if (orderEvent instanceof OrderAddedEvent) {
+                OrderAddedEvent oae = (OrderAddedEvent) orderEvent;
+                OrderState orderState = oae.getState();
+                return Order.builder()
+                        .eventLog(InProcessEventLog.instance())
+                        .ref(orderState.getRef())
+                        .orderRef(orderState.getOrderRef())
+                        .pizzas(orderState.getPizzas())
+                        .build();
+            }
+            throw new IllegalStateException("Unknown OrderEvent");
+        }
     }
 
     /*
@@ -162,6 +195,5 @@ public final class Order implements Aggregate {
         KitchenOrderRef ref;
         OrderRef orderRef;
         List<Pizza> pizzas;
-        State state;
     }
 }

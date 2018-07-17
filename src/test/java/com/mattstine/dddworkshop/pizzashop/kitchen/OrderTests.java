@@ -17,12 +17,14 @@ public class OrderTests {
 
     private Order order;
     private EventLog eventLog;
+    private KitchenOrderRef ref;
 
     @Before
     public void setUp() {
         eventLog = mock(EventLog.class);
+        ref = new KitchenOrderRef();
         order = Order.builder()
-                .ref(new KitchenOrderRef())
+                .ref(ref)
                 .orderRef(new OrderRef())
                 .eventLog(eventLog)
                 .pizza(Order.Pizza.builder().size(Order.Pizza.Size.SMALL).build())
@@ -187,5 +189,11 @@ public class OrderTests {
         verify(eventLog).publish(eq(new Topic("kitchen_orders")), isA(OrderBakeFinishedEvent.class));
         verify(eventLog).publish(eq(new Topic("kitchen_orders")), isA(OrderAssemblyStartedEvent.class));
         verify(eventLog).publish(eq(new Topic("kitchen_orders")), isA(OrderAssemblyFinishedEvent.class));
+    }
+
+    @Test
+    public void accumulator_apply_with_orderAddedEvent_returns_order() {
+        OrderAddedEvent orderAddedEvent = new OrderAddedEvent(ref, order.state());
+        assertThat(order.accumulatorFunction().apply(order.identity(), orderAddedEvent)).isEqualTo(order);
     }
 }
