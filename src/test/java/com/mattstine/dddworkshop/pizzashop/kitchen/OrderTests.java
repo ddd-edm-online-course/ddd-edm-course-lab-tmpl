@@ -1,20 +1,25 @@
 package com.mattstine.dddworkshop.pizzashop.kitchen;
 
+import com.mattstine.dddworkshop.pizzashop.infrastructure.events.ports.EventLog;
 import com.mattstine.dddworkshop.pizzashop.ordering.OrderRef;
 import org.junit.Before;
 import org.junit.Test;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatIllegalStateException;
+import static org.mockito.Mockito.mock;
 
 public class OrderTests {
 
     private Order order;
+    private EventLog eventLog;
 
     @Before
     public void setUp() {
+        eventLog = mock(EventLog.class);
         order = Order.builder()
                 .ref(new OrderRef())
+                .eventLog(eventLog)
                 .pizza(Order.Pizza.builder().size(Order.Pizza.Size.SMALL).build())
                 .pizza(Order.Pizza.builder().size(Order.Pizza.Size.MEDIUM).build())
                 .build();

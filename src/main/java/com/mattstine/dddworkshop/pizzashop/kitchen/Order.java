@@ -1,5 +1,6 @@
 package com.mattstine.dddworkshop.pizzashop.kitchen;
 
+import com.mattstine.dddworkshop.pizzashop.infrastructure.events.ports.EventLog;
 import com.mattstine.dddworkshop.pizzashop.ordering.OrderRef;
 import lombok.Builder;
 import lombok.NonNull;
@@ -13,13 +14,15 @@ import java.util.List;
 public final class Order {
     OrderRef ref;
     List<Pizza> pizzas;
+    EventLog $eventLog;
     @NonFinal
     State state;
 
     @Builder
-    private Order(@NonNull OrderRef ref, @Singular List<Pizza> pizzas) {
+    private Order(@NonNull OrderRef ref, @Singular List<Pizza> pizzas, @NonNull EventLog eventLog) {
         this.ref = ref;
         this.pizzas = pizzas;
+        this.$eventLog = eventLog;
 
         this.state = State.NEW;
     }

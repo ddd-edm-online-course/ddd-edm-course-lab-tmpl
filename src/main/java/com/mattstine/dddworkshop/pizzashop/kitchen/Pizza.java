@@ -1,5 +1,7 @@
 package com.mattstine.dddworkshop.pizzashop.kitchen;
 
+import com.mattstine.dddworkshop.pizzashop.infrastructure.events.ports.EventLog;
+import com.mattstine.dddworkshop.pizzashop.infrastructure.events.ports.Topic;
 import com.mattstine.dddworkshop.pizzashop.ordering.OrderRef;
 import lombok.Builder;
 import lombok.NonNull;
@@ -10,13 +12,17 @@ import lombok.experimental.NonFinal;
 public final class Pizza {
     OrderRef orderRef;
     Size size;
+    EventLog $eventLog;
     @NonFinal
     State state;
 
     @Builder
-    private Pizza(@NonNull OrderRef orderRef, @NonNull Size size) {
+    private Pizza(@NonNull OrderRef orderRef,
+                  @NonNull Size size,
+                  @NonNull EventLog eventLog) {
         this.orderRef = orderRef;
         this.size = size;
+        this.$eventLog = eventLog;
 
         this.state = State.NEW;
     }
@@ -31,6 +37,7 @@ public final class Pizza {
         }
 
         this.state = State.PREPPING;
+        $eventLog.publish(new Topic("pizzas"), new PizzaPrepStartedEvent());
     }
 
     public boolean isPrepping() {
@@ -43,6 +50,7 @@ public final class Pizza {
         }
 
         this.state = State.PREPPED;
+        $eventLog.publish(new Topic("pizzas"), new PizzaPrepFinishedEvent());
     }
 
     public boolean hasFinishedPrep() {
@@ -55,6 +63,7 @@ public final class Pizza {
         }
 
         this.state = State.BAKING;
+        $eventLog.publish(new Topic("pizzas"), new PizzaBakeStartedEvent());
     }
 
     public boolean isBaking() {
@@ -67,6 +76,7 @@ public final class Pizza {
         }
 
         this.state = State.BAKED;
+        $eventLog.publish(new Topic("pizzas"), new PizzaBakeFinishedEvent());
     }
 
     public boolean hasFinishedBaking() {
