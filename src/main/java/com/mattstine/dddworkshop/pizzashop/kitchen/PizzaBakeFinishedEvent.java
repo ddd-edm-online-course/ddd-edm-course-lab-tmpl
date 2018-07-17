@@ -1,6 +1,8 @@
 package com.mattstine.dddworkshop.pizzashop.kitchen;
 
 import com.mattstine.dddworkshop.pizzashop.infrastructure.events.ports.Event;
+import lombok.Value;
 
-class PizzaBakeFinishedEvent implements Event {
+@Value
+final class PizzaBakeFinishedEvent implements Event {
 }

@@ -4,6 +4,6 @@ import com.mattstine.dddworkshop.pizzashop.infrastructure.events.ports.Event;
 import lombok.Value;
 
 @Value
-class PizzaPrepFinishedEvent implements Event {
+final class PizzaPrepFinishedEvent implements Event {
 }
 
