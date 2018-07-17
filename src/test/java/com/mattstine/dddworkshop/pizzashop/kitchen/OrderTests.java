@@ -22,7 +22,8 @@ public class OrderTests {
     public void setUp() {
         eventLog = mock(EventLog.class);
         order = Order.builder()
-                .ref(new OrderRef())
+                .ref(new KitchenOrderRef())
+                .orderRef(new OrderRef())
                 .eventLog(eventLog)
                 .pizza(Order.Pizza.builder().size(Order.Pizza.Size.SMALL).build())
                 .pizza(Order.Pizza.builder().size(Order.Pizza.Size.MEDIUM).build())

@@ -2,6 +2,8 @@ package com.mattstine.dddworkshop.pizzashop.kitchen;
 
 import com.mattstine.dddworkshop.pizzashop.infrastructure.events.ports.EventLog;
 import com.mattstine.dddworkshop.pizzashop.infrastructure.events.ports.Topic;
+import com.mattstine.dddworkshop.pizzashop.infrastructure.repository.ports.Aggregate;
+import com.mattstine.dddworkshop.pizzashop.infrastructure.repository.ports.AggregateState;
 import com.mattstine.dddworkshop.pizzashop.ordering.OrderRef;
 import lombok.Builder;
 import lombok.NonNull;
@@ -10,18 +12,21 @@ import lombok.Value;
 import lombok.experimental.NonFinal;
 
 import java.util.List;
+import java.util.function.BiFunction;
 
 @Value
-public final class Order {
-    OrderRef ref;
+public final class Order implements Aggregate {
+    KitchenOrderRef ref;
+    OrderRef orderRef;
     List<Pizza> pizzas;
     EventLog $eventLog;
     @NonFinal
     State state;
 
     @Builder
-    private Order(@NonNull OrderRef ref, @Singular List<Pizza> pizzas, @NonNull EventLog eventLog) {
+    private Order(@NonNull KitchenOrderRef ref, @NonNull OrderRef orderRef, @Singular List<Pizza> pizzas, @NonNull EventLog eventLog) {
         this.ref = ref;
+        this.orderRef = orderRef;
         this.pizzas = pizzas;
         this.$eventLog = eventLog;
 
@@ -110,6 +115,21 @@ public final class Order {
         return this.state == State.ASSEMBLED;
     }
 
+    @Override
+    public Order identity() {
+        return null;
+    }
+
+    @Override
+    public BiFunction accumulatorFunction() {
+        return null;
+    }
+
+    @Override
+    public OrderState state() {
+        return new OrderState(ref, orderRef, pizzas, state);
+    }
+
     enum State {
         NEW,
         PREPPING,
@@ -135,5 +155,13 @@ public final class Order {
         enum Size {
             SMALL, MEDIUM, LARGE
         }
+    }
+
+    @Value
+    static class OrderState implements AggregateState {
+        KitchenOrderRef ref;
+        OrderRef orderRef;
+        List<Pizza> pizzas;
+        State state;
     }
 }
