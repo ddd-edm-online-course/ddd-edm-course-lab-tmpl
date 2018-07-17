@@ -89,11 +89,9 @@ public class InProcessEventSourcedRepository<K extends Ref, T extends Aggregate,
             T aggregateInstance = (T) ctor.newInstance();
             Method identityMethod = aggregateClass.getMethod("identity");
             identity = (T) identityMethod.invoke(aggregateInstance);
-        } catch (IllegalArgumentException | NoSuchMethodException | IllegalAccessException | InvocationTargetException e) {
-            e.printStackTrace();
+        } catch (NoSuchMethodException | IllegalAccessException | InvocationTargetException e) {
             throw new IllegalStateException("Cannot execute method: " + aggregateClass.getName() + ".identity", e);
         } catch (InstantiationException e) {
-            e.printStackTrace();
             throw new IllegalStateException("Cannot instantiate class: " + aggregateClass.getName(), e);
         }
         return identity;
