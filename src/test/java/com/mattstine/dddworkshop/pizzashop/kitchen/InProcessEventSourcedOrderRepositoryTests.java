@@ -6,13 +6,12 @@ import com.mattstine.dddworkshop.pizzashop.ordering.OrderRef;
 import org.junit.Before;
 import org.junit.Test;
 
+import java.util.Arrays;
 import java.util.Collections;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.eq;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 
 public class InProcessEventSourcedOrderRepositoryTests {
 
@@ -58,6 +57,18 @@ public class InProcessEventSourcedOrderRepositoryTests {
 
         when(eventLog.eventsBy(new Topic("kitchen_orders")))
                 .thenReturn(Collections.singletonList(new OrderAddedEvent(ref, order.state())));
+
+        assertThat(repository.findByRef(ref)).isEqualTo(order);
+    }
+
+    @Test
+    public void find_by_ref_hydrates_prepping_order() {
+        repository.add(order);
+        order.startPrep();
+
+        when(eventLog.eventsBy(new Topic("kitchen_orders")))
+                .thenReturn(Arrays.asList(new OrderAddedEvent(ref, order.state()),
+                        new OrderPrepStartedEvent(ref)));
 
         assertThat(repository.findByRef(ref)).isEqualTo(order);
     }

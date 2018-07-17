@@ -4,5 +4,6 @@ import com.mattstine.dddworkshop.pizzashop.infrastructure.events.ports.Event;
 import lombok.Value;
 
 @Value
-final class OrderPrepStartedEvent implements Event {
+final class OrderPrepStartedEvent implements Event, OrderEvent {
+    KitchenOrderRef ref;
 }

@@ -54,7 +54,7 @@ public final class Order implements Aggregate {
         }
 
         this.state = State.PREPPING;
-        $eventLog.publish(new Topic("kitchen_orders"), new OrderPrepStartedEvent());
+        $eventLog.publish(new Topic("kitchen_orders"), new OrderPrepStartedEvent(ref));
     }
 
     public boolean isPrepping() {
@@ -67,7 +67,7 @@ public final class Order implements Aggregate {
         }
 
         this.state = State.PREPPED;
-        $eventLog.publish(new Topic("kitchen_orders"), new OrderPrepFinishedEvent());
+        $eventLog.publish(new Topic("kitchen_orders"), new OrderPrepFinishedEvent(ref));
     }
 
     public boolean hasFinishedPrep() {
@@ -80,7 +80,7 @@ public final class Order implements Aggregate {
         }
 
         this.state = State.BAKING;
-        $eventLog.publish(new Topic("kitchen_orders"), new OrderBakeStartedEvent());
+        $eventLog.publish(new Topic("kitchen_orders"), new OrderBakeStartedEvent(ref));
     }
 
     public boolean isBaking() {
@@ -168,6 +168,15 @@ public final class Order implements Aggregate {
                         .orderRef(orderState.getOrderRef())
                         .pizzas(orderState.getPizzas())
                         .build();
+            } else if (orderEvent instanceof OrderPrepStartedEvent) {
+                order.state = State.PREPPING;
+                return order;
+            } else if (orderEvent instanceof OrderPrepFinishedEvent) {
+                order.state = State.PREPPED;
+                return order;
+            } else if (orderEvent instanceof OrderBakeStartedEvent) {
+                order.state = State.BAKING;
+                return order;
             }
             throw new IllegalStateException("Unknown OrderEvent");
         }

@@ -18,14 +18,16 @@ public class OrderTests {
     private Order order;
     private EventLog eventLog;
     private KitchenOrderRef ref;
+    private OrderRef orderRef;
 
     @Before
     public void setUp() {
         eventLog = mock(EventLog.class);
         ref = new KitchenOrderRef();
+        orderRef = new OrderRef();
         order = Order.builder()
                 .ref(ref)
-                .orderRef(new OrderRef())
+                .orderRef(orderRef)
                 .eventLog(eventLog)
                 .pizza(Order.Pizza.builder().size(Order.Pizza.Size.SMALL).build())
                 .pizza(Order.Pizza.builder().size(Order.Pizza.Size.MEDIUM).build())
@@ -195,5 +197,71 @@ public class OrderTests {
     public void accumulator_apply_with_orderAddedEvent_returns_order() {
         OrderAddedEvent orderAddedEvent = new OrderAddedEvent(ref, order.state());
         assertThat(order.accumulatorFunction().apply(order.identity(), orderAddedEvent)).isEqualTo(order);
+    }
+
+    @Test
+    public void accumulator_apply_with_orderPrepStartedEvent_returns_order() {
+        Order expectedOrder = Order.builder()
+                .ref(ref)
+                .orderRef(orderRef)
+                .eventLog(eventLog)
+                .pizza(Order.Pizza.builder().size(Order.Pizza.Size.SMALL).build())
+                .pizza(Order.Pizza.builder().size(Order.Pizza.Size.MEDIUM).build())
+                .build();
+        expectedOrder.startPrep();
+
+        OrderAddedEvent orderAddedEvent = new OrderAddedEvent(ref, order.state());
+        order.accumulatorFunction().apply(order.identity(), orderAddedEvent);
+
+        OrderPrepStartedEvent orderPrepStartedEvent = new OrderPrepStartedEvent(ref);
+        assertThat(order.accumulatorFunction().apply(order, orderPrepStartedEvent)).isEqualTo(expectedOrder);
+    }
+
+    @Test
+    public void accumulator_apply_with_orderPrepFinishedEvent_returns_order() {
+        Order expectedOrder = Order.builder()
+                .ref(ref)
+                .orderRef(orderRef)
+                .eventLog(eventLog)
+                .pizza(Order.Pizza.builder().size(Order.Pizza.Size.SMALL).build())
+                .pizza(Order.Pizza.builder().size(Order.Pizza.Size.MEDIUM).build())
+                .build();
+        expectedOrder.startPrep();
+        expectedOrder.finishPrep();
+
+        OrderAddedEvent orderAddedEvent = new OrderAddedEvent(ref, order.state());
+        order.accumulatorFunction().apply(order.identity(), orderAddedEvent);
+
+        OrderPrepStartedEvent orderPrepStartedEvent = new OrderPrepStartedEvent(ref);
+        order.accumulatorFunction().apply(order, orderPrepStartedEvent);
+
+        OrderPrepFinishedEvent orderPrepFinishedEvent = new OrderPrepFinishedEvent(ref);
+        assertThat(order.accumulatorFunction().apply(order, orderPrepFinishedEvent)).isEqualTo(expectedOrder);
+    }
+
+    @Test
+    public void accumulator_apply_with_orderBakeStartedEvent_returns_order() {
+        Order expectedOrder = Order.builder()
+                .ref(ref)
+                .orderRef(orderRef)
+                .eventLog(eventLog)
+                .pizza(Order.Pizza.builder().size(Order.Pizza.Size.SMALL).build())
+                .pizza(Order.Pizza.builder().size(Order.Pizza.Size.MEDIUM).build())
+                .build();
+        expectedOrder.startPrep();
+        expectedOrder.finishPrep();
+        expectedOrder.startBake();
+
+        OrderAddedEvent orderAddedEvent = new OrderAddedEvent(ref, order.state());
+        order.accumulatorFunction().apply(order.identity(), orderAddedEvent);
+
+        OrderPrepStartedEvent orderPrepStartedEvent = new OrderPrepStartedEvent(ref);
+        order.accumulatorFunction().apply(order, orderPrepStartedEvent);
+
+        OrderPrepFinishedEvent orderPrepFinishedEvent = new OrderPrepFinishedEvent(ref);
+        order.accumulatorFunction().apply(order, orderPrepFinishedEvent);
+
+        OrderBakeStartedEvent orderBakeStartedEvent = new OrderBakeStartedEvent(ref);
+        assertThat(order.accumulatorFunction().apply(order, orderBakeStartedEvent)).isEqualTo(expectedOrder);
     }
 }
