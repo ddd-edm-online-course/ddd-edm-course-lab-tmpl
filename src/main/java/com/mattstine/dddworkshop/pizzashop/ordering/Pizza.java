@@ -1,6 +1,6 @@
 package com.mattstine.dddworkshop.pizzashop.ordering;
 
-import com.mattstine.dddworkshop.pizzashop.infrastructure.Amount;
+import com.mattstine.dddworkshop.pizzashop.infrastructure.domain.valuetypes.Amount;
 import lombok.Builder;
 import lombok.NonNull;
 import lombok.Value;

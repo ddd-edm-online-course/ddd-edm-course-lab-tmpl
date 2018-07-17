@@ -1,4 +1,8 @@
-package com.mattstine.dddworkshop.pizzashop.infrastructure;
+package com.mattstine.dddworkshop.pizzashop.infrastructure.repository.adapters;
+
+import com.mattstine.dddworkshop.pizzashop.infrastructure.events.ports.EventLog;
+import com.mattstine.dddworkshop.pizzashop.infrastructure.events.ports.Topic;
+import com.mattstine.dddworkshop.pizzashop.infrastructure.repository.ports.*;
 
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
@@ -9,7 +13,7 @@ import java.util.function.BiFunction;
  * @author Matt Stine
  */
 @SuppressWarnings({"unchecked", "unused"})
-public class InProcessEventSourcedRepository<K extends Ref, T extends Aggregate, S extends AggregateState, U extends AggregateEvent, V extends RepositoryAddEvent> {
+public abstract class InProcessEventSourcedRepository<K extends Ref, T extends Aggregate, S extends AggregateState, U extends AggregateEvent, V extends RepositoryAddEvent> implements Repository<K, T, S, U, V> {
     private final EventLog eventLog;
     private final Class<K> refClass;
     private final Class<T> aggregateClass;
@@ -31,6 +35,7 @@ public class InProcessEventSourcedRepository<K extends Ref, T extends Aggregate,
         this.topic = topic;
     }
 
+    @Override
     public K nextIdentity() {
         try {
             Constructor ctor = refClass.getConstructor();
@@ -40,6 +45,7 @@ public class InProcessEventSourcedRepository<K extends Ref, T extends Aggregate,
         }
     }
 
+    @Override
     public void add(T aggregateInstance) {
         V addEvent;
 
@@ -54,16 +60,15 @@ public class InProcessEventSourcedRepository<K extends Ref, T extends Aggregate,
         eventLog.publish(topic, addEvent);
     }
 
+    @Override
     public T findByRef(K ref) {
-        T aggregate = eventLog.eventsBy(topic)
+        return eventLog.eventsBy(topic)
                 .stream()
                 .map(e -> (U) e)
                 .filter(e -> ref.equals(e.getRef()))
                 .reduce(retrieveIdentityValue(),
                         retrieveAccumulatorFunction(),
                         (t, t2) -> null);
-        aggregate.setEventLog(eventLog);
-        return aggregate;
     }
 
     private BiFunction<T, U, T> retrieveAccumulatorFunction() {

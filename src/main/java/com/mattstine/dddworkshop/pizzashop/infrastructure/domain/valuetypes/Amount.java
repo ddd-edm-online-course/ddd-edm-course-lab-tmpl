@@ -1,4 +1,4 @@
-package com.mattstine.dddworkshop.pizzashop.infrastructure;
+package com.mattstine.dddworkshop.pizzashop.infrastructure.domain.valuetypes;
 
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;

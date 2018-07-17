@@ -1,6 +1,6 @@
 package com.mattstine.dddworkshop.pizzashop.payments;
 
-import com.mattstine.dddworkshop.pizzashop.infrastructure.Amount;
+import com.mattstine.dddworkshop.pizzashop.infrastructure.domain.valuetypes.Amount;
 
 /**
  * @author Matt Stine

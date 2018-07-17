@@ -1,5 +1,8 @@
 package com.mattstine.dddworkshop.pizzashop.infrastructure;
 
+import com.mattstine.dddworkshop.pizzashop.infrastructure.events.ports.Event;
+import com.mattstine.dddworkshop.pizzashop.infrastructure.events.ports.EventHandler;
+
 /**
  * @author Matt Stine
  */

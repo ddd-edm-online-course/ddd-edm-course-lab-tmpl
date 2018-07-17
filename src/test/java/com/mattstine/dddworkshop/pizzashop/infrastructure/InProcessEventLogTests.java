@@ -1,5 +1,8 @@
 package com.mattstine.dddworkshop.pizzashop.infrastructure;
 
+import com.mattstine.dddworkshop.pizzashop.infrastructure.events.adapters.InProcessEventLog;
+import com.mattstine.dddworkshop.pizzashop.infrastructure.events.ports.Event;
+import com.mattstine.dddworkshop.pizzashop.infrastructure.events.ports.Topic;
 import lombok.Value;
 import org.junit.After;
 import org.junit.Before;
@@ -54,6 +57,6 @@ public class InProcessEventLogTests {
     }
 
     @Value
-    static class TestEvent implements Event {
+    private static class TestEvent implements Event {
     }
 }

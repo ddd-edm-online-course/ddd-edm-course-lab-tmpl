@@ -1,4 +1,4 @@
-package com.mattstine.dddworkshop.pizzashop.infrastructure;
+package com.mattstine.dddworkshop.pizzashop.infrastructure.events.ports;
 
 
 import sun.reflect.generics.reflectiveObjects.NotImplementedException;
@@ -36,6 +36,7 @@ public interface EventLog {
 
     void subscribe(Topic topic, EventHandler handler);
 
+    @SuppressWarnings("unused")
     int getNumberOfSubscribers(Topic topic);
 
     List<Event> eventsBy(Topic topic);

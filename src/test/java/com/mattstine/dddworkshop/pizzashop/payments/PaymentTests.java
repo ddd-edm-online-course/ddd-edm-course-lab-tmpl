@@ -1,8 +1,8 @@
 package com.mattstine.dddworkshop.pizzashop.payments;
 
-import com.mattstine.dddworkshop.pizzashop.infrastructure.Amount;
-import com.mattstine.dddworkshop.pizzashop.infrastructure.EventLog;
-import com.mattstine.dddworkshop.pizzashop.infrastructure.Topic;
+import com.mattstine.dddworkshop.pizzashop.infrastructure.domain.valuetypes.Amount;
+import com.mattstine.dddworkshop.pizzashop.infrastructure.events.ports.EventLog;
+import com.mattstine.dddworkshop.pizzashop.infrastructure.events.ports.Topic;
 import org.junit.Before;
 import org.junit.Test;
 

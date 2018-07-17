@@ -1,8 +1,8 @@
 package com.mattstine.dddworkshop.pizzashop.ordering;
 
-import com.mattstine.dddworkshop.pizzashop.infrastructure.Amount;
-import com.mattstine.dddworkshop.pizzashop.infrastructure.EventLog;
-import com.mattstine.dddworkshop.pizzashop.infrastructure.Topic;
+import com.mattstine.dddworkshop.pizzashop.infrastructure.domain.valuetypes.Amount;
+import com.mattstine.dddworkshop.pizzashop.infrastructure.events.ports.EventLog;
+import com.mattstine.dddworkshop.pizzashop.infrastructure.events.ports.Topic;
 import com.mattstine.dddworkshop.pizzashop.payments.PaymentRef;
 import com.mattstine.dddworkshop.pizzashop.payments.PaymentService;
 import com.mattstine.dddworkshop.pizzashop.payments.PaymentSuccessfulEvent;

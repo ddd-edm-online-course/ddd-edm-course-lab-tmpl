@@ -1,6 +1,6 @@
 package com.mattstine.dddworkshop.pizzashop.payments;
 
-import com.mattstine.dddworkshop.pizzashop.infrastructure.AggregateEvent;
+import com.mattstine.dddworkshop.pizzashop.infrastructure.repository.ports.AggregateEvent;
 
 /**
  * @author Matt Stine

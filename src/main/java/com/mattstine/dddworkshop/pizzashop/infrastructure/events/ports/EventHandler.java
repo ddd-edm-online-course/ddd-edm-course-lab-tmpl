@@ -1,4 +1,4 @@
-package com.mattstine.dddworkshop.pizzashop.infrastructure;
+package com.mattstine.dddworkshop.pizzashop.infrastructure.events.ports;
 
 /**
  * @author Matt Stine

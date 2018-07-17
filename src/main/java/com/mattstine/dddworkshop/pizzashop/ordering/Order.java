@@ -1,6 +1,11 @@
 package com.mattstine.dddworkshop.pizzashop.ordering;
 
-import com.mattstine.dddworkshop.pizzashop.infrastructure.*;
+import com.mattstine.dddworkshop.pizzashop.infrastructure.domain.valuetypes.Amount;
+import com.mattstine.dddworkshop.pizzashop.infrastructure.events.adapters.InProcessEventLog;
+import com.mattstine.dddworkshop.pizzashop.infrastructure.events.ports.EventLog;
+import com.mattstine.dddworkshop.pizzashop.infrastructure.events.ports.Topic;
+import com.mattstine.dddworkshop.pizzashop.infrastructure.repository.ports.Aggregate;
+import com.mattstine.dddworkshop.pizzashop.infrastructure.repository.ports.AggregateState;
 import com.mattstine.dddworkshop.pizzashop.payments.PaymentRef;
 import lombok.Builder;
 import lombok.EqualsAndHashCode;
@@ -18,8 +23,9 @@ import java.util.function.BiFunction;
 @SuppressWarnings("DefaultAnnotationParam")
 @Value
 @EqualsAndHashCode(callSuper = false)
-public class Order extends Aggregate {
+public class Order implements Aggregate {
     Type type;
+    EventLog $eventLog;
     OrderRef ref;
     List<Pizza> pizzas;
     @NonFinal
@@ -80,6 +86,11 @@ public class Order extends Aggregate {
         assert this.pizzas != null;
         this.pizzas.add(pizza);
 
+        /*
+         * condition only occurs if reflection supporting
+         * private no-args constructor is used
+         */
+        assert $eventLog != null;
         $eventLog.publish(new Topic("ordering"), new PizzaAddedEvent(ref, pizza));
     }
 
@@ -98,11 +109,23 @@ public class Order extends Aggregate {
         }
 
         this.state = State.SUBMITTED;
+
+        /*
+         * condition only occurs if reflection supporting
+         * private no-args constructor is used
+         */
+        assert $eventLog != null;
         $eventLog.publish(new Topic("ordering"), new OrderSubmittedEvent(ref));
     }
 
     public void assignPaymentRef(PaymentRef paymentRef) {
         this.paymentRef = paymentRef;
+
+        /*
+         * condition only occurs if reflection supporting
+         * private no-args constructor is used
+         */
+        assert $eventLog != null;
         $eventLog.publish(new Topic("ordering"), new PaymentRefAssignedEvent(ref, paymentRef));
     }
 
@@ -123,6 +146,12 @@ public class Order extends Aggregate {
         }
 
         this.state = State.PAID;
+
+        /*
+         * condition only occurs if reflection supporting
+         * private no-args constructor is used
+         */
+        assert $eventLog != null;
         $eventLog.publish(new Topic("ordering"), new OrderPaidEvent(ref));
     }
 
