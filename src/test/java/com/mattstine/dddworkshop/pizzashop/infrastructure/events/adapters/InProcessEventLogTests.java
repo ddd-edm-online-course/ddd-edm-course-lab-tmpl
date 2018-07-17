@@ -1,6 +1,5 @@
-package com.mattstine.dddworkshop.pizzashop.infrastructure;
+package com.mattstine.dddworkshop.pizzashop.infrastructure.events.adapters;
 
-import com.mattstine.dddworkshop.pizzashop.infrastructure.events.adapters.InProcessEventLog;
 import com.mattstine.dddworkshop.pizzashop.infrastructure.events.ports.Event;
 import com.mattstine.dddworkshop.pizzashop.infrastructure.events.ports.Topic;
 import lombok.Value;

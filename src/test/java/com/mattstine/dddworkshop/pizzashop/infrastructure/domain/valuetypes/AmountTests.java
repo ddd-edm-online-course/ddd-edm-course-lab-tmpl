@@ -1,6 +1,5 @@
-package com.mattstine.dddworkshop.pizzashop.infrastructure;
+package com.mattstine.dddworkshop.pizzashop.infrastructure.domain.valuetypes;
 
-import com.mattstine.dddworkshop.pizzashop.infrastructure.domain.valuetypes.Amount;
 import org.junit.Test;
 
 import static org.assertj.core.api.Assertions.assertThat;
