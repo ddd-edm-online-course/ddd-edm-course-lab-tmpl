@@ -33,8 +33,9 @@ public class InProcessEventSourcedRepository<K extends Ref, T extends Aggregate,
 
     public K nextIdentity() {
         try {
-            return refClass.newInstance();
-        } catch (InstantiationException | IllegalAccessException e) {
+            Constructor ctor = refClass.getConstructor();
+            return (K) ctor.newInstance();
+        } catch (InstantiationException | IllegalAccessException | NoSuchMethodException | InvocationTargetException e) {
             throw new IllegalStateException("Cannot instantiate nextIdentity of type: " + refClass.getName());
         }
     }
