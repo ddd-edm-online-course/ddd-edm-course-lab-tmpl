@@ -9,7 +9,7 @@ import lombok.Value;
  * @author Matt Stine
  */
 @Value
-final class Pizza {
+public final class Pizza {
 
     Size size;
 
@@ -19,7 +19,7 @@ final class Pizza {
         this.size = size;
     }
 
-    public Amount calculatePrice() {
+    Amount calculatePrice() {
         return size.getPrice();
     }
 

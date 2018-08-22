@@ -9,7 +9,6 @@ import java.util.Arrays;
 import java.util.Collections;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.*;
 
 public class InProcessEventSourcedPizzaRepositoryTests {
@@ -23,10 +22,6 @@ public class InProcessEventSourcedPizzaRepositoryTests {
     public void setUp() {
         eventLog = mock(EventLog.class);
         repository = new InProcessEventSourcedPizzaRepository(eventLog,
-                PizzaRef.class,
-                Pizza.class,
-                Pizza.PizzaState.class,
-                PizzaAddedEvent.class,
                 new Topic("pizzas"));
         ref = repository.nextIdentity();
         pizza = Pizza.builder()

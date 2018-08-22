@@ -10,11 +10,11 @@ final class PaymentProcessedEvent implements PaymentEvent {
     PaymentRef ref;
     Status status;
 
-    public boolean isSuccessful() {
+    boolean isSuccessful() {
         return status == Status.SUCCESSFUL;
     }
 
-    public boolean isFailed() {
+    boolean isFailed() {
         return status == Status.FAILED;
     }
 

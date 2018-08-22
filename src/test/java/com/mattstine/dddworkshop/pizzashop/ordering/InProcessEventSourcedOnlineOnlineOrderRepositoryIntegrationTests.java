@@ -23,10 +23,6 @@ public class InProcessEventSourcedOnlineOnlineOrderRepositoryIntegrationTests {
     public void setUp() {
         eventLog = InProcessEventLog.instance();
         repository = new InProcessEventSourcedOnlineOrderRepository(eventLog,
-                OnlineOrderRef.class,
-                OnlineOrder.class,
-                OnlineOrder.OrderState.class,
-                OnlineOrderAddedEvent.class,
                 new Topic("ordering"));
         OnlineOrderRef ref = repository.nextIdentity();
         onlineOrder = OnlineOrder.builder()

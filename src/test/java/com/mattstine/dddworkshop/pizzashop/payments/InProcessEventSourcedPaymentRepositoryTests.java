@@ -26,10 +26,6 @@ public class InProcessEventSourcedPaymentRepositoryTests {
     public void setUp() {
         eventLog = mock(EventLog.class);
         repository = new InProcessEventSourcedPaymentRepository(eventLog,
-                PaymentRef.class,
-                Payment.class,
-                Payment.PaymentState.class,
-                PaymentAddedEvent.class,
                 new Topic("payments"));
         ref = repository.nextIdentity();
         payment = Payment.builder()

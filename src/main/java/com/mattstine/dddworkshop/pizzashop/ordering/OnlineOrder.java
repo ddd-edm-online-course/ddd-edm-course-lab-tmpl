@@ -54,11 +54,11 @@ public final class OnlineOrder implements Aggregate {
         this.$eventLog = null;
     }
 
-    public boolean isPickupOrder() {
+    boolean isPickupOrder() {
         return this.type == Type.PICKUP;
     }
 
-    public boolean isDeliveryOrder() {
+    boolean isDeliveryOrder() {
         return this.type == Type.DELIVERY;
     }
 
@@ -66,11 +66,11 @@ public final class OnlineOrder implements Aggregate {
         return state == State.NEW;
     }
 
-    public boolean isSubmitted() {
+    boolean isSubmitted() {
         return this.state == State.SUBMITTED;
     }
 
-    public boolean isPaid() {
+    boolean isPaid() {
         return state == State.PAID;
     }
 
@@ -94,7 +94,7 @@ public final class OnlineOrder implements Aggregate {
         $eventLog.publish(new Topic("ordering"), new PizzaAddedEvent(ref, pizza));
     }
 
-    public void submit() {
+    void submit() {
         if (this.state != State.NEW) {
             throw new IllegalStateException("Can only submit NEW OnlineOrder");
         }
@@ -118,7 +118,7 @@ public final class OnlineOrder implements Aggregate {
         $eventLog.publish(new Topic("ordering"), new OnlineOrderSubmittedEvent(ref));
     }
 
-    public void assignPaymentRef(PaymentRef paymentRef) {
+    void assignPaymentRef(PaymentRef paymentRef) {
         this.paymentRef = paymentRef;
 
         /*
@@ -129,7 +129,7 @@ public final class OnlineOrder implements Aggregate {
         $eventLog.publish(new Topic("ordering"), new PaymentRefAssignedEvent(ref, paymentRef));
     }
 
-    public Amount calculatePrice() {
+    Amount calculatePrice() {
         /*
          * condition only occurs if reflection supporting
          * private no-args constructor is used
@@ -140,7 +140,7 @@ public final class OnlineOrder implements Aggregate {
                 .reduce(Amount.of(0, 0), Amount::plus);
     }
 
-    public void markPaid() {
+    void markPaid() {
         if (this.state != State.SUBMITTED) {
             throw new IllegalStateException("Can only mark SUBMITTED OnlineOrder as Paid");
         }
@@ -182,7 +182,7 @@ public final class OnlineOrder implements Aggregate {
         IDENTITY, DELIVERY, PICKUP
     }
 
-    static class Accumulator implements BiFunction<OnlineOrder, OnlineOrderEvent, OnlineOrder> {
+    private static class Accumulator implements BiFunction<OnlineOrder, OnlineOrderEvent, OnlineOrder> {
 
         @Override
         public OnlineOrder apply(OnlineOrder onlineOrder, OnlineOrderEvent onlineOrderEvent) {
@@ -209,6 +209,7 @@ public final class OnlineOrder implements Aggregate {
                 onlineOrder.state = State.SUBMITTED;
                 return onlineOrder;
             } else if (onlineOrderEvent instanceof PaymentRefAssignedEvent) {
+                @SuppressWarnings("SpellCheckingInspection")
                 PaymentRefAssignedEvent prae = (PaymentRefAssignedEvent) onlineOrderEvent;
                 onlineOrder.paymentRef = prae.getPaymentRef();
                 return onlineOrder;

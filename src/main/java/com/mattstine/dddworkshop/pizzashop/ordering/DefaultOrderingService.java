@@ -56,6 +56,11 @@ final class DefaultOrderingService implements OrderingService {
         onlineOrder.assignPaymentRef(paymentRef);
     }
 
+    @Override
+    public OnlineOrder findByRef(OnlineOrderRef ref) {
+        return repository.findByRef(ref);
+    }
+
     private void markOrderPaid(PaymentRef paymentRef) {
         OnlineOrder onlineOrder = repository.findByPaymentRef(paymentRef);
         onlineOrder.markPaid();

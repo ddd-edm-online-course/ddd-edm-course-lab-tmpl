@@ -6,11 +6,7 @@ import com.mattstine.dddworkshop.pizzashop.infrastructure.repository.adapters.In
 
 class InProcessEventSourcedPizzaRepository extends InProcessEventSourcedRepository<PizzaRef, Pizza, Pizza.PizzaState, PizzaEvent, PizzaAddedEvent> implements PizzaRepository {
     InProcessEventSourcedPizzaRepository(EventLog eventLog,
-                                         Class<PizzaRef> pizzaRefClass,
-                                         Class<Pizza> pizzaClass,
-                                         Class<Pizza.PizzaState> pizzaStateClass,
-                                         Class<PizzaAddedEvent> pizzaAddedEventClass,
                                          Topic pizzas) {
-        super(eventLog, pizzaRefClass, pizzaClass, pizzaStateClass, pizzaAddedEventClass, pizzas);
+        super(eventLog, PizzaRef.class, Pizza.class, Pizza.PizzaState.class, PizzaAddedEvent.class, pizzas);
     }
 }

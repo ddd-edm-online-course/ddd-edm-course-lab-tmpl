@@ -56,19 +56,19 @@ public final class Payment implements Aggregate {
         return state == State.NEW;
     }
 
-    public boolean isRequested() {
+    boolean isRequested() {
         return state == State.REQUESTED;
     }
 
-    public boolean isSuccessful() {
+    boolean isSuccessful() {
         return state == State.SUCCESSFUL;
     }
 
-    public boolean isFailed() {
+    boolean isFailed() {
         return state == State.FAILED;
     }
 
-    public void request() {
+    void request() {
         if (state != State.NEW) {
             throw new IllegalStateException("Payment must be NEW to request payment");
         }
@@ -90,7 +90,7 @@ public final class Payment implements Aggregate {
         $eventLog.publish(new Topic("payments"), new PaymentRequestedEvent(this.ref));
     }
 
-    public void markSuccessful() {
+    void markSuccessful() {
         if (state != State.REQUESTED) {
             throw new IllegalStateException("Payment must be REQUESTED to mark successful");
         }
@@ -105,7 +105,7 @@ public final class Payment implements Aggregate {
         $eventLog.publish(new Topic("payments"), new PaymentSuccessfulEvent(ref));
     }
 
-    public void markFailed() {
+    void markFailed() {
         if (state != State.REQUESTED) {
             throw new IllegalStateException("Payment must be REQUESTED to mark failed");
         }
@@ -144,7 +144,7 @@ public final class Payment implements Aggregate {
         NEW, REQUESTED, SUCCESSFUL, FAILED
     }
 
-    static class Accumulator implements BiFunction<Payment, PaymentEvent, Payment> {
+    private static class Accumulator implements BiFunction<Payment, PaymentEvent, Payment> {
         @Override
         public Payment apply(Payment payment, PaymentEvent paymentEvent) {
             if (paymentEvent instanceof PaymentAddedEvent) {

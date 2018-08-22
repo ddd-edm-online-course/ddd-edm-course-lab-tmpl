@@ -24,10 +24,6 @@ public class DefaultOrderingServiceIntegrationTests {
     public void setUp() {
         eventLog = InProcessEventLog.instance();
         repository = new InProcessEventSourcedOnlineOrderRepository(eventLog,
-                OnlineOrderRef.class,
-                OnlineOrder.class,
-                OnlineOrder.OrderState.class,
-                OnlineOrderAddedEvent.class,
                 new Topic("ordering"));
         new DefaultOrderingService(eventLog, repository, mock(PaymentService.class));
     }

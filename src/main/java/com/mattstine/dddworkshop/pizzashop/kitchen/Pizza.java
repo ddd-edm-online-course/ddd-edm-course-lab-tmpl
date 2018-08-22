@@ -37,6 +37,7 @@ public final class Pizza implements Aggregate {
     /**
      * Private no-args ctor to support reflection ONLY.
      */
+    @SuppressWarnings("unused")
     private Pizza() {
         this.ref = null;
         this.kitchenOrderRef = null;
@@ -48,55 +49,79 @@ public final class Pizza implements Aggregate {
         return this.state == State.NEW;
     }
 
-    public void startPrep() {
+    void startPrep() {
         if (this.state != State.NEW) {
             throw new IllegalStateException("only NEW Pizza can startPrep");
         }
 
         this.state = State.PREPPING;
+
+        /*
+         * condition only occurs if reflection supporting
+         * private no-args constructor is used
+         */
+        assert $eventLog != null;
         $eventLog.publish(new Topic("pizzas"), new PizzaPrepStartedEvent(ref));
     }
 
-    public boolean isPrepping() {
+    boolean isPrepping() {
         return this.state == State.PREPPING;
     }
 
-    public void finishPrep() {
+    void finishPrep() {
         if (this.state != State.PREPPING) {
             throw new IllegalStateException("only PREPPING Pizza can finishPrep");
         }
 
         this.state = State.PREPPED;
+
+        /*
+         * condition only occurs if reflection supporting
+         * private no-args constructor is used
+         */
+        assert $eventLog != null;
         $eventLog.publish(new Topic("pizzas"), new PizzaPrepFinishedEvent(ref));
     }
 
-    public boolean hasFinishedPrep() {
+    boolean hasFinishedPrep() {
         return this.state == State.PREPPED;
     }
 
-    public void startBake() {
+    void startBake() {
         if (this.state != State.PREPPED) {
             throw new IllegalStateException("only PREPPED Pizza can startBake");
         }
 
         this.state = State.BAKING;
+
+        /*
+         * condition only occurs if reflection supporting
+         * private no-args constructor is used
+         */
+        assert $eventLog != null;
         $eventLog.publish(new Topic("pizzas"), new PizzaBakeStartedEvent(ref));
     }
 
-    public boolean isBaking() {
+    boolean isBaking() {
         return this.state == State.BAKING;
     }
 
-    public void finishBake() {
+    void finishBake() {
         if (this.state != State.BAKING) {
             throw new IllegalStateException("only BAKING pizza can finishBake");
         }
 
         this.state = State.BAKED;
+
+        /*
+         * condition only occurs if reflection supporting
+         * private no-args constructor is used
+         */
+        assert $eventLog != null;
         $eventLog.publish(new Topic("pizzas"), new PizzaBakeFinishedEvent(ref));
     }
 
-    public boolean hasFinishedBaking() {
+    boolean hasFinishedBaking() {
         return this.state == State.BAKED;
     }
 
@@ -125,6 +150,7 @@ public final class Pizza implements Aggregate {
         return new PizzaState(ref, kitchenOrderRef, size);
     }
 
+    @SuppressWarnings("unused")
     enum Size {
         IDENTITY, SMALL, MEDIUM, LARGE
     }
@@ -137,7 +163,7 @@ public final class Pizza implements Aggregate {
         BAKED
     }
 
-    static class Accumulator implements BiFunction<Pizza, PizzaEvent, Pizza> {
+    private static class Accumulator implements BiFunction<Pizza, PizzaEvent, Pizza> {
 
         @Override
         public Pizza apply(Pizza pizza, PizzaEvent pizzaEvent) {

@@ -27,10 +27,6 @@ public class InProcessEventSourcedOnlineOnlineOrderRepositoryTests {
     public void setUp() {
         eventLog = mock(EventLog.class);
         repository = new InProcessEventSourcedOnlineOrderRepository(eventLog,
-                OnlineOrderRef.class,
-                OnlineOrder.class,
-                OnlineOrder.OrderState.class,
-                OnlineOrderAddedEvent.class,
                 new Topic("ordering"));
         ref = repository.nextIdentity();
         onlineOrder = OnlineOrder.builder()

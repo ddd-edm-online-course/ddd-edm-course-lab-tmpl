@@ -199,6 +199,7 @@ public class OnlineOrderTests {
         OnlineOrderSubmittedEvent ose = new OnlineOrderSubmittedEvent(ref);
         onlineOrder.accumulatorFunction().apply(onlineOrder, ose);
 
+        @SuppressWarnings("SpellCheckingInspection")
         PaymentRefAssignedEvent prae = new PaymentRefAssignedEvent(ref, paymentRef);
         assertThat(onlineOrder.accumulatorFunction().apply(onlineOrder, prae)).isEqualTo(expectedOnlineOrder);
     }
@@ -224,6 +225,7 @@ public class OnlineOrderTests {
         OnlineOrderSubmittedEvent ose = new OnlineOrderSubmittedEvent(ref);
         onlineOrder.accumulatorFunction().apply(onlineOrder, ose);
 
+        @SuppressWarnings("SpellCheckingInspection")
         PaymentRefAssignedEvent prae = new PaymentRefAssignedEvent(ref, paymentRef);
         onlineOrder.accumulatorFunction().apply(onlineOrder, prae);
 

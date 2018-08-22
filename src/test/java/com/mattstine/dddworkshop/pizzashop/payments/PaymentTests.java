@@ -38,7 +38,7 @@ public class PaymentTests {
 
     @Test
     public void new_payment_is_new() {
-        assertThat(payment.isNew());
+        assertThat(payment.isNew()).isTrue();
     }
 
     @Test

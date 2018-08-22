@@ -16,17 +16,14 @@ final class InProcessEventSourcedOnlineOrderRepository extends InProcessEventSou
     private final Map<PaymentRef, OnlineOrderRef> paymentRefToOrderRef;
 
     InProcessEventSourcedOnlineOrderRepository(EventLog eventLog,
-                                               Class<OnlineOrderRef> refClass,
-                                               Class<OnlineOrder> aggregateClass,
-                                               Class<OnlineOrder.OrderState> aggregateStateClass,
-                                               Class<OnlineOrderAddedEvent> addEventClass,
                                                Topic topic) {
-        super(eventLog, refClass, aggregateClass, aggregateStateClass, addEventClass, topic);
+        super(eventLog, OnlineOrderRef.class, OnlineOrder.class, OnlineOrder.OrderState.class, OnlineOrderAddedEvent.class, topic);
 
         paymentRefToOrderRef = new HashMap<>();
 
         eventLog.subscribe(topic, (e) -> {
             if (e instanceof PaymentRefAssignedEvent) {
+                @SuppressWarnings("SpellCheckingInspection")
                 PaymentRefAssignedEvent prae = (PaymentRefAssignedEvent) e;
                 this.paymentRefToOrderRef.put(prae.getPaymentRef(), prae.getRef());
             }

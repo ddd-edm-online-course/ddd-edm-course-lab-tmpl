@@ -23,10 +23,6 @@ public class InProcessEventSourcedKitchenOrderRepositoryTests {
     public void setUp() {
         eventLog = mock(EventLog.class);
         repository = new InProcessEventSourcedKitchenOrderRepository(eventLog,
-                KitchenOrderRef.class,
-                KitchenOrder.class,
-                KitchenOrder.OrderState.class,
-                KitchenOrderAddedEvent.class,
                 new Topic("kitchen_orders"));
         ref = repository.nextIdentity();
         kitchenOrder = KitchenOrder.builder()

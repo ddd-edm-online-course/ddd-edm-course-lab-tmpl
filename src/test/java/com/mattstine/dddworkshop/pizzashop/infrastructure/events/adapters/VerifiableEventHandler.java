@@ -6,11 +6,11 @@ import com.mattstine.dddworkshop.pizzashop.infrastructure.events.ports.EventHand
 /**
  * @author Matt Stine
  */
-public abstract class VerifiableEventHandler implements EventHandler {
+abstract class VerifiableEventHandler implements EventHandler {
     @SuppressWarnings("WeakerAccess")
     protected boolean invoked = false;
 
-    public static VerifiableEventHandler of(EventHandler eventHandler) {
+    static VerifiableEventHandler of(EventHandler eventHandler) {
         return new VerifiableEventHandler() {
             @Override
             public void handleEvent(Event e) {
@@ -20,7 +20,7 @@ public abstract class VerifiableEventHandler implements EventHandler {
         };
     }
 
-    public boolean isInvoked() {
+    boolean isInvoked() {
         return invoked;
     }
 }

@@ -37,6 +37,7 @@ public final class KitchenOrder implements Aggregate {
     /**
      * Private no-args ctor to support reflection ONLY.
      */
+    @SuppressWarnings("unused")
     private KitchenOrder() {
         this.ref = null;
         this.onlineOrderRef = null;
@@ -48,81 +49,117 @@ public final class KitchenOrder implements Aggregate {
         return this.state == State.NEW;
     }
 
-    public void startPrep() {
+    void startPrep() {
         if (this.state != State.NEW) {
             throw new IllegalStateException("Can only startPrep on NEW OnlineOrder");
         }
 
         this.state = State.PREPPING;
+
+        /*
+         * condition only occurs if reflection supporting
+         * private no-args constructor is used
+         */
+        assert $eventLog != null;
         $eventLog.publish(new Topic("kitchen_orders"), new KitchenOrderPrepStartedEvent(ref));
     }
 
-    public boolean isPrepping() {
+    boolean isPrepping() {
         return this.state == State.PREPPING;
     }
 
-    public void finishPrep() {
+    void finishPrep() {
         if (this.state != State.PREPPING) {
             throw new IllegalStateException("Can only finishPrep on PREPPING OnlineOrder");
         }
 
         this.state = State.PREPPED;
+
+        /*
+         * condition only occurs if reflection supporting
+         * private no-args constructor is used
+         */
+        assert $eventLog != null;
         $eventLog.publish(new Topic("kitchen_orders"), new KitchenOrderPrepFinishedEvent(ref));
     }
 
-    public boolean hasFinishedPrep() {
+    boolean hasFinishedPrep() {
         return this.state == State.PREPPED;
     }
 
-    public void startBake() {
+    void startBake() {
         if (this.state != State.PREPPED) {
             throw new IllegalStateException("Can only startBake on PREPPED OnlineOrder");
         }
 
         this.state = State.BAKING;
+
+        /*
+         * condition only occurs if reflection supporting
+         * private no-args constructor is used
+         */
+        assert $eventLog != null;
         $eventLog.publish(new Topic("kitchen_orders"), new KitchenOrderBakeStartedEvent(ref));
     }
 
-    public boolean isBaking() {
+    boolean isBaking() {
         return this.state == State.BAKING;
     }
 
-    public void finishBake() {
+    void finishBake() {
         if (this.state != State.BAKING) {
             throw new IllegalStateException("Can only finishBake on BAKING OnlineOrder");
         }
 
         this.state = State.BAKED;
+
+        /*
+         * condition only occurs if reflection supporting
+         * private no-args constructor is used
+         */
+        assert $eventLog != null;
         $eventLog.publish(new Topic("kitchen_orders"), new KitchenOrderBakeFinishedEvent(ref));
     }
 
-    public boolean hasFinishedBaking() {
+    boolean hasFinishedBaking() {
         return this.state == State.BAKED;
     }
 
-    public void startAssembly() {
+    void startAssembly() {
         if (this.state != State.BAKED) {
             throw new IllegalStateException("Can only startAssembly on BAKED OnlineOrder");
         }
 
         this.state = State.ASSEMBLING;
+
+        /*
+         * condition only occurs if reflection supporting
+         * private no-args constructor is used
+         */
+        assert $eventLog != null;
         $eventLog.publish(new Topic("kitchen_orders"), new KitchenOrderAssemblyStartedEvent(ref));
     }
 
-    public boolean hasStartedAssembly() {
+    boolean hasStartedAssembly() {
         return this.state == State.ASSEMBLING;
     }
 
-    public void finishAssembly() {
+    void finishAssembly() {
         if (this.state != State.ASSEMBLING) {
             throw new IllegalStateException("Can only finishAssembly on ASSEMBLING OnlineOrder");
         }
 
         this.state = State.ASSEMBLED;
+
+        /*
+         * condition only occurs if reflection supporting
+         * private no-args constructor is used
+         */
+        assert $eventLog != null;
         $eventLog.publish(new Topic("kitchen_orders"), new KitchenOrderAssemblyFinishedEvent(ref));
     }
 
-    public boolean hasFinishedAssembly() {
+    boolean hasFinishedAssembly() {
         return this.state == State.ASSEMBLED;
     }
 
@@ -155,7 +192,7 @@ public final class KitchenOrder implements Aggregate {
         ASSEMBLED
     }
 
-    static class Accumulator implements BiFunction<KitchenOrder, KitchenOrderEvent, KitchenOrder> {
+    private static class Accumulator implements BiFunction<KitchenOrder, KitchenOrderEvent, KitchenOrder> {
 
         @Override
         public KitchenOrder apply(KitchenOrder kitchenOrder, KitchenOrderEvent kitchenOrderEvent) {
@@ -203,6 +240,7 @@ public final class KitchenOrder implements Aggregate {
             this.size = size;
         }
 
+        @SuppressWarnings("unused")
         enum Size {
             SMALL, MEDIUM, LARGE
         }

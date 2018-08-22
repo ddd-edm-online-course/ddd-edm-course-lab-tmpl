@@ -6,4 +6,6 @@ public interface OrderingService {
     void addPizza(OnlineOrderRef ref, Pizza pizza);
 
     void requestPayment(OnlineOrderRef ref);
+
+    OnlineOrder findByRef(OnlineOrderRef ref);
 }

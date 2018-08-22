@@ -86,4 +86,17 @@ public class DefaultOrderingServiceTests {
         verify(paymentService).requestPaymentFor(eq(paymentRef));
     }
 
+    @Test
+    public void should_return_order_by_ref() {
+        OnlineOrderRef onlineOrderRef = new OnlineOrderRef();
+        OnlineOrder onlineOrder = OnlineOrder.builder()
+                .type(OnlineOrder.Type.PICKUP)
+                .eventLog(eventLog)
+                .ref(onlineOrderRef)
+                .build();
+        when(repository.findByRef(onlineOrderRef)).thenReturn(onlineOrder);
+
+        assertThat(orderingService.findByRef(onlineOrderRef)).isEqualTo(onlineOrder);
+    }
+
 }
