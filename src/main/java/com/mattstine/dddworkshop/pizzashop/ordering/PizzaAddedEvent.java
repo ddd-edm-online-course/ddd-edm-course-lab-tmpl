@@ -9,7 +9,7 @@ import lombok.Value;
  */
 @Value
 @AllArgsConstructor(access = AccessLevel.PACKAGE)
-final class PizzaAddedEvent implements OrderEvent {
-    private final OrderRef ref;
+final class PizzaAddedEvent implements OnlineOrderEvent {
+    private final OnlineOrderRef ref;
     private final Pizza pizza;
 }

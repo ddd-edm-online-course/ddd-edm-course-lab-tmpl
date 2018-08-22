@@ -1,7 +1,7 @@
 package com.mattstine.dddworkshop.pizzashop.ordering;
 
-import com.mattstine.dddworkshop.pizzashop.infrastructure.events.ports.EventLog;
 import com.mattstine.dddworkshop.pizzashop.infrastructure.events.adapters.InProcessEventLog;
+import com.mattstine.dddworkshop.pizzashop.infrastructure.events.ports.EventLog;
 import com.mattstine.dddworkshop.pizzashop.infrastructure.events.ports.Topic;
 import com.mattstine.dddworkshop.pizzashop.payments.PaymentRef;
 import com.mattstine.dddworkshop.pizzashop.payments.PaymentService;
@@ -15,40 +15,40 @@ import static org.mockito.Mockito.mock;
 /**
  * @author Matt Stine
  */
-public class OrderServiceIntegrationTests {
+public class DefaultOrderingServiceIntegrationTests {
 
     private EventLog eventLog;
-    private OrderRepository repository;
+    private OnlineOrderRepository repository;
 
     @Before
     public void setUp() {
         eventLog = InProcessEventLog.instance();
-        repository = new InProcessEventSourcedOrderRepository(eventLog,
-                OrderRef.class,
-                Order.class,
-                Order.OrderState.class,
-                OrderAddedEvent.class,
+        repository = new InProcessEventSourcedOnlineOrderRepository(eventLog,
+                OnlineOrderRef.class,
+                OnlineOrder.class,
+                OnlineOrder.OrderState.class,
+                OnlineOrderAddedEvent.class,
                 new Topic("ordering"));
-        new OrderService(eventLog, repository, mock(PaymentService.class));
+        new DefaultOrderingService(eventLog, repository, mock(PaymentService.class));
     }
 
     @Test
     public void on_successful_payment_mark_paid() {
-        OrderRef orderRef = new OrderRef();
-        Order order = Order.builder()
-                .type(Order.Type.PICKUP)
+        OnlineOrderRef onlineOrderRef = new OnlineOrderRef();
+        OnlineOrder onlineOrder = OnlineOrder.builder()
+                .type(OnlineOrder.Type.PICKUP)
                 .eventLog(eventLog)
-                .ref(orderRef)
+                .ref(onlineOrderRef)
                 .build();
-        repository.add(order);
-        order.addPizza(Pizza.builder().size(Pizza.Size.MEDIUM).build());
-        order.submit();
+        repository.add(onlineOrder);
+        onlineOrder.addPizza(Pizza.builder().size(Pizza.Size.MEDIUM).build());
+        onlineOrder.submit();
         PaymentRef paymentRef = new PaymentRef();
-        order.assignPaymentRef(paymentRef);
+        onlineOrder.assignPaymentRef(paymentRef);
 
         eventLog.publish(new Topic("payments"), new PaymentSuccessfulEvent(paymentRef));
 
-        order = repository.findByRef(orderRef);
-        assertThat(order.isPaid()).isTrue();
+        onlineOrder = repository.findByRef(onlineOrderRef);
+        assertThat(onlineOrder.isPaid()).isTrue();
     }
 }

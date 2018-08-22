@@ -6,6 +6,6 @@ import lombok.Value;
  * @author Matt Stine
  */
 @Value
-final class OrderSubmittedEvent implements OrderEvent {
-    OrderRef ref;
+final class OnlineOrderSubmittedEvent implements OnlineOrderEvent {
+    OnlineOrderRef ref;
 }

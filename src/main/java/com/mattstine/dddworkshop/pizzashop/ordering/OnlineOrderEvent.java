@@ -5,5 +5,5 @@ import com.mattstine.dddworkshop.pizzashop.infrastructure.repository.ports.Aggre
 /**
  * @author Matt Stine
  */
-interface OrderEvent extends AggregateEvent {
+interface OnlineOrderEvent extends AggregateEvent {
 }

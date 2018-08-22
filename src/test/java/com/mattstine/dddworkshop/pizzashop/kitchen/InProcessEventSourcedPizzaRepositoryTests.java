@@ -2,7 +2,6 @@ package com.mattstine.dddworkshop.pizzashop.kitchen;
 
 import com.mattstine.dddworkshop.pizzashop.infrastructure.events.ports.EventLog;
 import com.mattstine.dddworkshop.pizzashop.infrastructure.events.ports.Topic;
-import com.mattstine.dddworkshop.pizzashop.ordering.OrderRef;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -11,9 +10,7 @@ import java.util.Collections;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.eq;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 
 public class InProcessEventSourcedPizzaRepositoryTests {
 
@@ -35,7 +32,7 @@ public class InProcessEventSourcedPizzaRepositoryTests {
         pizza = Pizza.builder()
                 .ref(ref)
                 .size(Pizza.Size.MEDIUM)
-                .orderRef(new OrderRef())
+                .kitchenOrderRef(new KitchenOrderRef())
                 .eventLog(eventLog)
                 .build();
     }

@@ -12,26 +12,26 @@ import static org.assertj.core.api.Assertions.assertThat;
 /**
  * @author Matt Stine
  */
-public class InProcessEventSourcedOrderRepositoryIntegrationTests {
+public class InProcessEventSourcedOnlineOnlineOrderRepositoryIntegrationTests {
 
-    private OrderRepository repository;
-    private Order order;
+    private OnlineOrderRepository repository;
+    private OnlineOrder onlineOrder;
     private Pizza pizza;
     private InProcessEventLog eventLog;
 
     @Before
     public void setUp() {
         eventLog = InProcessEventLog.instance();
-        repository = new InProcessEventSourcedOrderRepository(eventLog,
-                OrderRef.class,
-                Order.class,
-                Order.OrderState.class,
-                OrderAddedEvent.class,
+        repository = new InProcessEventSourcedOnlineOrderRepository(eventLog,
+                OnlineOrderRef.class,
+                OnlineOrder.class,
+                OnlineOrder.OrderState.class,
+                OnlineOrderAddedEvent.class,
                 new Topic("ordering"));
-        OrderRef ref = repository.nextIdentity();
-        order = Order.builder()
+        OnlineOrderRef ref = repository.nextIdentity();
+        onlineOrder = OnlineOrder.builder()
                 .ref(ref)
-                .type(Order.Type.PICKUP)
+                .type(OnlineOrder.Type.PICKUP)
                 .eventLog(eventLog)
                 .build();
         pizza = Pizza.builder().size(Pizza.Size.MEDIUM).build();
@@ -44,13 +44,13 @@ public class InProcessEventSourcedOrderRepositoryIntegrationTests {
 
     @Test
     public void find_by_paymentRef_hydrates_order() {
-        repository.add(order);
-        order.addPizza(pizza);
-        order.submit();
+        repository.add(onlineOrder);
+        onlineOrder.addPizza(pizza);
+        onlineOrder.submit();
 
         PaymentRef paymentRef = new PaymentRef();
-        order.assignPaymentRef(paymentRef);
+        onlineOrder.assignPaymentRef(paymentRef);
 
-        assertThat(repository.findByPaymentRef(paymentRef)).isEqualTo(order);
+        assertThat(repository.findByPaymentRef(paymentRef)).isEqualTo(onlineOrder);
     }
 }

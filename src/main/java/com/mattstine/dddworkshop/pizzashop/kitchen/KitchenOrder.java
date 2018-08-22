@@ -5,7 +5,7 @@ import com.mattstine.dddworkshop.pizzashop.infrastructure.events.ports.EventLog;
 import com.mattstine.dddworkshop.pizzashop.infrastructure.events.ports.Topic;
 import com.mattstine.dddworkshop.pizzashop.infrastructure.repository.ports.Aggregate;
 import com.mattstine.dddworkshop.pizzashop.infrastructure.repository.ports.AggregateState;
-import com.mattstine.dddworkshop.pizzashop.ordering.OrderRef;
+import com.mattstine.dddworkshop.pizzashop.ordering.OnlineOrderRef;
 import lombok.Builder;
 import lombok.NonNull;
 import lombok.Singular;
@@ -16,18 +16,18 @@ import java.util.List;
 import java.util.function.BiFunction;
 
 @Value
-public final class Order implements Aggregate {
+public final class KitchenOrder implements Aggregate {
     KitchenOrderRef ref;
-    OrderRef orderRef;
+    OnlineOrderRef onlineOrderRef;
     List<Pizza> pizzas;
     EventLog $eventLog;
     @NonFinal
     State state;
 
     @Builder
-    private Order(@NonNull KitchenOrderRef ref, @NonNull OrderRef orderRef, @Singular List<Pizza> pizzas, @NonNull EventLog eventLog) {
+    private KitchenOrder(@NonNull KitchenOrderRef ref, @NonNull OnlineOrderRef onlineOrderRef, @Singular List<Pizza> pizzas, @NonNull EventLog eventLog) {
         this.ref = ref;
-        this.orderRef = orderRef;
+        this.onlineOrderRef = onlineOrderRef;
         this.pizzas = pizzas;
         this.$eventLog = eventLog;
 
@@ -37,9 +37,9 @@ public final class Order implements Aggregate {
     /**
      * Private no-args ctor to support reflection ONLY.
      */
-    private Order() {
+    private KitchenOrder() {
         this.ref = null;
-        this.orderRef = null;
+        this.onlineOrderRef = null;
         this.pizzas = null;
         this.$eventLog = null;
     }
@@ -50,11 +50,11 @@ public final class Order implements Aggregate {
 
     public void startPrep() {
         if (this.state != State.NEW) {
-            throw new IllegalStateException("Can only startPrep on NEW Order");
+            throw new IllegalStateException("Can only startPrep on NEW OnlineOrder");
         }
 
         this.state = State.PREPPING;
-        $eventLog.publish(new Topic("kitchen_orders"), new OrderPrepStartedEvent(ref));
+        $eventLog.publish(new Topic("kitchen_orders"), new KitchenOrderPrepStartedEvent(ref));
     }
 
     public boolean isPrepping() {
@@ -63,11 +63,11 @@ public final class Order implements Aggregate {
 
     public void finishPrep() {
         if (this.state != State.PREPPING) {
-            throw new IllegalStateException("Can only finishPrep on PREPPING Order");
+            throw new IllegalStateException("Can only finishPrep on PREPPING OnlineOrder");
         }
 
         this.state = State.PREPPED;
-        $eventLog.publish(new Topic("kitchen_orders"), new OrderPrepFinishedEvent(ref));
+        $eventLog.publish(new Topic("kitchen_orders"), new KitchenOrderPrepFinishedEvent(ref));
     }
 
     public boolean hasFinishedPrep() {
@@ -76,11 +76,11 @@ public final class Order implements Aggregate {
 
     public void startBake() {
         if (this.state != State.PREPPED) {
-            throw new IllegalStateException("Can only startBake on PREPPED Order");
+            throw new IllegalStateException("Can only startBake on PREPPED OnlineOrder");
         }
 
         this.state = State.BAKING;
-        $eventLog.publish(new Topic("kitchen_orders"), new OrderBakeStartedEvent(ref));
+        $eventLog.publish(new Topic("kitchen_orders"), new KitchenOrderBakeStartedEvent(ref));
     }
 
     public boolean isBaking() {
@@ -89,11 +89,11 @@ public final class Order implements Aggregate {
 
     public void finishBake() {
         if (this.state != State.BAKING) {
-            throw new IllegalStateException("Can only finishBake on BAKING Order");
+            throw new IllegalStateException("Can only finishBake on BAKING OnlineOrder");
         }
 
         this.state = State.BAKED;
-        $eventLog.publish(new Topic("kitchen_orders"), new OrderBakeFinishedEvent(ref));
+        $eventLog.publish(new Topic("kitchen_orders"), new KitchenOrderBakeFinishedEvent(ref));
     }
 
     public boolean hasFinishedBaking() {
@@ -102,11 +102,11 @@ public final class Order implements Aggregate {
 
     public void startAssembly() {
         if (this.state != State.BAKED) {
-            throw new IllegalStateException("Can only startAssembly on BAKED Order");
+            throw new IllegalStateException("Can only startAssembly on BAKED OnlineOrder");
         }
 
         this.state = State.ASSEMBLING;
-        $eventLog.publish(new Topic("kitchen_orders"), new OrderAssemblyStartedEvent(ref));
+        $eventLog.publish(new Topic("kitchen_orders"), new KitchenOrderAssemblyStartedEvent(ref));
     }
 
     public boolean hasStartedAssembly() {
@@ -115,11 +115,11 @@ public final class Order implements Aggregate {
 
     public void finishAssembly() {
         if (this.state != State.ASSEMBLING) {
-            throw new IllegalStateException("Can only finishAssembly on ASSEMBLING Order");
+            throw new IllegalStateException("Can only finishAssembly on ASSEMBLING OnlineOrder");
         }
 
         this.state = State.ASSEMBLED;
-        $eventLog.publish(new Topic("kitchen_orders"), new OrderAssemblyFinishedEvent(ref));
+        $eventLog.publish(new Topic("kitchen_orders"), new KitchenOrderAssemblyFinishedEvent(ref));
     }
 
     public boolean hasFinishedAssembly() {
@@ -127,22 +127,22 @@ public final class Order implements Aggregate {
     }
 
     @Override
-    public Order identity() {
-        return Order.builder()
+    public KitchenOrder identity() {
+        return KitchenOrder.builder()
                 .ref(KitchenOrderRef.IDENTITY)
-                .orderRef(OrderRef.IDENTITY)
+                .onlineOrderRef(OnlineOrderRef.IDENTITY)
                 .eventLog(EventLog.IDENTITY)
                 .build();
     }
 
     @Override
-    public BiFunction<Order, OrderEvent, Order> accumulatorFunction() {
+    public BiFunction<KitchenOrder, KitchenOrderEvent, KitchenOrder> accumulatorFunction() {
         return new Accumulator();
     }
 
     @Override
     public OrderState state() {
-        return new OrderState(ref, orderRef, pizzas);
+        return new OrderState(ref, onlineOrderRef, pizzas);
     }
 
     enum State {
@@ -155,44 +155,44 @@ public final class Order implements Aggregate {
         ASSEMBLED
     }
 
-    static class Accumulator implements BiFunction<Order, OrderEvent, Order> {
+    static class Accumulator implements BiFunction<KitchenOrder, KitchenOrderEvent, KitchenOrder> {
 
         @Override
-        public Order apply(Order order, OrderEvent orderEvent) {
-            if (orderEvent instanceof OrderAddedEvent) {
-                OrderAddedEvent oae = (OrderAddedEvent) orderEvent;
+        public KitchenOrder apply(KitchenOrder kitchenOrder, KitchenOrderEvent kitchenOrderEvent) {
+            if (kitchenOrderEvent instanceof KitchenOrderAddedEvent) {
+                KitchenOrderAddedEvent oae = (KitchenOrderAddedEvent) kitchenOrderEvent;
                 OrderState orderState = oae.getState();
-                return Order.builder()
+                return KitchenOrder.builder()
                         .eventLog(InProcessEventLog.instance())
                         .ref(orderState.getRef())
-                        .orderRef(orderState.getOrderRef())
+                        .onlineOrderRef(orderState.getOnlineOrderRef())
                         .pizzas(orderState.getPizzas())
                         .build();
-            } else if (orderEvent instanceof OrderPrepStartedEvent) {
-                order.state = State.PREPPING;
-                return order;
-            } else if (orderEvent instanceof OrderPrepFinishedEvent) {
-                order.state = State.PREPPED;
-                return order;
-            } else if (orderEvent instanceof OrderBakeStartedEvent) {
-                order.state = State.BAKING;
-                return order;
-            } else if (orderEvent instanceof OrderBakeFinishedEvent) {
-                order.state = State.BAKED;
-                return order;
-            } else if (orderEvent instanceof OrderAssemblyStartedEvent) {
-                order.state = State.ASSEMBLING;
-                return order;
-            } else if (orderEvent instanceof OrderAssemblyFinishedEvent) {
-                order.state = State.ASSEMBLED;
-                return order;
+            } else if (kitchenOrderEvent instanceof KitchenOrderPrepStartedEvent) {
+                kitchenOrder.state = State.PREPPING;
+                return kitchenOrder;
+            } else if (kitchenOrderEvent instanceof KitchenOrderPrepFinishedEvent) {
+                kitchenOrder.state = State.PREPPED;
+                return kitchenOrder;
+            } else if (kitchenOrderEvent instanceof KitchenOrderBakeStartedEvent) {
+                kitchenOrder.state = State.BAKING;
+                return kitchenOrder;
+            } else if (kitchenOrderEvent instanceof KitchenOrderBakeFinishedEvent) {
+                kitchenOrder.state = State.BAKED;
+                return kitchenOrder;
+            } else if (kitchenOrderEvent instanceof KitchenOrderAssemblyStartedEvent) {
+                kitchenOrder.state = State.ASSEMBLING;
+                return kitchenOrder;
+            } else if (kitchenOrderEvent instanceof KitchenOrderAssemblyFinishedEvent) {
+                kitchenOrder.state = State.ASSEMBLED;
+                return kitchenOrder;
             }
-            throw new IllegalStateException("Unknown OrderEvent");
+            throw new IllegalStateException("Unknown KitchenOrderEvent");
         }
     }
 
     /*
-     * Pizza Value Object for Order Details Only
+     * Pizza Value Object for OnlineOrder Details Only
      */
     @Value
     static final class Pizza {
@@ -211,7 +211,7 @@ public final class Order implements Aggregate {
     @Value
     static class OrderState implements AggregateState {
         KitchenOrderRef ref;
-        OrderRef orderRef;
+        OnlineOrderRef onlineOrderRef;
         List<Pizza> pizzas;
     }
 }

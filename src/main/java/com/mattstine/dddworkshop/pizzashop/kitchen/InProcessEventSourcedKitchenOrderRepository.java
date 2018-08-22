@@ -4,8 +4,8 @@ import com.mattstine.dddworkshop.pizzashop.infrastructure.events.ports.EventLog;
 import com.mattstine.dddworkshop.pizzashop.infrastructure.events.ports.Topic;
 import com.mattstine.dddworkshop.pizzashop.infrastructure.repository.adapters.InProcessEventSourcedRepository;
 
-class InProcessEventSourcedOrderRepository extends InProcessEventSourcedRepository<KitchenOrderRef, Order, Order.OrderState, OrderEvent, OrderAddedEvent> implements OrderRepository {
-    InProcessEventSourcedOrderRepository(EventLog eventLog, Class<KitchenOrderRef> refClass, Class<Order> aggregateClass, Class<Order.OrderState> aggregateStateClass, Class<OrderAddedEvent> addEventClass, Topic topic) {
+class InProcessEventSourcedKitchenOrderRepository extends InProcessEventSourcedRepository<KitchenOrderRef, KitchenOrder, KitchenOrder.OrderState, KitchenOrderEvent, KitchenOrderAddedEvent> implements KitchenOrderRepository {
+    InProcessEventSourcedKitchenOrderRepository(EventLog eventLog, Class<KitchenOrderRef> refClass, Class<KitchenOrder> aggregateClass, Class<KitchenOrder.OrderState> aggregateStateClass, Class<KitchenOrderAddedEvent> addEventClass, Topic topic) {
         super(eventLog,
                 refClass,
                 aggregateClass,

@@ -10,12 +10,12 @@ import com.mattstine.dddworkshop.pizzashop.payments.PaymentSuccessfulEvent;
 /**
  * @author Matt Stine
  */
-final class OrderService {
+final class DefaultOrderingService implements OrderingService {
     private final EventLog eventLog;
-    private final OrderRepository repository;
+    private final OnlineOrderRepository repository;
     private final PaymentService paymentService;
 
-    OrderService(EventLog eventLog, OrderRepository repository, PaymentService paymentService) {
+    DefaultOrderingService(EventLog eventLog, OnlineOrderRepository repository, PaymentService paymentService) {
         this.eventLog = eventLog;
         this.repository = repository;
         this.paymentService = paymentService;
@@ -28,10 +28,11 @@ final class OrderService {
         });
     }
 
-    public OrderRef createOrder(Order.Type type) {
-        OrderRef ref = repository.nextIdentity();
+    @Override
+    public OnlineOrderRef createOrder(OnlineOrder.Type type) {
+        OnlineOrderRef ref = repository.nextIdentity();
 
-        Order order = Order.builder().type(type)
+        OnlineOrder order = OnlineOrder.builder().type(type)
                 .eventLog(eventLog)
                 .ref(ref)
                 .build();
@@ -41,20 +42,22 @@ final class OrderService {
         return ref;
     }
 
-    public void addPizza(OrderRef ref, Pizza pizza) {
-        Order order = repository.findByRef(ref);
-        order.addPizza(pizza);
+    @Override
+    public void addPizza(OnlineOrderRef ref, Pizza pizza) {
+        OnlineOrder onlineOrder = repository.findByRef(ref);
+        onlineOrder.addPizza(pizza);
     }
 
-    public void requestPayment(OrderRef ref) {
+    @Override
+    public void requestPayment(OnlineOrderRef ref) {
         PaymentRef paymentRef = paymentService.createPaymentOf(Amount.of(10, 0));
         paymentService.requestPaymentFor(paymentRef);
-        Order order = repository.findByRef(ref);
-        order.assignPaymentRef(paymentRef);
+        OnlineOrder onlineOrder = repository.findByRef(ref);
+        onlineOrder.assignPaymentRef(paymentRef);
     }
 
     private void markOrderPaid(PaymentRef paymentRef) {
-        Order order = repository.findByPaymentRef(paymentRef);
-        order.markPaid();
+        OnlineOrder onlineOrder = repository.findByPaymentRef(paymentRef);
+        onlineOrder.markPaid();
     }
 }

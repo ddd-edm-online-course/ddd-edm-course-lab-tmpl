@@ -5,7 +5,6 @@ import com.mattstine.dddworkshop.pizzashop.infrastructure.events.ports.EventLog;
 import com.mattstine.dddworkshop.pizzashop.infrastructure.events.ports.Topic;
 import com.mattstine.dddworkshop.pizzashop.infrastructure.repository.ports.Aggregate;
 import com.mattstine.dddworkshop.pizzashop.infrastructure.repository.ports.AggregateState;
-import com.mattstine.dddworkshop.pizzashop.ordering.OrderRef;
 import lombok.Builder;
 import lombok.NonNull;
 import lombok.Value;
@@ -16,7 +15,7 @@ import java.util.function.BiFunction;
 @Value
 public final class Pizza implements Aggregate {
     PizzaRef ref;
-    OrderRef orderRef;
+    KitchenOrderRef kitchenOrderRef;
     Size size;
     EventLog $eventLog;
     @NonFinal
@@ -24,11 +23,11 @@ public final class Pizza implements Aggregate {
 
     @Builder
     private Pizza(@NonNull PizzaRef ref,
-                  @NonNull OrderRef orderRef,
+                  @NonNull KitchenOrderRef kitchenOrderRef,
                   @NonNull Size size,
                   @NonNull EventLog eventLog) {
         this.ref = ref;
-        this.orderRef = orderRef;
+        this.kitchenOrderRef = kitchenOrderRef;
         this.size = size;
         this.$eventLog = eventLog;
 
@@ -40,7 +39,7 @@ public final class Pizza implements Aggregate {
      */
     private Pizza() {
         this.ref = null;
-        this.orderRef = null;
+        this.kitchenOrderRef = null;
         this.size = null;
         this.$eventLog = null;
     }
@@ -106,7 +105,7 @@ public final class Pizza implements Aggregate {
         return Pizza.builder()
                 .ref(PizzaRef.IDENTITY)
                 .eventLog(EventLog.IDENTITY)
-                .orderRef(OrderRef.IDENTITY)
+                .kitchenOrderRef(KitchenOrderRef.IDENTITY)
                 .size(Size.IDENTITY)
                 .build();
     }
@@ -123,7 +122,7 @@ public final class Pizza implements Aggregate {
 
     @Override
     public PizzaState state() {
-        return new PizzaState(ref, orderRef, size);
+        return new PizzaState(ref, kitchenOrderRef, size);
     }
 
     enum Size {
@@ -148,7 +147,7 @@ public final class Pizza implements Aggregate {
                 return Pizza.builder()
                         .size(pizzaState.getSize())
                         .ref(pizzaState.getRef())
-                        .orderRef(pizzaState.getOrderRef())
+                        .kitchenOrderRef(pizzaState.getKitchenOrderRef())
                         .eventLog(InProcessEventLog.instance())
                         .build();
             } else if (pizzaEvent instanceof PizzaPrepStartedEvent) {
@@ -171,7 +170,7 @@ public final class Pizza implements Aggregate {
     @Value
     static class PizzaState implements AggregateState {
         PizzaRef ref;
-        OrderRef orderRef;
+        KitchenOrderRef kitchenOrderRef;
         Size size;
     }
 }

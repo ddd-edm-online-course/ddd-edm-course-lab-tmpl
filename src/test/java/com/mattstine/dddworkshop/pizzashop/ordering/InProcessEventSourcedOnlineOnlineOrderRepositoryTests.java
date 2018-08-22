@@ -15,27 +15,27 @@ import static org.mockito.Mockito.*;
 /**
  * @author Matt Stine
  */
-public class InProcessEventSourcedOrderRepositoryTests {
+public class InProcessEventSourcedOnlineOnlineOrderRepositoryTests {
 
-    private OrderRepository repository;
+    private OnlineOrderRepository repository;
     private EventLog eventLog;
-    private OrderRef ref;
-    private Order order;
+    private OnlineOrderRef ref;
+    private OnlineOrder onlineOrder;
     private Pizza pizza;
 
     @Before
     public void setUp() {
         eventLog = mock(EventLog.class);
-        repository = new InProcessEventSourcedOrderRepository(eventLog,
-                OrderRef.class,
-                Order.class,
-                Order.OrderState.class,
-                OrderAddedEvent.class,
+        repository = new InProcessEventSourcedOnlineOrderRepository(eventLog,
+                OnlineOrderRef.class,
+                OnlineOrder.class,
+                OnlineOrder.OrderState.class,
+                OnlineOrderAddedEvent.class,
                 new Topic("ordering"));
         ref = repository.nextIdentity();
-        order = Order.builder()
+        onlineOrder = OnlineOrder.builder()
                 .ref(ref)
-                .type(Order.Type.PICKUP)
+                .type(OnlineOrder.Type.PICKUP)
                 .eventLog(eventLog)
                 .build();
         pizza = Pizza.builder().size(Pizza.Size.MEDIUM).build();
@@ -48,84 +48,84 @@ public class InProcessEventSourcedOrderRepositoryTests {
 
     @Test
     public void add_fires_event() {
-        repository.add(order);
-        OrderAddedEvent event = new OrderAddedEvent(order.getRef(), order.state());
+        repository.add(onlineOrder);
+        OnlineOrderAddedEvent event = new OnlineOrderAddedEvent(onlineOrder.getRef(), onlineOrder.state());
         verify(eventLog).publish(eq(new Topic("ordering")), eq(event));
     }
 
     @Test
     public void find_by_ref_hydrates_added_order() {
-        repository.add(order);
+        repository.add(onlineOrder);
 
         when(eventLog.eventsBy(new Topic("ordering")))
-                .thenReturn(Collections.singletonList(new OrderAddedEvent(ref, order.state())));
+                .thenReturn(Collections.singletonList(new OnlineOrderAddedEvent(ref, onlineOrder.state())));
 
-        assertThat(repository.findByRef(ref)).isEqualTo(order);
+        assertThat(repository.findByRef(ref)).isEqualTo(onlineOrder);
     }
 
     @Test
     public void find_by_ref_hydrates_order_with_added_pizza() {
-        repository.add(order);
-        order.addPizza(pizza);
+        repository.add(onlineOrder);
+        onlineOrder.addPizza(pizza);
 
         when(eventLog.eventsBy(new Topic("ordering")))
-                .thenReturn(Arrays.asList(new OrderAddedEvent(ref, order.state()),
+                .thenReturn(Arrays.asList(new OnlineOrderAddedEvent(ref, onlineOrder.state()),
                         new PizzaAddedEvent(ref, pizza)));
 
-        assertThat(repository.findByRef(ref)).isEqualTo(order);
+        assertThat(repository.findByRef(ref)).isEqualTo(onlineOrder);
     }
 
     @Test
     public void find_by_ref_hydrates_submitted_order() {
-        repository.add(order);
-        order.addPizza(pizza);
-        order.submit();
+        repository.add(onlineOrder);
+        onlineOrder.addPizza(pizza);
+        onlineOrder.submit();
 
         when(eventLog.eventsBy(new Topic("ordering")))
-                .thenReturn(Arrays.asList(new OrderAddedEvent(ref, order.state()),
+                .thenReturn(Arrays.asList(new OnlineOrderAddedEvent(ref, onlineOrder.state()),
                         new PizzaAddedEvent(ref, pizza),
-                        new OrderSubmittedEvent(ref)));
+                        new OnlineOrderSubmittedEvent(ref)));
 
-        assertThat(repository.findByRef(ref)).isEqualTo(order);
+        assertThat(repository.findByRef(ref)).isEqualTo(onlineOrder);
     }
 
     @Test
     public void find_by_ref_hydrates_order_with_paymentRef_assigned() {
-        repository.add(order);
-        order.addPizza(pizza);
-        order.submit();
+        repository.add(onlineOrder);
+        onlineOrder.addPizza(pizza);
+        onlineOrder.submit();
 
         PaymentRef paymentRef = new PaymentRef();
-        order.assignPaymentRef(paymentRef);
+        onlineOrder.assignPaymentRef(paymentRef);
 
         when(eventLog.eventsBy(new Topic("ordering")))
-                .thenReturn(Arrays.asList(new OrderAddedEvent(ref, order.state()),
+                .thenReturn(Arrays.asList(new OnlineOrderAddedEvent(ref, onlineOrder.state()),
                         new PizzaAddedEvent(ref, pizza),
-                        new OrderSubmittedEvent(ref),
+                        new OnlineOrderSubmittedEvent(ref),
                         new PaymentRefAssignedEvent(ref, paymentRef)));
 
-        assertThat(repository.findByRef(ref)).isEqualTo(order);
+        assertThat(repository.findByRef(ref)).isEqualTo(onlineOrder);
     }
 
     @Test
     public void find_by_ref_hydrates_order_marked_paid() {
-        repository.add(order);
-        order.addPizza(pizza);
-        order.submit();
+        repository.add(onlineOrder);
+        onlineOrder.addPizza(pizza);
+        onlineOrder.submit();
 
         PaymentRef paymentRef = new PaymentRef();
-        order.assignPaymentRef(paymentRef);
+        onlineOrder.assignPaymentRef(paymentRef);
 
-        order.markPaid();
+        onlineOrder.markPaid();
 
         when(eventLog.eventsBy(new Topic("ordering")))
-                .thenReturn(Arrays.asList(new OrderAddedEvent(ref, order.state()),
+                .thenReturn(Arrays.asList(new OnlineOrderAddedEvent(ref, onlineOrder.state()),
                         new PizzaAddedEvent(ref, pizza),
-                        new OrderSubmittedEvent(ref),
+                        new OnlineOrderSubmittedEvent(ref),
                         new PaymentRefAssignedEvent(ref, paymentRef),
-                        new OrderPaidEvent(ref)));
+                        new OnlineOrderPaidEvent(ref)));
 
-        assertThat(repository.findByRef(ref)).isEqualTo(order);
+        assertThat(repository.findByRef(ref)).isEqualTo(onlineOrder);
     }
 
     @Test

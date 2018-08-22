@@ -23,10 +23,10 @@ import java.util.function.BiFunction;
 @SuppressWarnings("DefaultAnnotationParam")
 @Value
 @EqualsAndHashCode(callSuper = false)
-public final class Order implements Aggregate {
+public final class OnlineOrder implements Aggregate {
     Type type;
     EventLog $eventLog;
-    OrderRef ref;
+    OnlineOrderRef ref;
     List<Pizza> pizzas;
     @NonFinal
     State state;
@@ -34,7 +34,7 @@ public final class Order implements Aggregate {
     PaymentRef paymentRef;
 
     @Builder
-    private Order(@NonNull Type type, @NonNull EventLog eventLog, @NonNull OrderRef ref) {
+    private OnlineOrder(@NonNull Type type, @NonNull EventLog eventLog, @NonNull OnlineOrderRef ref) {
         this.type = type;
         this.$eventLog = eventLog;
         this.ref = ref;
@@ -47,7 +47,7 @@ public final class Order implements Aggregate {
      * Private no-args ctor to support reflection ONLY.
      */
     @SuppressWarnings("unused")
-    private Order() {
+    private OnlineOrder() {
         this.type = null;
         this.ref = null;
         this.pizzas = null;
@@ -76,7 +76,7 @@ public final class Order implements Aggregate {
 
     public void addPizza(Pizza pizza) {
         if (this.state != State.NEW) {
-            throw new IllegalStateException("Can only add Pizza to NEW Order");
+            throw new IllegalStateException("Can only add Pizza to NEW OnlineOrder");
         }
 
         /*
@@ -96,7 +96,7 @@ public final class Order implements Aggregate {
 
     public void submit() {
         if (this.state != State.NEW) {
-            throw new IllegalStateException("Can only submit NEW Order");
+            throw new IllegalStateException("Can only submit NEW OnlineOrder");
         }
 
         /*
@@ -105,7 +105,7 @@ public final class Order implements Aggregate {
          */
         assert this.pizzas != null;
         if (this.pizzas.isEmpty()) {
-            throw new IllegalStateException("Cannot submit Order without at least one Pizza");
+            throw new IllegalStateException("Cannot submit OnlineOrder without at least one Pizza");
         }
 
         this.state = State.SUBMITTED;
@@ -115,7 +115,7 @@ public final class Order implements Aggregate {
          * private no-args constructor is used
          */
         assert $eventLog != null;
-        $eventLog.publish(new Topic("ordering"), new OrderSubmittedEvent(ref));
+        $eventLog.publish(new Topic("ordering"), new OnlineOrderSubmittedEvent(ref));
     }
 
     public void assignPaymentRef(PaymentRef paymentRef) {
@@ -142,7 +142,7 @@ public final class Order implements Aggregate {
 
     public void markPaid() {
         if (this.state != State.SUBMITTED) {
-            throw new IllegalStateException("Can only mark SUBMITTED Order as Paid");
+            throw new IllegalStateException("Can only mark SUBMITTED OnlineOrder as Paid");
         }
 
         this.state = State.PAID;
@@ -152,20 +152,20 @@ public final class Order implements Aggregate {
          * private no-args constructor is used
          */
         assert $eventLog != null;
-        $eventLog.publish(new Topic("ordering"), new OrderPaidEvent(ref));
+        $eventLog.publish(new Topic("ordering"), new OnlineOrderPaidEvent(ref));
     }
 
     @Override
-    public Order identity() {
-        return Order.builder()
+    public OnlineOrder identity() {
+        return OnlineOrder.builder()
                 .eventLog(EventLog.IDENTITY)
-                .ref(OrderRef.IDENTITY)
+                .ref(OnlineOrderRef.IDENTITY)
                 .type(Type.IDENTITY)
                 .build();
     }
 
     @Override
-    public BiFunction<Order, OrderEvent, Order> accumulatorFunction() {
+    public BiFunction<OnlineOrder, OnlineOrderEvent, OnlineOrder> accumulatorFunction() {
         return new Accumulator();
     }
 
@@ -178,51 +178,51 @@ public final class Order implements Aggregate {
         NEW, SUBMITTED, PAID
     }
 
-    enum Type {
+    public enum Type {
         IDENTITY, DELIVERY, PICKUP
     }
 
-    static class Accumulator implements BiFunction<Order, OrderEvent, Order> {
+    static class Accumulator implements BiFunction<OnlineOrder, OnlineOrderEvent, OnlineOrder> {
 
         @Override
-        public Order apply(Order order, OrderEvent orderEvent) {
-            if (orderEvent instanceof OrderAddedEvent) {
-                OrderAddedEvent oae = (OrderAddedEvent) orderEvent;
+        public OnlineOrder apply(OnlineOrder onlineOrder, OnlineOrderEvent onlineOrderEvent) {
+            if (onlineOrderEvent instanceof OnlineOrderAddedEvent) {
+                OnlineOrderAddedEvent oae = (OnlineOrderAddedEvent) onlineOrderEvent;
                 OrderState orderState = oae.getOrderState();
-                return Order.builder()
+                return OnlineOrder.builder()
                         .eventLog(InProcessEventLog.instance())
-                        .ref(orderState.getOrderRef())
+                        .ref(orderState.getOnlineOrderRef())
                         .type(orderState.getType())
                         .build();
-            } else if (orderEvent instanceof PizzaAddedEvent) {
-                PizzaAddedEvent pae = (PizzaAddedEvent) orderEvent;
+            } else if (onlineOrderEvent instanceof PizzaAddedEvent) {
+                PizzaAddedEvent pae = (PizzaAddedEvent) onlineOrderEvent;
 
                 /*
                  * condition only occurs if reflection supporting
                  * private no-args constructor is used
                  */
-                assert order.pizzas != null;
-                order.pizzas.add(pae.getPizza());
+                assert onlineOrder.pizzas != null;
+                onlineOrder.pizzas.add(pae.getPizza());
 
-                return order;
-            } else if (orderEvent instanceof OrderSubmittedEvent) {
-                order.state = State.SUBMITTED;
-                return order;
-            } else if (orderEvent instanceof PaymentRefAssignedEvent) {
-                PaymentRefAssignedEvent prae = (PaymentRefAssignedEvent) orderEvent;
-                order.paymentRef = prae.getPaymentRef();
-                return order;
-            } else if (orderEvent instanceof OrderPaidEvent) {
-                order.state = State.PAID;
-                return order;
+                return onlineOrder;
+            } else if (onlineOrderEvent instanceof OnlineOrderSubmittedEvent) {
+                onlineOrder.state = State.SUBMITTED;
+                return onlineOrder;
+            } else if (onlineOrderEvent instanceof PaymentRefAssignedEvent) {
+                PaymentRefAssignedEvent prae = (PaymentRefAssignedEvent) onlineOrderEvent;
+                onlineOrder.paymentRef = prae.getPaymentRef();
+                return onlineOrder;
+            } else if (onlineOrderEvent instanceof OnlineOrderPaidEvent) {
+                onlineOrder.state = State.PAID;
+                return onlineOrder;
             }
-            throw new IllegalStateException("Unknown OrderEvent");
+            throw new IllegalStateException("Unknown OnlineOrderEvent");
         }
     }
 
     @Value
     static class OrderState implements AggregateState {
-        OrderRef orderRef;
+        OnlineOrderRef onlineOrderRef;
         State state;
         Type type;
     }

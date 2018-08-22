@@ -7,7 +7,7 @@ import lombok.Value;
  * @author Matt Stine
  */
 @Value
-final class PaymentRefAssignedEvent implements OrderEvent {
-    OrderRef ref;
+final class PaymentRefAssignedEvent implements OnlineOrderEvent {
+    OnlineOrderRef ref;
     PaymentRef paymentRef;
 }

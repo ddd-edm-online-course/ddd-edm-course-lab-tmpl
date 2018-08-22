@@ -15,19 +15,19 @@ import static org.mockito.Mockito.*;
 /**
  * @author Matt Stine
  */
-public class OrderServiceTests {
+public class DefaultOrderingServiceTests {
 
     private EventLog eventLog;
-    private OrderRepository repository;
-    private OrderService orderService;
+    private OnlineOrderRepository repository;
+    private OrderingService orderingService;
     private PaymentService paymentService;
 
     @Before
     public void setUp() {
         eventLog = mock(EventLog.class);
-        repository = mock(OrderRepository.class);
+        repository = mock(OnlineOrderRepository.class);
         paymentService = mock(PaymentService.class);
-        orderService = new OrderService(eventLog, repository, paymentService);
+        orderingService = new DefaultOrderingService(eventLog, repository, paymentService);
     }
 
     @Test
@@ -37,51 +37,51 @@ public class OrderServiceTests {
 
     @Test
     public void adds_new_order_to_repository() {
-        when(repository.nextIdentity()).thenReturn(new OrderRef());
-        orderService.createOrder(Order.Type.PICKUP);
-        verify(repository).add(isA(Order.class));
+        when(repository.nextIdentity()).thenReturn(new OnlineOrderRef());
+        orderingService.createOrder(OnlineOrder.Type.PICKUP);
+        verify(repository).add(isA(OnlineOrder.class));
     }
 
     @Test
     public void returns_ref_to_new_order() {
-        OrderRef ref = new OrderRef();
+        OnlineOrderRef ref = new OnlineOrderRef();
         when(repository.nextIdentity()).thenReturn(ref);
-        OrderRef orderRef = orderService.createOrder(Order.Type.PICKUP);
-        assertThat(orderRef).isEqualTo(orderRef);
+        OnlineOrderRef onlineOrderRef = orderingService.createOrder(OnlineOrder.Type.PICKUP);
+        assertThat(onlineOrderRef).isEqualTo(onlineOrderRef);
     }
 
     @Test
     public void adds_pizza_to_order() {
-        OrderRef orderRef = new OrderRef();
-        Order order = Order.builder()
-                .type(Order.Type.PICKUP)
+        OnlineOrderRef onlineOrderRef = new OnlineOrderRef();
+        OnlineOrder onlineOrder = OnlineOrder.builder()
+                .type(OnlineOrder.Type.PICKUP)
                 .eventLog(eventLog)
-                .ref(orderRef)
+                .ref(onlineOrderRef)
                 .build();
 
-        when(repository.findByRef(orderRef)).thenReturn(order);
+        when(repository.findByRef(onlineOrderRef)).thenReturn(onlineOrder);
 
         Pizza pizza = Pizza.builder().size(Pizza.Size.MEDIUM).build();
-        orderService.addPizza(orderRef, pizza);
+        orderingService.addPizza(onlineOrderRef, pizza);
 
-        assertThat(order.getPizzas()).contains(pizza);
+        assertThat(onlineOrder.getPizzas()).contains(pizza);
     }
 
     @Test
     public void requests_payment_for_order() {
-        OrderRef orderRef = new OrderRef();
-        Order order = Order.builder()
-                .type(Order.Type.PICKUP)
+        OnlineOrderRef onlineOrderRef = new OnlineOrderRef();
+        OnlineOrder onlineOrder = OnlineOrder.builder()
+                .type(OnlineOrder.Type.PICKUP)
                 .eventLog(eventLog)
-                .ref(orderRef)
+                .ref(onlineOrderRef)
                 .build();
-        when(repository.findByRef(orderRef)).thenReturn(order);
+        when(repository.findByRef(onlineOrderRef)).thenReturn(onlineOrder);
 
         PaymentRef paymentRef = new PaymentRef();
         when(paymentService.createPaymentOf(Amount.of(10, 0))).thenReturn(paymentRef);
 
-        orderService.requestPayment(orderRef);
-        assertThat(order.getPaymentRef()).isEqualTo(paymentRef);
+        orderingService.requestPayment(onlineOrderRef);
+        assertThat(onlineOrder.getPaymentRef()).isEqualTo(paymentRef);
 
         verify(paymentService).requestPaymentFor(eq(paymentRef));
     }

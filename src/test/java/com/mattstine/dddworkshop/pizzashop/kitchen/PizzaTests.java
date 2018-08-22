@@ -2,7 +2,6 @@ package com.mattstine.dddworkshop.pizzashop.kitchen;
 
 import com.mattstine.dddworkshop.pizzashop.infrastructure.events.ports.EventLog;
 import com.mattstine.dddworkshop.pizzashop.infrastructure.events.ports.Topic;
-import com.mattstine.dddworkshop.pizzashop.ordering.OrderRef;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -18,17 +17,17 @@ public class PizzaTests {
     private Pizza pizza;
     private EventLog eventLog;
     private PizzaRef ref;
-    private OrderRef orderRef;
+    private KitchenOrderRef kitchenOrderRef;
 
     @Before
     public void setUp() {
         eventLog = mock(EventLog.class);
         ref = new PizzaRef();
-        orderRef = new OrderRef();
+        kitchenOrderRef = new KitchenOrderRef();
         pizza = Pizza.builder()
                 .ref(ref)
                 .eventLog(eventLog)
-                .orderRef(orderRef)
+                .kitchenOrderRef(kitchenOrderRef)
                 .size(Pizza.Size.MEDIUM)
                 .build();
     }
@@ -145,7 +144,7 @@ public class PizzaTests {
         Pizza expectedPizza = Pizza.builder()
                 .ref(ref)
                 .eventLog(eventLog)
-                .orderRef(orderRef)
+                .kitchenOrderRef(kitchenOrderRef)
                 .size(Pizza.Size.MEDIUM)
                 .build();
         expectedPizza.startPrep();
@@ -162,7 +161,7 @@ public class PizzaTests {
         Pizza expectedPizza = Pizza.builder()
                 .ref(ref)
                 .eventLog(eventLog)
-                .orderRef(orderRef)
+                .kitchenOrderRef(kitchenOrderRef)
                 .size(Pizza.Size.MEDIUM)
                 .build();
         expectedPizza.startPrep();
@@ -183,7 +182,7 @@ public class PizzaTests {
         Pizza expectedPizza = Pizza.builder()
                 .ref(ref)
                 .eventLog(eventLog)
-                .orderRef(orderRef)
+                .kitchenOrderRef(kitchenOrderRef)
                 .size(Pizza.Size.MEDIUM)
                 .build();
         expectedPizza.startPrep();
@@ -208,7 +207,7 @@ public class PizzaTests {
         Pizza expectedPizza = Pizza.builder()
                 .ref(ref)
                 .eventLog(eventLog)
-                .orderRef(orderRef)
+                .kitchenOrderRef(kitchenOrderRef)
                 .size(Pizza.Size.MEDIUM)
                 .build();
         expectedPizza.startPrep();
