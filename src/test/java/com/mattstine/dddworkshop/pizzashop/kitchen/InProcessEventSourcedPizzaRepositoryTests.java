@@ -1,5 +1,6 @@
 package com.mattstine.dddworkshop.pizzashop.kitchen;
 
+import com.mattstine.dddworkshop.pizzashop.infrastructure.events.ports.EventHandler;
 import com.mattstine.dddworkshop.pizzashop.infrastructure.events.ports.EventLog;
 import com.mattstine.dddworkshop.pizzashop.infrastructure.events.ports.Topic;
 import org.junit.Before;
@@ -112,5 +113,10 @@ public class InProcessEventSourcedPizzaRepositoryTests {
                         new PizzaBakeFinishedEvent(ref)));
 
         assertThat(repository.findByRef(ref)).isEqualTo(pizza);
+    }
+
+    @Test
+    public void subscribes_to_pizzas_topic() {
+        verify(eventLog).subscribe(eq(new Topic("pizzas")), isA(EventHandler.class));
     }
 }

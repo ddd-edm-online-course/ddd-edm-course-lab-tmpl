@@ -150,7 +150,6 @@ public final class Pizza implements Aggregate {
         return new PizzaState(ref, kitchenOrderRef, size);
     }
 
-    @SuppressWarnings("unused")
     enum Size {
         IDENTITY, SMALL, MEDIUM, LARGE
     }

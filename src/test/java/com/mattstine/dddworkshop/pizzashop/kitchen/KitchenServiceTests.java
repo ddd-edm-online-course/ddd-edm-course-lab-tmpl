@@ -9,8 +9,6 @@ import org.junit.Before;
 import org.junit.Test;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.mockito.ArgumentMatchers.eq;
-import static org.mockito.ArgumentMatchers.isA;
 import static org.mockito.Mockito.*;
 
 public class KitchenServiceTests {
@@ -23,8 +21,9 @@ public class KitchenServiceTests {
     public void setUp() {
         eventLog = mock(EventLog.class);
         kitchenOrderRepository = mock(KitchenOrderRepository.class);
+        PizzaRepository pizzaRepository = mock(PizzaRepository.class);
         OrderingService orderingService = mock(OrderingService.class);
-        service = new KitchenService(eventLog, kitchenOrderRepository, orderingService);
+        service = new KitchenService(eventLog, kitchenOrderRepository, pizzaRepository, orderingService);
     }
 
     @Test
@@ -45,6 +44,11 @@ public class KitchenServiceTests {
         when(kitchenOrderRepository.findByOnlineOrderRef(eq(onlineOrderRef))).thenReturn(kitchenOrder);
 
         assertThat(service.findKitchenOrderByOnlineOrderRef(onlineOrderRef)).isEqualTo(kitchenOrder);
+    }
+
+    @Test
+    public void subscribes_to_kitchen_orders_topic() {
+        verify(eventLog).subscribe(eq(new Topic("kitchen_orders")), isA(EventHandler.class));
     }
 
 

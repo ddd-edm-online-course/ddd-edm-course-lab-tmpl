@@ -240,7 +240,6 @@ public final class KitchenOrder implements Aggregate {
             this.size = size;
         }
 
-        @SuppressWarnings("unused")
         enum Size {
             SMALL, MEDIUM, LARGE
         }
