@@ -68,28 +68,9 @@ public final class KitchenOrder implements Aggregate {
         return this.state == State.PREPPING;
     }
 
-    void finishPrep() {
-        if (this.state != State.PREPPING) {
-            throw new IllegalStateException("Can only finishPrep on PREPPING OnlineOrder");
-        }
-
-        this.state = State.PREPPED;
-
-        /*
-         * condition only occurs if reflection supporting
-         * private no-args constructor is used
-         */
-        assert $eventLog != null;
-        $eventLog.publish(new Topic("kitchen_orders"), new KitchenOrderPrepFinishedEvent(ref));
-    }
-
-    boolean hasFinishedPrep() {
-        return this.state == State.PREPPED;
-    }
-
     void startBake() {
-        if (this.state != State.PREPPED) {
-            throw new IllegalStateException("Can only startBake on PREPPED OnlineOrder");
+		if (this.state != State.PREPPING) {
+			throw new IllegalStateException("Can only startBake on PREPPING KitchenOrder");
         }
 
         this.state = State.BAKING;
@@ -108,7 +89,7 @@ public final class KitchenOrder implements Aggregate {
 
     void finishBake() {
         if (this.state != State.BAKING) {
-            throw new IllegalStateException("Can only finishBake on BAKING OnlineOrder");
+			throw new IllegalStateException("Can only finishBake on BAKING KitchenOrder");
         }
 
         this.state = State.BAKED;
@@ -127,7 +108,7 @@ public final class KitchenOrder implements Aggregate {
 
     void startAssembly() {
         if (this.state != State.BAKED) {
-            throw new IllegalStateException("Can only startAssembly on BAKED OnlineOrder");
+			throw new IllegalStateException("Can only startAssembly on BAKED KitchenOrder");
         }
 
         this.state = State.ASSEMBLING;
@@ -146,7 +127,7 @@ public final class KitchenOrder implements Aggregate {
 
     void finishAssembly() {
         if (this.state != State.ASSEMBLING) {
-            throw new IllegalStateException("Can only finishAssembly on ASSEMBLING OnlineOrder");
+			throw new IllegalStateException("Can only finishAssembly on ASSEMBLING KitchenOrder");
         }
 
         this.state = State.ASSEMBLED;
@@ -207,9 +188,6 @@ public final class KitchenOrder implements Aggregate {
                         .build();
             } else if (kitchenOrderEvent instanceof KitchenOrderPrepStartedEvent) {
                 kitchenOrder.state = State.PREPPING;
-                return kitchenOrder;
-            } else if (kitchenOrderEvent instanceof KitchenOrderPrepFinishedEvent) {
-                kitchenOrder.state = State.PREPPED;
                 return kitchenOrder;
             } else if (kitchenOrderEvent instanceof KitchenOrderBakeStartedEvent) {
                 kitchenOrder.state = State.BAKING;

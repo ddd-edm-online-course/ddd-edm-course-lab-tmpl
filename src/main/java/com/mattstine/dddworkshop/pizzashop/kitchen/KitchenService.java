@@ -34,6 +34,21 @@ final class KitchenService {
                 createAndStartPrepOfKitchenOrderPizzas((KitchenOrderPrepStartedEvent) e);
             }
         });
+
+		this.eventLog.subscribe(new Topic("pizzas"), e -> {
+			if (e instanceof PizzaPrepFinishedEvent) {
+				PizzaPrepFinishedEvent ppfe = (PizzaPrepFinishedEvent) e;
+				Pizza pizza = pizzaRepository.findByRef(ppfe.getRef());
+				pizza.startBake();
+			} else if (e instanceof PizzaBakeStartedEvent) {
+				PizzaBakeStartedEvent pbse = (PizzaBakeStartedEvent) e;
+				Pizza pizza = pizzaRepository.findByRef(pbse.getRef());
+				KitchenOrder kitchenOrder = kitchenOrderRepository.findByRef(pizza.getKitchenOrderRef());
+				if (kitchenOrder.isPrepping()) {
+					kitchenOrder.startBake();
+				}
+			}
+		});
     }
 
     KitchenOrder findKitchenOrderByOnlineOrderRef(OnlineOrderRef onlineOrderRef) {

@@ -69,30 +69,14 @@ public class InProcessEventSourcedKitchenOrderRepositoryTests {
     }
 
     @Test
-    public void find_by_ref_hydrates_prepped_order() {
-        repository.add(kitchenOrder);
-        kitchenOrder.startPrep();
-        kitchenOrder.finishPrep();
-
-        when(eventLog.eventsBy(new Topic("kitchen_orders")))
-                .thenReturn(Arrays.asList(new KitchenOrderAddedEvent(ref, kitchenOrder.state()),
-                        new KitchenOrderPrepStartedEvent(ref),
-                        new KitchenOrderPrepFinishedEvent(ref)));
-
-        assertThat(repository.findByRef(ref)).isEqualTo(kitchenOrder);
-    }
-
-    @Test
     public void find_by_ref_hydrates_baking_order() {
         repository.add(kitchenOrder);
         kitchenOrder.startPrep();
-        kitchenOrder.finishPrep();
         kitchenOrder.startBake();
 
         when(eventLog.eventsBy(new Topic("kitchen_orders")))
                 .thenReturn(Arrays.asList(new KitchenOrderAddedEvent(ref, kitchenOrder.state()),
                         new KitchenOrderPrepStartedEvent(ref),
-                        new KitchenOrderPrepFinishedEvent(ref),
                         new KitchenOrderBakeStartedEvent(ref)));
 
         assertThat(repository.findByRef(ref)).isEqualTo(kitchenOrder);
@@ -102,14 +86,12 @@ public class InProcessEventSourcedKitchenOrderRepositoryTests {
     public void find_by_ref_hydrates_baked_order() {
         repository.add(kitchenOrder);
         kitchenOrder.startPrep();
-        kitchenOrder.finishPrep();
         kitchenOrder.startBake();
         kitchenOrder.finishBake();
 
         when(eventLog.eventsBy(new Topic("kitchen_orders")))
                 .thenReturn(Arrays.asList(new KitchenOrderAddedEvent(ref, kitchenOrder.state()),
                         new KitchenOrderPrepStartedEvent(ref),
-                        new KitchenOrderPrepFinishedEvent(ref),
                         new KitchenOrderBakeStartedEvent(ref),
                         new KitchenOrderBakeFinishedEvent(ref)));
 
@@ -120,7 +102,6 @@ public class InProcessEventSourcedKitchenOrderRepositoryTests {
     public void find_by_ref_hydrates_assembling_order() {
         repository.add(kitchenOrder);
         kitchenOrder.startPrep();
-        kitchenOrder.finishPrep();
         kitchenOrder.startBake();
         kitchenOrder.finishBake();
         kitchenOrder.startAssembly();
@@ -128,7 +109,6 @@ public class InProcessEventSourcedKitchenOrderRepositoryTests {
         when(eventLog.eventsBy(new Topic("kitchen_orders")))
                 .thenReturn(Arrays.asList(new KitchenOrderAddedEvent(ref, kitchenOrder.state()),
                         new KitchenOrderPrepStartedEvent(ref),
-                        new KitchenOrderPrepFinishedEvent(ref),
                         new KitchenOrderBakeStartedEvent(ref),
                         new KitchenOrderBakeFinishedEvent(ref),
                         new KitchenOrderAssemblyStartedEvent(ref)));
@@ -140,7 +120,6 @@ public class InProcessEventSourcedKitchenOrderRepositoryTests {
     public void find_by_ref_hydrates_assembled_order() {
         repository.add(kitchenOrder);
         kitchenOrder.startPrep();
-        kitchenOrder.finishPrep();
         kitchenOrder.startBake();
         kitchenOrder.finishBake();
         kitchenOrder.startAssembly();
@@ -149,7 +128,6 @@ public class InProcessEventSourcedKitchenOrderRepositoryTests {
         when(eventLog.eventsBy(new Topic("kitchen_orders")))
                 .thenReturn(Arrays.asList(new KitchenOrderAddedEvent(ref, kitchenOrder.state()),
                         new KitchenOrderPrepStartedEvent(ref),
-                        new KitchenOrderPrepFinishedEvent(ref),
                         new KitchenOrderBakeStartedEvent(ref),
                         new KitchenOrderBakeFinishedEvent(ref),
                         new KitchenOrderAssemblyStartedEvent(ref),

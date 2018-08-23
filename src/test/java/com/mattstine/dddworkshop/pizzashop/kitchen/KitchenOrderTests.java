@@ -57,27 +57,14 @@ public class KitchenOrderTests {
     }
 
     @Test
-    public void finish_order_prep_updates_state() {
-        kitchenOrder.startPrep();
-        kitchenOrder.finishPrep();
-        assertThat(kitchenOrder.hasFinishedPrep()).isTrue();
-    }
-
-    @Test
-    public void only_prepping_order_can_finish_prep() {
-        assertThatIllegalStateException().isThrownBy(kitchenOrder::finishPrep);
-    }
-
-    @Test
     public void start_order_bake_updates_state() {
         kitchenOrder.startPrep();
-        kitchenOrder.finishPrep();
         kitchenOrder.startBake();
         assertThat(kitchenOrder.isBaking()).isTrue();
     }
 
     @Test
-    public void only_prepped_order_can_start_bake() {
+	public void only_prepping_order_can_start_bake() {
         assertThatIllegalStateException().isThrownBy(kitchenOrder::startBake);
     }
 
@@ -85,7 +72,6 @@ public class KitchenOrderTests {
     @Test
     public void finish_order_bake_updates_state() {
         kitchenOrder.startPrep();
-        kitchenOrder.finishPrep();
         kitchenOrder.startBake();
         kitchenOrder.finishBake();
         assertThat(kitchenOrder.hasFinishedBaking()).isTrue();
@@ -99,7 +85,6 @@ public class KitchenOrderTests {
     @Test
     public void start_order_assembly_updates_state() {
         kitchenOrder.startPrep();
-        kitchenOrder.finishPrep();
         kitchenOrder.startBake();
         kitchenOrder.finishBake();
         kitchenOrder.startAssembly();
@@ -114,7 +99,6 @@ public class KitchenOrderTests {
     @Test
     public void finish_order_assembly_updates_state() {
         kitchenOrder.startPrep();
-        kitchenOrder.finishPrep();
         kitchenOrder.startBake();
         kitchenOrder.finishBake();
         kitchenOrder.startAssembly();
@@ -134,31 +118,19 @@ public class KitchenOrderTests {
     }
 
     @Test
-    public void finish_order_prep_fires_event() {
-        kitchenOrder.startPrep();
-        kitchenOrder.finishPrep();
-        verify(eventLog).publish(eq(new Topic("kitchen_orders")), isA(KitchenOrderPrepStartedEvent.class));
-        verify(eventLog).publish(eq(new Topic("kitchen_orders")), isA(KitchenOrderPrepFinishedEvent.class));
-    }
-
-    @Test
     public void start_order_bake_fires_event() {
         kitchenOrder.startPrep();
-        kitchenOrder.finishPrep();
         kitchenOrder.startBake();
         verify(eventLog).publish(eq(new Topic("kitchen_orders")), isA(KitchenOrderPrepStartedEvent.class));
-        verify(eventLog).publish(eq(new Topic("kitchen_orders")), isA(KitchenOrderPrepFinishedEvent.class));
         verify(eventLog).publish(eq(new Topic("kitchen_orders")), isA(KitchenOrderBakeStartedEvent.class));
     }
 
     @Test
     public void finish_order_bake_fires_event() {
         kitchenOrder.startPrep();
-        kitchenOrder.finishPrep();
         kitchenOrder.startBake();
         kitchenOrder.finishBake();
         verify(eventLog).publish(eq(new Topic("kitchen_orders")), isA(KitchenOrderPrepStartedEvent.class));
-        verify(eventLog).publish(eq(new Topic("kitchen_orders")), isA(KitchenOrderPrepFinishedEvent.class));
         verify(eventLog).publish(eq(new Topic("kitchen_orders")), isA(KitchenOrderBakeStartedEvent.class));
         verify(eventLog).publish(eq(new Topic("kitchen_orders")), isA(KitchenOrderBakeFinishedEvent.class));
     }
@@ -166,12 +138,10 @@ public class KitchenOrderTests {
     @Test
     public void start_order_assembly_fires_event() {
         kitchenOrder.startPrep();
-        kitchenOrder.finishPrep();
         kitchenOrder.startBake();
         kitchenOrder.finishBake();
         kitchenOrder.startAssembly();
         verify(eventLog).publish(eq(new Topic("kitchen_orders")), isA(KitchenOrderPrepStartedEvent.class));
-        verify(eventLog).publish(eq(new Topic("kitchen_orders")), isA(KitchenOrderPrepFinishedEvent.class));
         verify(eventLog).publish(eq(new Topic("kitchen_orders")), isA(KitchenOrderBakeStartedEvent.class));
         verify(eventLog).publish(eq(new Topic("kitchen_orders")), isA(KitchenOrderBakeFinishedEvent.class));
         verify(eventLog).publish(eq(new Topic("kitchen_orders")), isA(KitchenOrderAssemblyStartedEvent.class));
@@ -180,13 +150,11 @@ public class KitchenOrderTests {
     @Test
     public void finish_order_assembly_fires_event() {
         kitchenOrder.startPrep();
-        kitchenOrder.finishPrep();
         kitchenOrder.startBake();
         kitchenOrder.finishBake();
         kitchenOrder.startAssembly();
         kitchenOrder.finishAssembly();
         verify(eventLog).publish(eq(new Topic("kitchen_orders")), isA(KitchenOrderPrepStartedEvent.class));
-        verify(eventLog).publish(eq(new Topic("kitchen_orders")), isA(KitchenOrderPrepFinishedEvent.class));
         verify(eventLog).publish(eq(new Topic("kitchen_orders")), isA(KitchenOrderBakeStartedEvent.class));
         verify(eventLog).publish(eq(new Topic("kitchen_orders")), isA(KitchenOrderBakeFinishedEvent.class));
         verify(eventLog).publish(eq(new Topic("kitchen_orders")), isA(KitchenOrderAssemblyStartedEvent.class));
@@ -218,28 +186,6 @@ public class KitchenOrderTests {
     }
 
     @Test
-    public void accumulator_apply_with_orderPrepFinishedEvent_returns_order() {
-        KitchenOrder expectedKitchenOrder = KitchenOrder.builder()
-                .ref(ref)
-                .onlineOrderRef(onlineOrderRef)
-                .eventLog(eventLog)
-                .pizza(KitchenOrder.Pizza.builder().size(KitchenOrder.Pizza.Size.SMALL).build())
-                .pizza(KitchenOrder.Pizza.builder().size(KitchenOrder.Pizza.Size.MEDIUM).build())
-                .build();
-        expectedKitchenOrder.startPrep();
-        expectedKitchenOrder.finishPrep();
-
-        KitchenOrderAddedEvent orderAddedEvent = new KitchenOrderAddedEvent(ref, kitchenOrder.state());
-        kitchenOrder.accumulatorFunction().apply(kitchenOrder.identity(), orderAddedEvent);
-
-        KitchenOrderPrepStartedEvent orderPrepStartedEvent = new KitchenOrderPrepStartedEvent(ref);
-        kitchenOrder.accumulatorFunction().apply(kitchenOrder, orderPrepStartedEvent);
-
-        KitchenOrderPrepFinishedEvent orderPrepFinishedEvent = new KitchenOrderPrepFinishedEvent(ref);
-        assertThat(kitchenOrder.accumulatorFunction().apply(kitchenOrder, orderPrepFinishedEvent)).isEqualTo(expectedKitchenOrder);
-    }
-
-    @Test
     public void accumulator_apply_with_orderBakeStartedEvent_returns_order() {
         KitchenOrder expectedKitchenOrder = KitchenOrder.builder()
                 .ref(ref)
@@ -249,7 +195,6 @@ public class KitchenOrderTests {
                 .pizza(KitchenOrder.Pizza.builder().size(KitchenOrder.Pizza.Size.MEDIUM).build())
                 .build();
         expectedKitchenOrder.startPrep();
-        expectedKitchenOrder.finishPrep();
         expectedKitchenOrder.startBake();
 
         KitchenOrderAddedEvent orderAddedEvent = new KitchenOrderAddedEvent(ref, kitchenOrder.state());
@@ -257,9 +202,6 @@ public class KitchenOrderTests {
 
         KitchenOrderPrepStartedEvent orderPrepStartedEvent = new KitchenOrderPrepStartedEvent(ref);
         kitchenOrder.accumulatorFunction().apply(kitchenOrder, orderPrepStartedEvent);
-
-        KitchenOrderPrepFinishedEvent orderPrepFinishedEvent = new KitchenOrderPrepFinishedEvent(ref);
-        kitchenOrder.accumulatorFunction().apply(kitchenOrder, orderPrepFinishedEvent);
 
         KitchenOrderBakeStartedEvent orderBakeStartedEvent = new KitchenOrderBakeStartedEvent(ref);
         assertThat(kitchenOrder.accumulatorFunction().apply(kitchenOrder, orderBakeStartedEvent)).isEqualTo(expectedKitchenOrder);
@@ -275,7 +217,6 @@ public class KitchenOrderTests {
                 .pizza(KitchenOrder.Pizza.builder().size(KitchenOrder.Pizza.Size.MEDIUM).build())
                 .build();
         expectedKitchenOrder.startPrep();
-        expectedKitchenOrder.finishPrep();
         expectedKitchenOrder.startBake();
         expectedKitchenOrder.finishBake();
 
@@ -284,9 +225,6 @@ public class KitchenOrderTests {
 
         KitchenOrderPrepStartedEvent orderPrepStartedEvent = new KitchenOrderPrepStartedEvent(ref);
         kitchenOrder.accumulatorFunction().apply(kitchenOrder, orderPrepStartedEvent);
-
-        KitchenOrderPrepFinishedEvent orderPrepFinishedEvent = new KitchenOrderPrepFinishedEvent(ref);
-        kitchenOrder.accumulatorFunction().apply(kitchenOrder, orderPrepFinishedEvent);
 
         KitchenOrderBakeStartedEvent orderBakeStartedEvent = new KitchenOrderBakeStartedEvent(ref);
         kitchenOrder.accumulatorFunction().apply(kitchenOrder, orderBakeStartedEvent);
@@ -305,7 +243,6 @@ public class KitchenOrderTests {
                 .pizza(KitchenOrder.Pizza.builder().size(KitchenOrder.Pizza.Size.MEDIUM).build())
                 .build();
         expectedKitchenOrder.startPrep();
-        expectedKitchenOrder.finishPrep();
         expectedKitchenOrder.startBake();
         expectedKitchenOrder.finishBake();
         expectedKitchenOrder.startAssembly();
@@ -315,9 +252,6 @@ public class KitchenOrderTests {
 
         KitchenOrderPrepStartedEvent orderPrepStartedEvent = new KitchenOrderPrepStartedEvent(ref);
         kitchenOrder.accumulatorFunction().apply(kitchenOrder, orderPrepStartedEvent);
-
-        KitchenOrderPrepFinishedEvent orderPrepFinishedEvent = new KitchenOrderPrepFinishedEvent(ref);
-        kitchenOrder.accumulatorFunction().apply(kitchenOrder, orderPrepFinishedEvent);
 
         KitchenOrderBakeStartedEvent orderBakeStartedEvent = new KitchenOrderBakeStartedEvent(ref);
         kitchenOrder.accumulatorFunction().apply(kitchenOrder, orderBakeStartedEvent);
@@ -339,7 +273,6 @@ public class KitchenOrderTests {
                 .pizza(KitchenOrder.Pizza.builder().size(KitchenOrder.Pizza.Size.MEDIUM).build())
                 .build();
         expectedKitchenOrder.startPrep();
-        expectedKitchenOrder.finishPrep();
         expectedKitchenOrder.startBake();
         expectedKitchenOrder.finishBake();
         expectedKitchenOrder.startAssembly();
@@ -350,9 +283,6 @@ public class KitchenOrderTests {
 
         KitchenOrderPrepStartedEvent orderPrepStartedEvent = new KitchenOrderPrepStartedEvent(ref);
         kitchenOrder.accumulatorFunction().apply(kitchenOrder, orderPrepStartedEvent);
-
-        KitchenOrderPrepFinishedEvent orderPrepFinishedEvent = new KitchenOrderPrepFinishedEvent(ref);
-        kitchenOrder.accumulatorFunction().apply(kitchenOrder, orderPrepFinishedEvent);
 
         KitchenOrderBakeStartedEvent orderBakeStartedEvent = new KitchenOrderBakeStartedEvent(ref);
         kitchenOrder.accumulatorFunction().apply(kitchenOrder, orderBakeStartedEvent);
