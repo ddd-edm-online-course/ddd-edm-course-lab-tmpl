@@ -83,34 +83,16 @@ public class InProcessEventSourcedKitchenOrderRepositoryTests {
     }
 
     @Test
-    public void find_by_ref_hydrates_baked_order() {
-        repository.add(kitchenOrder);
-        kitchenOrder.startPrep();
-        kitchenOrder.startBake();
-        kitchenOrder.finishBake();
-
-        when(eventLog.eventsBy(new Topic("kitchen_orders")))
-                .thenReturn(Arrays.asList(new KitchenOrderAddedEvent(ref, kitchenOrder.state()),
-                        new KitchenOrderPrepStartedEvent(ref),
-                        new KitchenOrderBakeStartedEvent(ref),
-                        new KitchenOrderBakeFinishedEvent(ref)));
-
-        assertThat(repository.findByRef(ref)).isEqualTo(kitchenOrder);
-    }
-
-    @Test
     public void find_by_ref_hydrates_assembling_order() {
         repository.add(kitchenOrder);
         kitchenOrder.startPrep();
         kitchenOrder.startBake();
-        kitchenOrder.finishBake();
         kitchenOrder.startAssembly();
 
         when(eventLog.eventsBy(new Topic("kitchen_orders")))
                 .thenReturn(Arrays.asList(new KitchenOrderAddedEvent(ref, kitchenOrder.state()),
                         new KitchenOrderPrepStartedEvent(ref),
                         new KitchenOrderBakeStartedEvent(ref),
-                        new KitchenOrderBakeFinishedEvent(ref),
                         new KitchenOrderAssemblyStartedEvent(ref)));
 
         assertThat(repository.findByRef(ref)).isEqualTo(kitchenOrder);
@@ -121,7 +103,6 @@ public class InProcessEventSourcedKitchenOrderRepositoryTests {
         repository.add(kitchenOrder);
         kitchenOrder.startPrep();
         kitchenOrder.startBake();
-        kitchenOrder.finishBake();
         kitchenOrder.startAssembly();
         kitchenOrder.finishAssembly();
 
@@ -129,7 +110,6 @@ public class InProcessEventSourcedKitchenOrderRepositoryTests {
                 .thenReturn(Arrays.asList(new KitchenOrderAddedEvent(ref, kitchenOrder.state()),
                         new KitchenOrderPrepStartedEvent(ref),
                         new KitchenOrderBakeStartedEvent(ref),
-                        new KitchenOrderBakeFinishedEvent(ref),
                         new KitchenOrderAssemblyStartedEvent(ref),
                         new KitchenOrderAssemblyFinishedEvent(ref)));
 

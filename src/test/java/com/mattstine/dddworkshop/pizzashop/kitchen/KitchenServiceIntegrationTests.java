@@ -106,7 +106,7 @@ public class KitchenServiceIntegrationTests {
 		pizza.finishPrep();
 
 		pizza = pizzaRepository.findByRef(pizza.getRef());
-		assertThat(pizza.getState()).isEqualTo(Pizza.State.BAKING);
+		assertThat(pizza.isBaking()).isTrue();
 	}
 
 	@Test
@@ -116,6 +116,21 @@ public class KitchenServiceIntegrationTests {
 		pizzasByKitchenOrderRef.forEach(Pizza::finishPrep);
 
 		kitchenOrder = kitchenOrderRepository.findByRef(kitchenOrderRef);
-		assertThat(kitchenOrder.getState()).isEqualTo(KitchenOrder.State.BAKING);
+		assertThat(kitchenOrder.isBaking()).isTrue();
+	}
+
+	@Test
+	public void on_pizzaBakeFinished_start_orderAssembly() {
+		// Load pizzas that are prepping...
+		Set<Pizza> pizzasByKitchenOrderRef = kitchenService.findPizzasByKitchenOrderRef(kitchenOrderRef);
+		pizzasByKitchenOrderRef.forEach(Pizza::finishPrep);
+
+		// Load pizzas that are baking...
+		pizzasByKitchenOrderRef = kitchenService.findPizzasByKitchenOrderRef(kitchenOrderRef);
+		pizzasByKitchenOrderRef.forEach(Pizza::finishBake);
+
+		// Ensure order has started assembly...
+		kitchenOrder = kitchenOrderRepository.findByRef(kitchenOrderRef);
+		assertThat(kitchenOrder.hasStartedAssembly()).isTrue();
 	}
 }

@@ -47,6 +47,13 @@ final class KitchenService {
 				if (kitchenOrder.isPrepping()) {
 					kitchenOrder.startBake();
 				}
+			} else if (e instanceof PizzaBakeFinishedEvent) {
+				PizzaBakeFinishedEvent pbfe = (PizzaBakeFinishedEvent) e;
+				Pizza pizza = pizzaRepository.findByRef(pbfe.getRef());
+				KitchenOrder kitchenOrder = kitchenOrderRepository.findByRef(pizza.getKitchenOrderRef());
+				if (kitchenOrder.isBaking()) {
+					kitchenOrder.startAssembly();
+				}
 			}
 		});
     }

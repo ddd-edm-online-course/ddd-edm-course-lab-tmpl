@@ -87,28 +87,9 @@ public final class KitchenOrder implements Aggregate {
         return this.state == State.BAKING;
     }
 
-    void finishBake() {
-        if (this.state != State.BAKING) {
-			throw new IllegalStateException("Can only finishBake on BAKING KitchenOrder");
-        }
-
-        this.state = State.BAKED;
-
-        /*
-         * condition only occurs if reflection supporting
-         * private no-args constructor is used
-         */
-        assert $eventLog != null;
-        $eventLog.publish(new Topic("kitchen_orders"), new KitchenOrderBakeFinishedEvent(ref));
-    }
-
-    boolean hasFinishedBaking() {
-        return this.state == State.BAKED;
-    }
-
     void startAssembly() {
-        if (this.state != State.BAKED) {
-			throw new IllegalStateException("Can only startAssembly on BAKED KitchenOrder");
+		if (this.state != State.BAKING) {
+			throw new IllegalStateException("Can only startAssembly on BAKING KitchenOrder");
         }
 
         this.state = State.ASSEMBLING;
@@ -191,9 +172,6 @@ public final class KitchenOrder implements Aggregate {
                 return kitchenOrder;
             } else if (kitchenOrderEvent instanceof KitchenOrderBakeStartedEvent) {
                 kitchenOrder.state = State.BAKING;
-                return kitchenOrder;
-            } else if (kitchenOrderEvent instanceof KitchenOrderBakeFinishedEvent) {
-                kitchenOrder.state = State.BAKED;
                 return kitchenOrder;
             } else if (kitchenOrderEvent instanceof KitchenOrderAssemblyStartedEvent) {
                 kitchenOrder.state = State.ASSEMBLING;
