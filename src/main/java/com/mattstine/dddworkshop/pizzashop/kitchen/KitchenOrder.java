@@ -147,9 +147,7 @@ public final class KitchenOrder implements Aggregate {
     enum State {
         NEW,
         PREPPING,
-        PREPPED,
         BAKING,
-        BAKED,
         ASSEMBLING,
         ASSEMBLED
     }
