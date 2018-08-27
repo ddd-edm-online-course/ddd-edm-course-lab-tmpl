@@ -125,4 +125,22 @@ final class KitchenService {
                 throw new IllegalStateException("orderingSize must be member of ordering.Pizza.Size enum");
         }
     }
+
+	public void startOrderPrep(KitchenOrderRef kitchenOrderRef) {
+		KitchenOrder kitchenOrder = kitchenOrderRepository.findByRef(kitchenOrderRef);
+		kitchenOrder.startPrep();
+	}
+
+	public KitchenOrder findKitchenOrderByRef(KitchenOrderRef kitchenOrderRef) {
+		return kitchenOrderRepository.findByRef(kitchenOrderRef);
+	}
+
+	public void removePizzaFromOven(PizzaRef ref) {
+		Pizza pizza = pizzaRepository.findByRef(ref);
+		pizza.finishBake();
+	}
+
+	public Pizza findPizzaByRef(PizzaRef ref) {
+		return pizzaRepository.findByRef(ref);
+	}
 }

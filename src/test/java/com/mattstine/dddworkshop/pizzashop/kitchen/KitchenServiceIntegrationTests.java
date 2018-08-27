@@ -45,7 +45,6 @@ public class KitchenServiceIntegrationTests {
 				.pizza(KitchenOrder.Pizza.builder().size(KitchenOrder.Pizza.Size.LARGE).build())
 				.build();
 		kitchenOrderRepository.add(kitchenOrder);
-		kitchenOrder.startPrep();
     }
 
     @After
@@ -78,7 +77,9 @@ public class KitchenServiceIntegrationTests {
 
     @Test
     public void on_kitchenOrderPrepStartedEvent_start_prep_on_all_pizzas() {
-        Set<Pizza> pizzas = kitchenService.findPizzasByKitchenOrderRef(kitchenOrderRef);
+		kitchenOrder.startPrep();
+
+		Set<Pizza> pizzas = kitchenService.findPizzasByKitchenOrderRef(kitchenOrderRef);
 
         assertThat(pizzas.size()).isEqualTo(2);
 
@@ -97,6 +98,8 @@ public class KitchenServiceIntegrationTests {
 
 	@Test
 	public void on_pizzaPrepFinished_start_pizzaBake() {
+		kitchenOrder.startPrep();
+
 		Set<Pizza> pizzasByKitchenOrderRef = kitchenService.findPizzasByKitchenOrderRef(kitchenOrderRef);
 
 		Pizza pizza = pizzasByKitchenOrderRef.stream()
@@ -111,6 +114,8 @@ public class KitchenServiceIntegrationTests {
 
 	@Test
 	public void on_pizzaBakeStarted_start_orderBake() {
+		kitchenOrder.startPrep();
+
 		Set<Pizza> pizzasByKitchenOrderRef = kitchenService.findPizzasByKitchenOrderRef(kitchenOrderRef);
 
 		pizzasByKitchenOrderRef.forEach(Pizza::finishPrep);
@@ -121,6 +126,8 @@ public class KitchenServiceIntegrationTests {
 
 	@Test
 	public void on_pizzaBakeFinished_start_orderAssembly() {
+		kitchenOrder.startPrep();
+
 		// Load pizzas that are prepping...
 		Set<Pizza> pizzasByKitchenOrderRef = kitchenService.findPizzasByKitchenOrderRef(kitchenOrderRef);
 		pizzasByKitchenOrderRef.forEach(Pizza::finishPrep);
@@ -133,4 +140,40 @@ public class KitchenServiceIntegrationTests {
 		kitchenOrder = kitchenOrderRepository.findByRef(kitchenOrderRef);
 		assertThat(kitchenOrder.hasStartedAssembly()).isTrue();
 	}
+
+	@Test
+	public void should_start_kitchenOrder_prep() {
+		kitchenService.startOrderPrep(kitchenOrderRef);
+		kitchenOrder = kitchenService.findKitchenOrderByRef(kitchenOrderRef);
+		assertThat(kitchenOrder.isPrepping()).isTrue();
+	}
+
+	@Test
+	public void should_finish_pizza_prep() {
+		kitchenOrder.startPrep();
+
+		Pizza pizza = kitchenService.findPizzasByKitchenOrderRef(kitchenOrderRef).stream()
+				.findFirst().get();
+
+		pizza.finishPrep();
+		assertThat(pizza.hasFinishedPrep()).isTrue();
+	}
+
+	@Test
+	public void should_remove_pizza_from_oven() {
+		kitchenOrder.startPrep();
+
+		Pizza pizza = kitchenService.findPizzasByKitchenOrderRef(kitchenOrderRef).stream()
+				.findFirst().get();
+
+		pizza.finishPrep();
+
+		kitchenService.removePizzaFromOven(pizza.getRef());
+
+		pizza = kitchenService.findPizzaByRef(pizza.getRef());
+
+		assertThat(pizza.hasFinishedBaking()).isTrue();
+	}
+
+
 }
