@@ -23,7 +23,7 @@ public class KitchenServiceTests {
 		kitchenOrderRepository = mock(KitchenOrderRepository.class);
 		PizzaRepository pizzaRepository = mock(PizzaRepository.class);
 		OrderingService orderingService = mock(OrderingService.class);
-		service = new KitchenService(eventLog, kitchenOrderRepository, pizzaRepository, orderingService);
+		service = new DefaultKitchenService(eventLog, kitchenOrderRepository, pizzaRepository, orderingService);
 	}
 
 	@Test
