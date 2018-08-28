@@ -186,7 +186,7 @@ public final class KitchenOrder implements Aggregate {
      * Pizza Value Object for OnlineOrder Details Only
      */
     @Value
-    static final class Pizza {
+    public static final class Pizza {
         Size size;
 
         @Builder
@@ -194,7 +194,7 @@ public final class KitchenOrder implements Aggregate {
             this.size = size;
         }
 
-        enum Size {
+        public enum Size {
             SMALL, MEDIUM, LARGE
         }
     }

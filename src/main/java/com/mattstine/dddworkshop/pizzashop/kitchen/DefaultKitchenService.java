@@ -10,6 +10,7 @@ import lombok.Value;
 
 import java.util.Set;
 
+@SuppressWarnings("SpellCheckingInspection")
 @Value
 final class DefaultKitchenService implements KitchenService {
 	EventLog eventLog;
