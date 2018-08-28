@@ -8,7 +8,7 @@ import com.mattstine.dddworkshop.pizzashop.ordering.OnlineOrderRef;
 import java.util.HashMap;
 import java.util.Map;
 
-class InProcessEventSourcedKitchenOrderRepository extends InProcessEventSourcedRepository<KitchenOrderRef, KitchenOrder, KitchenOrder.OrderState, KitchenOrderEvent, KitchenOrderAddedEvent> implements KitchenOrderRepository {
+final class InProcessEventSourcedKitchenOrderRepository extends InProcessEventSourcedRepository<KitchenOrderRef, KitchenOrder, KitchenOrder.OrderState, KitchenOrderEvent, KitchenOrderAddedEvent> implements KitchenOrderRepository {
 
     private final Map<OnlineOrderRef, KitchenOrderRef> onlineOrderRefToKitchenOrderRef;
 
