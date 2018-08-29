@@ -8,13 +8,45 @@ You have now successfully acquired your own private copy of the lab exercises an
 This is your sandbox, and you can feel free to make changes, commit and push those changes, etc.
 You'll also find guidance here on how to complete the labs and run the tests. Happy coding!
 
-== Setup Instructions
+WARNING: While this is *your* repository, please don't make changes to any of the implemented code that already has passing tests during the labs.
+If you break that code, you may not be able to successfully complete the labs.
 
-TODO: these need to be written
+== Setup Guide
+
+If you've gotten this far, we can safely assume that your Git/GitHub setup is correct.
+All that remains is to import the code into your IDE of choice and run your first tests.
+
+NOTE: While IDE choice should not matter, these instructions have only been tested in IntelliJ IDEA.
+
+. Ensure your workstation has a proper Java 8 installation.
+
+. You will need to make sure your IDE is properly configured for Lombok.
+At the following links, you can find instructions for https://projectlombok.org/setup/eclipse[Eclipse] and https://projectlombok.org/setup/intellij[IntelliJ] IDEA.
+
+. Import `pom.xml` as a Maven project into your IDE.
+
+. Run `com.mattstine.dddworkshop.pizzashop.suites.SetupSuite` to demonstrate that all of the implemented tests are passing.
+
+. Assuming you've gotten this far, you're ready to submit your setup lab. Read on!
 
 == Lab Submission Guide
 
-TODO: this needs to be written
+Now we'll ensure that you are properly setup for submitting completed labs to GitHub and viewing your results in TravisCI.
+
+NOTE: While submission of your lab implementations is entirely optional, it will help your instructor gauge everyone's progress, as well as provide him the opportunity to provide custom feedback in your repository!
+
+. Find `com.mattstine.lab.setup.HelloWorldTest`. This test should currently be failing.
+
+. Make it pass!
+
+. You'll now want to commit your changes to Git. When submitting labs, please prefix your commit with `[NAME OF LAB]` in order to make it easier to track down.
+For this lab, you'll prefix with `[SETUP]`. For Lab 1, you'll prefix with `[LAB 1]`. And so on...
+
+. Push your changes to GitHub.
+
+TODO: create another dummy user and walk through provisioning to TravisCI. Demonstrate viewing of results.
+
+. Assuming you've gotten this far, you're ready to start Lab 1!
 
 == Lab Guides
 
