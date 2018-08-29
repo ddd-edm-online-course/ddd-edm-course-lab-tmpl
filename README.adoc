@@ -44,21 +44,21 @@ For this lab, you'll prefix with `[SETUP]`. For Lab 1, you'll prefix with `[LAB 
 
 . Push your changes to GitHub.
 
-. Visit http://travis-ci.com, and sign in with your GitHub account.
+. Visit http://travis-ci.com, and sign in with your GitHub account. If you are not already a Travis CI user, you will need to complete the following steps.
 +
-image::travis.png[]
+image::assets/travis.png[]
 
 . You will be asked to authorize Travis CI to access data from your GitHub account. You will have to accept to continue. If you are not comfortable with this authorization, you will be able to complete the labs (if you're here, I assume you've cloned the repo), but you won't be able to submit for feedback.
 +
-image::authorize_travis.png[]
+image::assets/authorize_travis.png[]
 
 . You may be asked by GitHub to confirm your password.
 +
-image::password.png[]
+image::assets/password.png[]
 
 . Travis CI will sync any enabled repos in your GitHub account. Your class repo should already be there as well, and should have a successful build.
 +
-image::travis_repo.png[]
+image::assets/travis_repo.png[]
 
 . Assuming you've gotten this far, you're ready to start Lab 1!
 
