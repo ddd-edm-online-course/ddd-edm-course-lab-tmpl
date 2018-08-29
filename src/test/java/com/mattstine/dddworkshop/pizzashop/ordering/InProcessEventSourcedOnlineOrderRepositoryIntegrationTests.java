@@ -12,7 +12,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 /**
  * @author Matt Stine
  */
-public class InProcessEventSourcedOnlineOnlineOrderRepositoryIntegrationTests {
+public class InProcessEventSourcedOnlineOrderRepositoryIntegrationTests {
 
     private OnlineOrderRepository repository;
     private OnlineOrder onlineOrder;

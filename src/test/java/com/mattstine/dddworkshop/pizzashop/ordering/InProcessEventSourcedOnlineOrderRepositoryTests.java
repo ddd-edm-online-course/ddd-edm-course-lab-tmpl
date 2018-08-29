@@ -15,7 +15,7 @@ import static org.mockito.Mockito.*;
 /**
  * @author Matt Stine
  */
-public class InProcessEventSourcedOnlineOnlineOrderRepositoryTests {
+public class InProcessEventSourcedOnlineOrderRepositoryTests {
 
     private OnlineOrderRepository repository;
     private EventLog eventLog;
