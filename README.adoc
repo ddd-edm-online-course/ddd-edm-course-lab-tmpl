@@ -1,11 +1,29 @@
-= Pizza Shop DDD Example
+= Domain-Driven Design and Event-Driven Microservices
 
-This is my pizza shop. There are others like it, but this one is mine.
+**Learning a Pathway to Evolutionary Architecture**
 
+== Welcome to the Lab Environment!
 
-== Event Storm
-image::docs/event_storm.jpg[]
+You have now successfully acquired your own private copy of the lab exercises and instructions.
+This is your sandbox, and you can feel free to make changes, commit and push those changes, etc.
+You'll also find guidance here on how to complete the labs and run the tests. Happy coding!
 
-== Tell Me More!
+== Setup Instructions
 
-There will be more docs. I promise!
+TODO: these need to be written
+
+== Lab Submission Guide
+
+TODO: this needs to be written
+
+== Lab Guides
+
+TODO: these need to be written
+
+* link:docs/lab1.adoc[Lab 1] - TDD Aggregate Root - Create Kitchen Commands with Business Logic and Invariants
+* link:docs/lab2.adoc[Lab 2] - TDD Aggregate Root - Create and Publish Kitchen Domain Events
+* link:docs/lab3.adoc[Lab 3] - TDD Aggregate Repository - Create Kitchen Repositories and Add Domain Events
+* link:docs/lab4.adoc[Lab 4] - TDD Aggregate Repository - Rehydrate Kitchen Aggregates by Reference
+* link:docs/lab5.adoc[Lab 5] - TDD Application Service - Expose Kitchen Business Interface and Implement Transactions
+* link:docs/lab6.adoc[Lab 6] - TDD Policy - Subscribe to a Kitchen Domain Event from within an Aggregate and Create CQRS View
+* link:docs/lab7.adoc[Lab 7] - TDD Policy - Subscribe to a Kitchen Domain Event from an Adjacent Aggregate and Update State
