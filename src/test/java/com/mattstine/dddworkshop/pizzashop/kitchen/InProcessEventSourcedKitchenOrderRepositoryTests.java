@@ -3,8 +3,11 @@ package com.mattstine.dddworkshop.pizzashop.kitchen;
 import com.mattstine.dddworkshop.pizzashop.infrastructure.events.ports.EventLog;
 import com.mattstine.dddworkshop.pizzashop.infrastructure.events.ports.Topic;
 import com.mattstine.dddworkshop.pizzashop.ordering.OnlineOrderRef;
+import com.mattstine.lab.infrastructure.Lab3Tests;
+import com.mattstine.lab.infrastructure.Lab4Tests;
 import org.junit.Before;
 import org.junit.Test;
+import org.junit.experimental.categories.Category;
 
 import java.util.Arrays;
 import java.util.Collections;
@@ -34,11 +37,13 @@ public class InProcessEventSourcedKitchenOrderRepositoryTests {
     }
 
     @Test
+    @Category(Lab3Tests.class)
     public void provides_next_identity() {
         assertThat(ref).isNotNull();
     }
 
     @Test
+    @Category(Lab3Tests.class)
     public void add_fires_event() {
         repository.add(kitchenOrder);
         KitchenOrderAddedEvent event = new KitchenOrderAddedEvent(ref, kitchenOrder.state());
@@ -47,6 +52,7 @@ public class InProcessEventSourcedKitchenOrderRepositoryTests {
 
 
     @Test
+    @Category(Lab4Tests.class)
     public void find_by_ref_hydrates_added_order() {
         repository.add(kitchenOrder);
 
@@ -57,6 +63,7 @@ public class InProcessEventSourcedKitchenOrderRepositoryTests {
     }
 
     @Test
+    @Category(Lab4Tests.class)
     public void find_by_ref_hydrates_prepping_order() {
         repository.add(kitchenOrder);
         kitchenOrder.startPrep();
@@ -69,6 +76,7 @@ public class InProcessEventSourcedKitchenOrderRepositoryTests {
     }
 
     @Test
+    @Category(Lab4Tests.class)
     public void find_by_ref_hydrates_baking_order() {
         repository.add(kitchenOrder);
         kitchenOrder.startPrep();
@@ -83,6 +91,7 @@ public class InProcessEventSourcedKitchenOrderRepositoryTests {
     }
 
     @Test
+    @Category(Lab4Tests.class)
     public void find_by_ref_hydrates_assembling_order() {
         repository.add(kitchenOrder);
         kitchenOrder.startPrep();
@@ -99,6 +108,7 @@ public class InProcessEventSourcedKitchenOrderRepositoryTests {
     }
 
     @Test
+    @Category(Lab4Tests.class)
     public void find_by_ref_hydrates_assembled_order() {
         repository.add(kitchenOrder);
         kitchenOrder.startPrep();

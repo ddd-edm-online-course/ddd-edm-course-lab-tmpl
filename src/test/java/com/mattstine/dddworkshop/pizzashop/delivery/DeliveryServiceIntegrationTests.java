@@ -9,9 +9,11 @@ import com.mattstine.dddworkshop.pizzashop.kitchen.KitchenService;
 import com.mattstine.dddworkshop.pizzashop.ordering.OnlineOrder;
 import com.mattstine.dddworkshop.pizzashop.ordering.OnlineOrderRef;
 import com.mattstine.dddworkshop.pizzashop.ordering.OrderingService;
+import com.mattstine.lab.infrastructure.Lab7Tests;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
+import org.junit.experimental.categories.Category;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.mock;
@@ -43,6 +45,7 @@ public class DeliveryServiceIntegrationTests {
 	}
 
 	@Test
+	@Category(Lab7Tests.class)
 	public void on_kitchenOrderAssemblyFinished_add_to_queue() {
 		KitchenOrderRef kitchenOrderRef = new KitchenOrderRef();
 		KitchenOrderAssemblyFinishedEvent kitchenOrderAssemblyFinishedEvent = new KitchenOrderAssemblyFinishedEvent(kitchenOrderRef);

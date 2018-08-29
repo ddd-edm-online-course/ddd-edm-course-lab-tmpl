@@ -3,8 +3,12 @@ package com.mattstine.dddworkshop.pizzashop.kitchen;
 import com.mattstine.dddworkshop.pizzashop.infrastructure.events.ports.EventHandler;
 import com.mattstine.dddworkshop.pizzashop.infrastructure.events.ports.EventLog;
 import com.mattstine.dddworkshop.pizzashop.infrastructure.events.ports.Topic;
+import com.mattstine.lab.infrastructure.Lab3Tests;
+import com.mattstine.lab.infrastructure.Lab4Tests;
+import com.mattstine.lab.infrastructure.Lab6Tests;
 import org.junit.Before;
 import org.junit.Test;
+import org.junit.experimental.categories.Category;
 
 import java.util.Arrays;
 import java.util.Collections;
@@ -34,11 +38,13 @@ public class InProcessEventSourcedPizzaRepositoryTests {
     }
 
     @Test
+    @Category(Lab3Tests.class)
     public void provides_next_identity() {
         assertThat(ref).isNotNull();
     }
 
     @Test
+    @Category(Lab3Tests.class)
     public void add_fires_event() {
         repository.add(pizza);
         PizzaAddedEvent event = new PizzaAddedEvent(ref, pizza.state());
@@ -46,6 +52,7 @@ public class InProcessEventSourcedPizzaRepositoryTests {
     }
 
     @Test
+    @Category(Lab4Tests.class)
     public void find_by_ref_hydrates_added_pizza() {
         repository.add(pizza);
 
@@ -56,6 +63,7 @@ public class InProcessEventSourcedPizzaRepositoryTests {
     }
 
     @Test
+    @Category(Lab4Tests.class)
     public void find_by_ref_hydrates_prepping_pizza() {
         repository.add(pizza);
         pizza.startPrep();
@@ -68,6 +76,7 @@ public class InProcessEventSourcedPizzaRepositoryTests {
     }
 
     @Test
+    @Category(Lab4Tests.class)
     public void find_by_ref_hydrates_prepped_pizza() {
         repository.add(pizza);
         pizza.startPrep();
@@ -82,6 +91,7 @@ public class InProcessEventSourcedPizzaRepositoryTests {
     }
 
     @Test
+    @Category(Lab4Tests.class)
     public void find_by_ref_hydrates_baking_pizza() {
         repository.add(pizza);
         pizza.startPrep();
@@ -98,6 +108,7 @@ public class InProcessEventSourcedPizzaRepositoryTests {
     }
 
     @Test
+    @Category(Lab4Tests.class)
     public void find_by_ref_hydrates_baked_pizza() {
         repository.add(pizza);
         pizza.startPrep();
@@ -116,6 +127,7 @@ public class InProcessEventSourcedPizzaRepositoryTests {
     }
 
     @Test
+    @Category(Lab6Tests.class)
     public void subscribes_to_pizzas_topic() {
         verify(eventLog).subscribe(eq(new Topic("pizzas")), isA(EventHandler.class));
     }

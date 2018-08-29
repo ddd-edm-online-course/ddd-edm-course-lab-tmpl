@@ -4,9 +4,11 @@ import com.mattstine.dddworkshop.pizzashop.infrastructure.events.adapters.InProc
 import com.mattstine.dddworkshop.pizzashop.infrastructure.events.ports.Topic;
 import com.mattstine.dddworkshop.pizzashop.kitchen.KitchenOrderRef;
 import com.mattstine.dddworkshop.pizzashop.ordering.OnlineOrderRef;
+import com.mattstine.lab.infrastructure.Lab7Tests;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
+import org.junit.experimental.categories.Category;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -42,6 +44,7 @@ public class InProcessEventSourcedDeliveryOrderRepositoryIntegrationTests {
 	}
 
 	@Test
+	@Category(Lab7Tests.class)
 	public void find_by_kitchenOrderRef_hydrates_deliveryOrder() {
 		repository.add(deliveryOrder);
 
