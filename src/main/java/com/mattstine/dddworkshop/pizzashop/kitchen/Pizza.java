@@ -1,6 +1,5 @@
 package com.mattstine.dddworkshop.pizzashop.kitchen;
 
-import com.mattstine.dddworkshop.pizzashop.infrastructure.events.adapters.InProcessEventLog;
 import com.mattstine.dddworkshop.pizzashop.infrastructure.events.ports.EventLog;
 import com.mattstine.dddworkshop.pizzashop.infrastructure.events.ports.Topic;
 import com.mattstine.dddworkshop.pizzashop.infrastructure.repository.ports.Aggregate;
@@ -127,12 +126,7 @@ public final class Pizza implements Aggregate {
 
     @Override
     public Pizza identity() {
-        return Pizza.builder()
-                .ref(PizzaRef.IDENTITY)
-                .eventLog(EventLog.IDENTITY)
-                .kitchenOrderRef(KitchenOrderRef.IDENTITY)
-                .size(Size.IDENTITY)
-                .build();
+        return null;
     }
 
     @Override
@@ -166,29 +160,7 @@ public final class Pizza implements Aggregate {
 
         @Override
         public Pizza apply(Pizza pizza, PizzaEvent pizzaEvent) {
-            if (pizzaEvent instanceof PizzaAddedEvent) {
-                PizzaAddedEvent pae = (PizzaAddedEvent) pizzaEvent;
-                PizzaState pizzaState = pae.getState();
-                return Pizza.builder()
-                        .size(pizzaState.getSize())
-                        .ref(pizzaState.getRef())
-                        .kitchenOrderRef(pizzaState.getKitchenOrderRef())
-                        .eventLog(InProcessEventLog.instance())
-                        .build();
-            } else if (pizzaEvent instanceof PizzaPrepStartedEvent) {
-                pizza.state = State.PREPPING;
-                return pizza;
-            } else if (pizzaEvent instanceof PizzaPrepFinishedEvent) {
-                pizza.state = State.PREPPED;
-                return pizza;
-            } else if (pizzaEvent instanceof PizzaBakeStartedEvent) {
-                pizza.state = State.BAKING;
-                return pizza;
-            } else if (pizzaEvent instanceof PizzaBakeFinishedEvent) {
-                pizza.state = State.BAKED;
-                return pizza;
-            }
-            throw new IllegalStateException("Unknown PizzaEvent");
+            return null;
         }
     }
 

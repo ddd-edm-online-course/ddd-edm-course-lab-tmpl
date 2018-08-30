@@ -1,3 +1,35 @@
 = Lab 4 - TDD Aggregate Repository - Rehydrate Kitchen Aggregates by Reference
 
-TODO
+== Summary
+
+When using Event Sourcing without CQRS, the only way to find an Aggregate is to "rehydrate" it from the list of events that it has published. This find operation can only be indexed by primary key.
+
+In this lab, we'll implement find by reference for the Kitchen context Aggregates.
+
+We will complete two stories:
+
+. We will support finding a `KitchenOrder` by its `KitchenOrderRef`.
+. We will support finding a `Pizza` by its `PizzaRef`.
+
+You can run `com.mattstine.dddworkshop.pizzashop.suites.Lab4Suite` to check your progress in this lab.
+
+== Instructions
+
+. Our generic `InProcessEventSourcedRepository` implementation depends primarily on two methods that must exist on each `Aggregate`:
++
+* `identity`
+* `accumulatorFunction`
+
+. The implementations of both of these methods on `KitchenOrder` and `Pizza` are broken. You have to fix them.
+
+. Implementing `identity` is fairly straightforward. Use the builder for the Aggregate to construct a new instance, setting each property to its `IDENTITY` value, and return it.
+
+. The implementation of `accumulatorFunction` is fine, but you'll need to fix the `Accumulator` object it returns by implementing its `apply` method.
+
+. To properly implement `apply`, you need to check the type of the `AggregateEvent` passed as an argument, and for each event type published for that `Aggregate`, perform the appropriate state transformation.
+
+. If you're looking for hints, try looking at the `apply` implementations in the Ordering and Payments contexts.
+
+. Change the `script` property in `.travis.yml` to read: `mvn test -B -P Lab4`
+
+. When you've completed the lab, be sure to submit your work to GitHub using a `[LAB 4]` prefix on your commit message.
