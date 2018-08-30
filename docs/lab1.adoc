@@ -2,10 +2,50 @@
 
 == Summary
 
+The first responsibility of an Aggregate is to maintain the business invariants of the domain concept it represents, and to ensure that these invariants are transactionally consistent.
+
+In this lab, we'll implement these concerns by treating the Aggregate as a state machine. It will ensure that Aggregates only transition state when the appropriate conditions are met.
+
+We'll complete 18 stories:
+
+. When a `KitchenOrder` is created, its status is `NEW`.
+. When a cook starts preparing a `KitchenOrder`, its status becomes `PREPPING`.
+. Only a `NEW` `KitchenOrder` can begin prepping.
+. When a cook starts baking a `KitchenOrder`, its status becomes `BAKING`.
+. Only a `PREPPING` `KitchenOrder` can begin baking.
+. When an assembler starts assembling a `KitchenOrder`, its status becomes `ASSEMBLING`.
+. Only an `BAKING` `KitchenOrder` can begin assembly.
+. When an assembler finishes assembling a `KitchenOrder`, its status becomes `ASSEMBLED`.
+. Only an `ASSEMBLING` `KitchenOrder` can finish assembly.
+. When a `Pizza` is created, its status is `NEW`.
+. When a cook starts preparing a `Pizza`, its status becomes `PREPPING`.
+. Only a `NEW` `Pizza` can begin prepping.
+. When a cook finishes preparing a `Pizza`, its status becomes `PREPPED`.
+. Only a `PREPPING` `Pizza` can finish prepping.
+. When a cook starts baking a `Pizza`, its status becomes `BAKING`.
+. Only a `PREPPED` `Pizza` can begin baking.
+. When a cook finishes baking a `Pizza`, its status becomes `BAKED`.
+. Only a `BAKING` `Pizza` can finish baking.
+
 You can run `com.mattstine.dddworkshop.pizzashop.suites.Lab1Suite` to check your progress in this lab.
 
 == Instructions
 
+. `KitchenOrder` and `Pizza` will be responsible for maintaining business invariants.
+
+. Each command that an actor can execute on an Aggregate exists as a method on  that Aggregate. The command method is responsible for maintaining the business rules and executing the state transitions.
+
+. For example, when a cook starts baking a pizza, the `Pizza.startBake()` method is called.
+
+. Implement each of these command methods on the two Aggregates.
+
+. Each state of an Aggregate has a status method that explicitly exposes the state of the state machine, but hides the implementation.
+
+. For example, to check if a pizza is baking, the `Pizza.isBaking()` method is called.
+
+. Implement each of these status methods on the two Aggregates.
+
+. If you're looking for hints on how to implement these command and status methods, take a look at the Aggregates in the Ordering or Payments contexts.
 
 . Change the `script` property in `.travis.yml` to read: `mvn test -B -P Lab1`
 

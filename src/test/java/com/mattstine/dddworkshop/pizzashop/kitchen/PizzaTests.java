@@ -45,7 +45,7 @@ public class PizzaTests {
     @Test
 	@Category(Lab1Tests.class)
     public void new_pizza_is_new() {
-        assertThat(pizza.isNew()).isNotNull();
+        assertThat(pizza.isNew()).isTrue();
     }
 
     @Test
