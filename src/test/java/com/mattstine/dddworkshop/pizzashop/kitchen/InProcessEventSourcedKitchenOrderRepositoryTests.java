@@ -39,13 +39,14 @@ public class InProcessEventSourcedKitchenOrderRepositoryTests {
     @Test
     @Category(Lab3Tests.class)
     public void provides_next_identity() {
-        assertThat(ref).isNotNull();
+        assertThat(ref.getReference()).isNotNull();
     }
 
     @Test
     @Category(Lab3Tests.class)
     public void add_fires_event() {
         repository.add(kitchenOrder);
+        assertThat(kitchenOrder.state()).isNotNull();
         KitchenOrderAddedEvent event = new KitchenOrderAddedEvent(ref, kitchenOrder.state());
         verify(eventLog).publish(eq(new Topic("kitchen_orders")), eq(event));
     }

@@ -1,21 +1,22 @@
 package com.mattstine.dddworkshop.pizzashop.kitchen;
 
-import com.mattstine.dddworkshop.pizzashop.infrastructure.domain.services.RefStringGenerator;
 import com.mattstine.dddworkshop.pizzashop.infrastructure.repository.ports.Ref;
 import lombok.Value;
 
+/**
+ * @author Matt Stine
+ */
 @Value
 public final class KitchenOrderRef implements Ref {
     public static final KitchenOrderRef IDENTITY = new KitchenOrderRef("");
-    private String reference;
+    private String reference = null;
 
     public  KitchenOrderRef() {
-        reference = RefStringGenerator.generateRefString();
+        // Use RefStringGenerator here!
     }
 
     @SuppressWarnings("SameParameterValue")
     private KitchenOrderRef(String reference) {
-        this.reference = reference;
     }
 
     @Override

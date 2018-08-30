@@ -40,13 +40,14 @@ public class InProcessEventSourcedPizzaRepositoryTests {
     @Test
     @Category(Lab3Tests.class)
     public void provides_next_identity() {
-        assertThat(ref).isNotNull();
+        assertThat(ref.getReference()).isNotNull();
     }
 
     @Test
     @Category(Lab3Tests.class)
     public void add_fires_event() {
         repository.add(pizza);
+        assertThat(pizza.state()).isNotNull();
         PizzaAddedEvent event = new PizzaAddedEvent(ref, pizza.state());
         verify(eventLog).publish(eq(new Topic("pizzas")), eq(event));
     }

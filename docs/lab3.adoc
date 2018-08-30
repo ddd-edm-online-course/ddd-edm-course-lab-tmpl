@@ -1,3 +1,20 @@
 = Lab 3 - TDD Aggregate Repository - Create Kitchen Repositories and Add Domain Events
 
-TODO
+When persisting Aggregate instances using Event Sourcing, we persist an "Add Event" rather than the instance itself. This event will contain the initial state snapshot on which we will apply all subsequent events to "rehydrate" the current state of the object.
+
+In this lab, we'll begin filling in the details necessary for a Repository to "add" an Aggregate instance.
+
+We will complete two stories:
+
+. A Repository must be able to provide the next available identity, or `Ref` for an Aggregate.
+. A Repository must properly construct and publish a `RepositoryAddEvent`.
+
+You can run `com.mattstine.dddworkshop.pizzashop.suites.Lab3Suite` to check your progress in this lab.
+
+== Instructions
+
+. TODO
+
+. Change the `script` property in `.travis.yml` to read: `mvn test -B -P Lab3`
+
+. When you've completed the lab, be sure to submit your work to GitHub using a `[LAB 3]` prefix on your commit message.
