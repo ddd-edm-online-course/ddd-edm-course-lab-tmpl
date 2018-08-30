@@ -15,7 +15,7 @@ You can run `com.mattstine.dddworkshop.pizzashop.suites.Lab5Suite` to check your
 
 == Instructions
 
-. . Complete the implementation of `InProcessEventSourcedKitchenOrderRepository.findByOnlineOrderRef()`. This one is a little bit tricky. Basically, you need to create an index that allows you to find a `KitchenOrder` by its `OnlineOrderRef`. You'll need to update this index every time a `KitchenOrder` is added to the repository.
+. Complete the implementation of `InProcessEventSourcedKitchenOrderRepository.findByOnlineOrderRef()`. This one is a little bit tricky. Basically, you need to create an index that allows you to find a `KitchenOrder` by its `OnlineOrderRef`. You'll need to update this index every time a `KitchenOrder` is added to the repository.
 
 . Complete the implementation of `InProcessEventSourcedPizzaRepository.findPizzasByKitchenOrderRef()`. This one is slightly trickier. Basically, you need to create an index that allows you to find a `Set<Pizza>` by their associated `KitchenOrderRef`. You'll need to update this index every time a `Pizza` is added to the repository.
 
