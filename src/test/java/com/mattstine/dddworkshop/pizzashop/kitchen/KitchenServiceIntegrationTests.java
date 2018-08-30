@@ -6,7 +6,7 @@ import com.mattstine.dddworkshop.pizzashop.ordering.OnlineOrder;
 import com.mattstine.dddworkshop.pizzashop.ordering.OnlineOrderPaidEvent;
 import com.mattstine.dddworkshop.pizzashop.ordering.OnlineOrderRef;
 import com.mattstine.dddworkshop.pizzashop.ordering.OrderingService;
-import com.mattstine.lab.infrastructure.Lab5Tests;
+import com.mattstine.lab.infrastructure.Lab6Tests;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -55,7 +55,7 @@ public class KitchenServiceIntegrationTests {
 	}
 
 	@Test
-	@Category(Lab5Tests.class)
+	@Category(Lab6Tests.class)
 	public void on_orderPaidEvent_add_to_queue() {
 		OnlineOrderRef ref = new OnlineOrderRef();
 		OnlineOrderPaidEvent orderPaidEvent = new OnlineOrderPaidEvent(ref);
@@ -79,7 +79,7 @@ public class KitchenServiceIntegrationTests {
 	}
 
 	@Test
-	@Category(Lab5Tests.class)
+	@Category(Lab6Tests.class)
 	public void on_kitchenOrderPrepStartedEvent_start_prep_on_all_pizzas() {
 		kitchenOrder.startPrep();
 
@@ -101,7 +101,7 @@ public class KitchenServiceIntegrationTests {
 	}
 
 	@Test
-	@Category(Lab5Tests.class)
+	@Category(Lab6Tests.class)
 	public void on_pizzaPrepFinished_start_pizzaBake() {
 		kitchenOrder.startPrep();
 
@@ -118,7 +118,7 @@ public class KitchenServiceIntegrationTests {
 	}
 
 	@Test
-	@Category(Lab5Tests.class)
+	@Category(Lab6Tests.class)
 	public void on_pizzaBakeStarted_start_orderBake() {
 		kitchenOrder.startPrep();
 
@@ -131,7 +131,7 @@ public class KitchenServiceIntegrationTests {
 	}
 
 	@Test
-	@Category(Lab5Tests.class)
+	@Category(Lab6Tests.class)
 	public void on_first_pizzaBakeFinished_start_orderAssembly() {
 		kitchenOrder.startPrep();
 
@@ -151,7 +151,7 @@ public class KitchenServiceIntegrationTests {
 	}
 
 	@Test
-	@Category(Lab5Tests.class)
+	@Category(Lab6Tests.class)
 	public void should_start_kitchenOrder_prep() {
 		kitchenService.startOrderPrep(kitchenOrderRef);
 		kitchenOrder = kitchenService.findKitchenOrderByRef(kitchenOrderRef);
@@ -159,7 +159,7 @@ public class KitchenServiceIntegrationTests {
 	}
 
 	@Test
-	@Category(Lab5Tests.class)
+	@Category(Lab6Tests.class)
 	public void should_finish_pizza_prep() {
 		kitchenOrder.startPrep();
 
@@ -174,7 +174,7 @@ public class KitchenServiceIntegrationTests {
 	}
 
 	@Test
-	@Category(Lab5Tests.class)
+	@Category(Lab6Tests.class)
 	public void should_remove_pizza_from_oven() {
 		kitchenOrder.startPrep();
 
@@ -191,7 +191,7 @@ public class KitchenServiceIntegrationTests {
 	}
 
 	@Test
-	@Category(Lab5Tests.class)
+	@Category(Lab6Tests.class)
 	public void on_final_pizzaBakeFinished_finish_orderAssembly() {
 		kitchenOrder.startPrep();
 

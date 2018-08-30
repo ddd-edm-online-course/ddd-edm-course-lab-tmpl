@@ -42,9 +42,9 @@ You can run `com.mattstine.dddworkshop.pizzashop.suites.Lab7Suite` to check your
 
 . Complete the implementation of `DeliveryOrderRef`. It should be fairly obvious what's missing here.
 
-. Complete the implementation of `InProcessEventSourcedDeliveryOrderRepository.findByKitchenOrderRef()`. This one is a little bit tricky. Basically, you need to create an index that allows you to find a `DeliveryOrder` by its `KitchenOrderRef`. You'll need to update this index every time a `DeliveryOrder` is added to the repository.
+. Complete the implementation of `InProcessEventSourcedDeliveryOrderRepository.findByKitchenOrderRef()`. You need to create an index that allows you to find a `DeliveryOrder` by its `KitchenOrderRef`. You'll need to update this index every time a `DeliveryOrder` is added to the repository.
 +
-If you're looking for hints, you can model your implementation after either repository in the Kitchen context.
+If you're looking for hints, you can model your implementation after your solutions to Lab 5.
 
 . Finally, finish the implementation of `DeliveryService`. It needs to subscribe to the `kitchen_orders` topic, and on `KitchenOrderAssemblyFinishedEvent`, create a matching `DeliveryOrder`.
 +

@@ -70,6 +70,6 @@ TODO: these need to be written
 * link:docs/lab2.adoc[Lab 2] - TDD Aggregate Root - Create and Publish Kitchen Domain Events
 * link:docs/lab3.adoc[Lab 3] - TDD Aggregate Repository - Create Kitchen Repositories and Add Domain Events
 * link:docs/lab4.adoc[Lab 4] - TDD Aggregate Repository - Rehydrate Kitchen Aggregates by Reference
-* link:docs/lab5.adoc[Lab 5] - TDD Application Service - Expose Kitchen Business Interface and Implement Transactions
-* link:docs/lab6.adoc[Lab 6] - TDD Policy - Subscribe to a Kitchen Domain Event from within an Aggregate and Create CQRS View
+* link:docs/lab5.adoc[Lab 5] - TDD Policy - Subscribe to a Kitchen Domain Event from within an Aggregate and Create CQRS View
+* link:docs/lab6.adoc[Lab 6] - TDD Application Service - Expose Kitchen Business Interface and Implement Transactions
 * link:docs/lab7.adoc[Lab 7] - TDD Policy - Subscribe to a Kitchen Domain Event from an Adjacent Aggregate and Update State

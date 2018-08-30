@@ -3,7 +3,7 @@ package com.mattstine.dddworkshop.pizzashop.kitchen;
 import com.mattstine.dddworkshop.pizzashop.infrastructure.events.adapters.InProcessEventLog;
 import com.mattstine.dddworkshop.pizzashop.infrastructure.events.ports.Topic;
 import com.mattstine.dddworkshop.pizzashop.ordering.OnlineOrderRef;
-import com.mattstine.lab.infrastructure.Lab6Tests;
+import com.mattstine.lab.infrastructure.Lab5Tests;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -39,7 +39,7 @@ public class InProcessEventSourcedKitchenOrderRepositoryIntegrationTests {
     }
 
     @Test
-    @Category(Lab6Tests.class)
+    @Category(Lab5Tests.class)
     public void find_by_onlineOrderRef_hydrates_kitchenOrder() {
         repository.add(kitchenOrder);
 

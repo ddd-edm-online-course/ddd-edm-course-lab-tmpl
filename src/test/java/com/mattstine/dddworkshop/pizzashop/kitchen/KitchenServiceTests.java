@@ -5,7 +5,7 @@ import com.mattstine.dddworkshop.pizzashop.infrastructure.events.ports.EventLog;
 import com.mattstine.dddworkshop.pizzashop.infrastructure.events.ports.Topic;
 import com.mattstine.dddworkshop.pizzashop.ordering.OnlineOrderRef;
 import com.mattstine.dddworkshop.pizzashop.ordering.OrderingService;
-import com.mattstine.lab.infrastructure.Lab5Tests;
+import com.mattstine.lab.infrastructure.Lab6Tests;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
@@ -29,13 +29,13 @@ public class KitchenServiceTests {
 	}
 
 	@Test
-	@Category(Lab5Tests.class)
+	@Category(Lab6Tests.class)
 	public void subscribes_to_ordering_topic() {
 		verify(eventLog).subscribe(eq(new Topic("ordering")), isA(EventHandler.class));
 	}
 
 	@Test
-	@Category(Lab5Tests.class)
+	@Category(Lab6Tests.class)
 	public void should_return_kitchenOrder_by_onlineOrderRef() {
 		OnlineOrderRef onlineOrderRef = new OnlineOrderRef();
 
@@ -51,13 +51,13 @@ public class KitchenServiceTests {
 	}
 
 	@Test
-	@Category(Lab5Tests.class)
+	@Category(Lab6Tests.class)
 	public void subscribes_to_kitchen_orders_topic() {
 		verify(eventLog).subscribe(eq(new Topic("kitchen_orders")), isA(EventHandler.class));
 	}
 
 	@Test
-	@Category(Lab5Tests.class)
+	@Category(Lab6Tests.class)
 	public void subscribes_to_pizzas_topic() {
 		verify(eventLog).subscribe(eq(new Topic("pizzas")), isA(EventHandler.class));
 	}

@@ -1,3 +1,53 @@
-= Lab 6 - TDD Policy - Subscribe to a Kitchen Domain Event from within an Aggregate and Create CQRS View
+= Lab 6 - TDD Application Service - Expose Kitchen Business Interface and Implement Transactions
 
-TODO
+== Summary
+
+In DDD, we use an Application Service to expose operations involving Aggregates and Repositories, or multiple Aggregates. An Application Service is the first immediate client of the core Domain Model.
+
+We would eventually use the interface of an Application Service to expose its operations as a REST API or message-driven collaboration using RabbitMQ or Kafka.
+
+In this lab, we'll build out the ApplicationService for the Kitchen context.
+
+We will complete 10 stories:
+
+. The ability to find a `KitchenOrder` by its `OnlineOrderRef`.
+. When an `OnlineOrderPaidEvent` is published by the Ordering context, create a `KitchenOrder`.
+. The ability to start prep on a `KitchenOrder`.
+. When a `KitchenOrderPrepStartedEvent` is published, create a `Pizza` for every `KitchenOrder.Pizza`, and then start prep on each `Pizza`.
+. The ability to finish prep on a `Pizza`.
+. When a `PizzaPrepFinishedEvent` is published, start baking the pizza.
+. When a `PizzaBakeStartedEvent` is published, start baking the order.
+. The ability to remove a pizza from the oven.
+. When the first pizza in an order has finished baking (i.e. `PizzaBakeFinishedEvent`), start assembling the order.
+. When the final pizza in an order has finished baking, finish assembling the order.
+
+You can run `com.mattstine.dddworkshop.pizzashop.suites.Lab6Suite` to check your progress in this lab.
+
+== Instructions
+
+. Implement the following command methods:
++
+* `startOrderPrep()`
+* `finishPizzaPrep()`
+* `removePizzaFromOven()`
+
+. Implement the following finders:
++
+* `findKitchenOrderByRef()`
+* `findKitchenOrderByOnlineOrderRef()`
+* `findPizzaByRef()`
+* `findPizzasByKitchenOrderRef()`
+
+. Subscribe to the `ordering` topic. On an `OnlineOrderPaidEvent`, retrieve the asssociated `OnlineOrder` by its `Ref`. Convert the `OnlineOrder` to a `KitchenOrder`, and add it to the repository.
+
+. Subscribe to the `ktichen_orders` topic. On a `KitchenOrderPrepStartedEvent`, create a `Pizza` for each `KitchenOrder.Pizza`, and add it to the repository. Then `startPrep()` on the `Pizza`.
+
+. Subscribe to the `pizzas` topic:
++
+* On a `PizzaPrepFinishedEvent`, retrieve the associated `Pizza` and `startBake()`.
+* On a `PizzaBakeStartedEvent`, retrieve the associated `KitchenOrder`. If the `KitchenOrder` is prepping, `startBake()`.
+* On a `PizzaBakeFinishedEvent`, retrieve the associated `KitchenOrder`. If the `KitchenOrder` is baking, `startAssembly()`; otherwise, retrieve all of the associated `Pizza` instances. If all of them have finished baking, `finishAssembly` on the `KitchenOrder`.
+
+. Change the `script` property in `.travis.yml` to read: `mvn test -B -P Lab6`
+
+. When you've completed the lab, be sure to submit your work to GitHub using a `[LAB 6]` prefix on your commit message.

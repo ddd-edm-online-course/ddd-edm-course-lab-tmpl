@@ -1,3 +1,24 @@
-= Lab 5 - TDD Application Service - Expose Kitchen Business Interface and Implement Transactions
+= Lab 5 - TDD Policy - Subscribe to a Kitchen Domain Event from within an Aggregate and Create CQRS View
 
-TODO
+== Summary
+
+When using Event Sourcing, it's really only possible to query an Aggregate by its primary key. Obviously we often want to execute different queries! We can subscribe to the events published by an Aggregate and create alternative indexes or data stores to support these queries.
+
+In this lab, we'll keep it simple and build out two alternative indexes. These will be used by the Application Service methods we implement in Lab 6.
+
+We will complete two stories:
+
+. We will support finding a `KitchenOrder` by its `OnlineOrderRef`.
+. We will support finding a `Set<Pizza>` by their associated `KitchenOrderRef`.
+
+You can run `com.mattstine.dddworkshop.pizzashop.suites.Lab5Suite` to check your progress in this lab.
+
+== Instructions
+
+. . Complete the implementation of `InProcessEventSourcedKitchenOrderRepository.findByOnlineOrderRef()`. This one is a little bit tricky. Basically, you need to create an index that allows you to find a `KitchenOrder` by its `OnlineOrderRef`. You'll need to update this index every time a `KitchenOrder` is added to the repository.
+
+. Complete the implementation of `InProcessEventSourcedPizzaRepository.findPizzasByKitchenOrderRef()`. This one is slightly trickier. Basically, you need to create an index that allows you to find a `Set<Pizza>` by their associated `KitchenOrderRef`. You'll need to update this index every time a `Pizza` is added to the repository.
+
+. Change the `script` property in `.travis.yml` to read: `mvn test -B -P Lab5`
+
+. When you've completed the lab, be sure to submit your work to GitHub using a `[LAB 5]` prefix on your commit message.

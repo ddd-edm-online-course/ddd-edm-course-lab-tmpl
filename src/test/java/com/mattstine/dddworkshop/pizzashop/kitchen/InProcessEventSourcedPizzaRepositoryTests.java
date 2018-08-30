@@ -5,7 +5,7 @@ import com.mattstine.dddworkshop.pizzashop.infrastructure.events.ports.EventLog;
 import com.mattstine.dddworkshop.pizzashop.infrastructure.events.ports.Topic;
 import com.mattstine.lab.infrastructure.Lab3Tests;
 import com.mattstine.lab.infrastructure.Lab4Tests;
-import com.mattstine.lab.infrastructure.Lab6Tests;
+import com.mattstine.lab.infrastructure.Lab5Tests;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
@@ -127,7 +127,7 @@ public class InProcessEventSourcedPizzaRepositoryTests {
     }
 
     @Test
-    @Category(Lab6Tests.class)
+    @Category(Lab5Tests.class)
     public void subscribes_to_pizzas_topic() {
         verify(eventLog).subscribe(eq(new Topic("pizzas")), isA(EventHandler.class));
     }

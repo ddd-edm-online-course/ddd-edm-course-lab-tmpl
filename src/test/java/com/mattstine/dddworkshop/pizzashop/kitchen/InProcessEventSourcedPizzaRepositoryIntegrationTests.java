@@ -2,7 +2,7 @@ package com.mattstine.dddworkshop.pizzashop.kitchen;
 
 import com.mattstine.dddworkshop.pizzashop.infrastructure.events.adapters.InProcessEventLog;
 import com.mattstine.dddworkshop.pizzashop.infrastructure.events.ports.Topic;
-import com.mattstine.lab.infrastructure.Lab6Tests;
+import com.mattstine.lab.infrastructure.Lab5Tests;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -41,7 +41,7 @@ public class InProcessEventSourcedPizzaRepositoryIntegrationTests {
 	}
 
 	@Test
-	@Category(Lab6Tests.class)
+	@Category(Lab5Tests.class)
 	public void find_by_kitchenOrderRef_hydrates_pizza() {
 		repository.add(pizza);
 

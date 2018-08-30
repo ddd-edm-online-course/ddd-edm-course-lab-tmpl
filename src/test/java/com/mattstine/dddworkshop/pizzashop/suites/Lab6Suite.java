@@ -16,9 +16,7 @@ import org.junit.runners.Suite;
 		InProcessEventSourcedKitchenOrderRepositoryTests.class,
 		InProcessEventSourcedPizzaRepositoryTests.class,
 		KitchenServiceTests.class,
-		KitchenServiceIntegrationTests.class,
-		InProcessEventSourcedKitchenOrderRepositoryIntegrationTests.class,
-		InProcessEventSourcedPizzaRepositoryIntegrationTests.class
+		KitchenServiceIntegrationTests.class
 })
 @Categories.IncludeCategory({
 		Lab1Tests.class,
