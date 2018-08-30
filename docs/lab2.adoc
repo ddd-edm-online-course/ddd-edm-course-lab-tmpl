@@ -1,3 +1,32 @@
 = Lab 2 - TDD Aggregate Root - Create and Publish Kitchen Domain Events
 
-TODO
+== Summary
+
+When we conducted our Event Storm, we identified many important business events that happen within our Pizza Shop. It is the responsibility of our Aggregates to publish these events.
+
+In this lab, we will publish the interesting events that occur within the Kitchen context.
+
+We will complete 8 stories:
+
+. When the cook starts preparing an order, publish an event.
+. When the cook starts preparing a pizza, publish an event.
+. When the cook finishes preparing a pizza, publish an event.
+. When the cook starts baking a pizza, publish an event.
+. When the cook starts baking an order, publish an event.
+. When the assembler removes a pizza from the oven, publish an event.
+. When the assembler starts assembling an order, publish an event.
+. When the assembler finishes assembling an order, publish an event.
+
+You can run `com.mattstine.dddworkshop.pizzashop.suites.Lab2Suite` to check your progress in this lab.
+
+== Instructions
+
+. `KitchenOrder` and `Pizza` will be responsible for publishing events.
+
+. Walk through each of the command methods that you completed in Lab 1 on these Aggregates, and publish the appropriate events. They all already exist within the `kitchen` package.
+
+. If you're looking for hints on how to publish an event, take a look at the Aggregates in the Ordering or Payments contexts.
+
+. Change the `script` property in `.travis.yml` to read: `mvn test -B -P Lab2`
+
+. When you've completed the lab, be sure to submit your work to GitHub using a `[LAB 2]` prefix on your commit message.
