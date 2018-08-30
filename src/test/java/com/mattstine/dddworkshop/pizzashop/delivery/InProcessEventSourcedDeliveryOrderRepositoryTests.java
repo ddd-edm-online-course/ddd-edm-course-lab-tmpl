@@ -43,7 +43,7 @@ public class InProcessEventSourcedDeliveryOrderRepositoryTests {
 	@Test
 	@Category(Lab7Tests.class)
 	public void provides_next_identity() {
-		assertThat(ref).isNotNull();
+		assertThat(ref.getReference()).isNotNull();
 	}
 
 	@Test

@@ -1,3 +1,55 @@
 = Lab 7 - TDD Policy - Subscribe to a Kitchen Domain Event from an Adjacent Aggregate and Update State
 
-TODO
+== Summary
+
+It is often useful to subscribe to events published by Aggregates in other Bounded Contexts. We saw an example of this in the Kitchen context.
+Any time an `OnlineOrderPaidEvent` is published, a new `KitchenOrder` is added to the repository.
+
+In this lab, we will create a similar collaboration between the Kitchen and Delivery contexts.
+
+We will complete two stories:
+
+. We will build out the minimum implementation necessary to manage the creation of a `DeliveryOrder`.
+
+. We will subscribe to the `kitchen_orders` topic, and on `KitchenOrderAssemblyFinishedEvent`, we will create a matching `DeliveryOrder`.
+
+You can run `com.mattstine.dddworkshop.pizzashop.suites.Lab7Suite` to check your progress in this lab.
+
+== Instructions
+
+. Build out `DeliveryOrder`. It needs to keep track of the following properties:
++
+* Its `DeliveryOrderRef`
+* Its matching `KitchenOrderRef` and `OnlineOrderRef`.
+* A collection of `Pizza` objects, copied from the Kitchen context.
+* Its internal state. In this lab we will only implement one `State` value, `READY_FOR_DELIVERY`.
+
+. Add the appropriate value to the `DeliveryOrder.State` enum.
+
+. `DeliveryOrder` needs both its `@Builder` and no-args constructors implemented.
+
+. `DeliveryOrder` needs the following methods implemented:
++
+* `identity()`
+* `accumulatorFunction()`
+* `getRef()` - HINT: if you leverage Lombok, you can get this implementation for free.
+* `state()`
+* `isReadyForDelivery()` - HINT: you'll want to base this on the internal `State` value.
+
+. Implement the `apply` method in `DeliveryOrder.Accumulator`.
+
+. Build out `DeliveryOrder.OrderState`.
+
+. Complete the implementation of `DeliveryOrderRef`. It should be fairly obvious what's missing here.
+
+. Complete the implementation of `InProcessEventSourcedDeliveryOrderRepository.findByKitchenOrderRef()`. This one is a little bit tricky. Basically, you need to create an index that allows you to find a `DeliveryOrder` by its `KitchenOrderRef`. You'll need to update this index every time a `DeliveryOrder` is added to the repository.
++
+If you're looking for hints, you can model your implementation after either repository in the Kitchen context.
+
+. Finally, finish the implementation of `DeliveryService`. It needs to subscribe to the `kitchen_orders` topic, and on `KitchenOrderAssemblyFinishedEvent`, create a matching `DeliveryOrder`.
++
+Then complete the implementation of `DeliveryService.findDeliveryOrderByKitchenOrderRef`. This should be easy!
+
+. Change the `script` property in `.travis.yml` to read: `mvn test -B -P Lab7`
+
+. When you've completed the lab, be sure to submit your work to GitHub using a `[LAB 7]` prefix on your commit message.

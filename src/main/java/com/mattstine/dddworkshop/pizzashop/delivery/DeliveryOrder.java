@@ -1,16 +1,15 @@
 package com.mattstine.dddworkshop.pizzashop.delivery;
 
-import com.mattstine.dddworkshop.pizzashop.infrastructure.events.adapters.InProcessEventLog;
 import com.mattstine.dddworkshop.pizzashop.infrastructure.events.ports.EventLog;
 import com.mattstine.dddworkshop.pizzashop.infrastructure.repository.ports.Aggregate;
 import com.mattstine.dddworkshop.pizzashop.infrastructure.repository.ports.AggregateState;
+import com.mattstine.dddworkshop.pizzashop.infrastructure.repository.ports.Ref;
 import com.mattstine.dddworkshop.pizzashop.kitchen.KitchenOrderRef;
 import com.mattstine.dddworkshop.pizzashop.ordering.OnlineOrderRef;
 import lombok.Builder;
 import lombok.NonNull;
 import lombok.Singular;
 import lombok.Value;
-import lombok.experimental.NonFinal;
 
 import java.util.List;
 import java.util.function.BiFunction;
@@ -20,13 +19,6 @@ import java.util.function.BiFunction;
  */
 @Value
 public final class DeliveryOrder implements Aggregate {
-	DeliveryOrderRef ref;
-	KitchenOrderRef kitchenOrderRef;
-	OnlineOrderRef onlineOrderRef;
-	List<Pizza> pizzas;
-	EventLog $eventLog;
-	@NonFinal
-	State state;
 
 	@Builder
 	private DeliveryOrder(@NonNull DeliveryOrderRef ref,
@@ -34,13 +26,7 @@ public final class DeliveryOrder implements Aggregate {
 						  @NonNull OnlineOrderRef onlineOrderRef,
 						  @Singular List<Pizza> pizzas,
 						  @NonNull EventLog eventLog) {
-		this.ref = ref;
-		this.kitchenOrderRef = kitchenOrderRef;
-		this.onlineOrderRef = onlineOrderRef;
-		this.pizzas = pizzas;
-		this.$eventLog = eventLog;
-
-		this.state = State.READY_FOR_DELIVERY;
+		throw new IllegalStateException("Builder constructor must be implemented!");
 	}
 
 	/**
@@ -48,58 +34,40 @@ public final class DeliveryOrder implements Aggregate {
 	 */
 	@SuppressWarnings("unused")
 	private DeliveryOrder() {
-		this.ref = null;
-		this.kitchenOrderRef = null;
-		this.onlineOrderRef = null;
-		this.pizzas = null;
-		this.$eventLog = null;
 	}
 
 	@Override
 	public DeliveryOrder identity() {
-		return DeliveryOrder.builder()
-				.ref(DeliveryOrderRef.IDENTITY)
-				.kitchenOrderRef(KitchenOrderRef.IDENTITY)
-				.onlineOrderRef(OnlineOrderRef.IDENTITY)
-				.eventLog(EventLog.IDENTITY)
-				.build();
+		return null;
 	}
 
 	@Override
 	public BiFunction<DeliveryOrder, DeliveryOrderEvent, DeliveryOrder> accumulatorFunction() {
-		return new Accumulator();
+		return null;
+	}
+
+	@Override
+	public Ref getRef() {
+		return null;
 	}
 
 	@Override
 	public OrderState state() {
-		return new OrderState(ref, kitchenOrderRef, onlineOrderRef, pizzas);
+		return null;
 	}
 
-	public boolean isReadyForDelivery() {
-		return this.state == State.READY_FOR_DELIVERY;
+	boolean isReadyForDelivery() {
+		return false;
 	}
 
 	enum State {
-		READY_FOR_DELIVERY
 	}
 
 	private static class Accumulator implements BiFunction<DeliveryOrder, DeliveryOrderEvent, DeliveryOrder> {
 
-		@SuppressWarnings("SpellCheckingInspection")
 		@Override
 		public DeliveryOrder apply(DeliveryOrder deliveryOrder, DeliveryOrderEvent deliveryOrderEvent) {
-			if (deliveryOrderEvent instanceof DeliveryOrderAddedEvent) {
-				DeliveryOrderAddedEvent doae = (DeliveryOrderAddedEvent) deliveryOrderEvent;
-				OrderState orderState = doae.getState();
-				return DeliveryOrder.builder()
-						.eventLog(InProcessEventLog.instance())
-						.ref(orderState.getRef())
-						.kitchenOrderRef(orderState.getKitchenOrderRef())
-						.onlineOrderRef(orderState.getOnlineOrderRef())
-						.pizzas(orderState.getPizzas())
-						.build();
-			}
-			throw new IllegalStateException("Unknown DeliveryOrderEvent");
+			return null;
 		}
 	}
 
@@ -122,9 +90,5 @@ public final class DeliveryOrder implements Aggregate {
 
 	@Value
 	static class OrderState implements AggregateState {
-		DeliveryOrderRef ref;
-		KitchenOrderRef kitchenOrderRef;
-		OnlineOrderRef onlineOrderRef;
-		List<Pizza> pizzas;
 	}
 }
