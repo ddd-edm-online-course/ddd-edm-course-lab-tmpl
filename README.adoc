@@ -39,6 +39,8 @@ NOTE: While submission of your lab implementations is entirely optional, it will
 
 . Make it pass!
 
+. Change the `script` property in `.travis.yml` to read: `mvn test -B -P FirstSubmission`
+
 . You'll now want to commit your changes to Git. When submitting labs, please prefix your commit with `[NAME OF LAB]` in order to make it easier to track down.
 For this lab, you'll prefix with `[SETUP]`. For Lab 1, you'll prefix with `[LAB 1]`. And so on...
 
