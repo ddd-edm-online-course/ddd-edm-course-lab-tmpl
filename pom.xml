@@ -56,6 +56,15 @@
 
     <profiles>
         <profile>
+            <id>FirstSubmission</id>
+            <properties>
+                <testcase.groups>com.mattstine.lab.infrastructure.FirstSubmissionTest</testcase.groups>
+                <testcase.excludeGroups>
+                    com.mattstine.lab.infrastructure.Lab1Tests,com.mattstine.lab.infrastructure.Lab2Tests,com.mattstine.lab.infrastructure.Lab3Tests,com.mattstine.lab.infrastructure.Lab4Tests,com.mattstine.lab.infrastructure.Lab5Tests,com.mattstine.lab.infrastructure.Lab6Tests,com.mattstine.lab.infrastructure.Lab7Tests
+                </testcase.excludeGroups>
+            </properties>
+        </profile>
+        <profile>
             <id>Lab1</id>
             <properties>
                 <testcase.groups>com.mattstine.lab.infrastructure.Lab1Tests</testcase.groups>
