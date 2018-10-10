@@ -1,8 +1,5 @@
 package com.mattstine.dddworkshop.pizzashop.infrastructure.events.ports;
 
-
-import sun.reflect.generics.reflectiveObjects.NotImplementedException;
-
 import java.util.List;
 
 /**
@@ -13,12 +10,12 @@ public interface EventLog {
     EventLog IDENTITY = new EventLog() {
         @Override
         public void publish(Topic topic, Event event) {
-            throw new NotImplementedException();
+            throw new RuntimeException("Not implemented!");
         }
 
         @Override
         public void subscribe(Topic topic, EventHandler handler) {
-            throw new NotImplementedException();
+            throw new RuntimeException("Not implemented!");
         }
 
         @Override

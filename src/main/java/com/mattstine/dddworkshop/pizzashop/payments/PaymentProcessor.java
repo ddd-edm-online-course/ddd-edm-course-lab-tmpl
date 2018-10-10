@@ -1,13 +1,11 @@
 package com.mattstine.dddworkshop.pizzashop.payments;
 
-import sun.reflect.generics.reflectiveObjects.NotImplementedException;
-
 /**
  * @author Matt Stine
  */
 interface PaymentProcessor {
     PaymentProcessor IDENTITY = payment -> {
-        throw new NotImplementedException();
+        throw new RuntimeException("Not implemented!");
     };
 
     @SuppressWarnings({"EmptyMethod", "unused"})
