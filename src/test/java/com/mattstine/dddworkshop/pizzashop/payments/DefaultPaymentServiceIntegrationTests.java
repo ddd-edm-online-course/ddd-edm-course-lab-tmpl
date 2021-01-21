@@ -3,9 +3,7 @@ package com.mattstine.dddworkshop.pizzashop.payments;
 import com.mattstine.dddworkshop.pizzashop.infrastructure.domain.valuetypes.Amount;
 import com.mattstine.dddworkshop.pizzashop.infrastructure.events.adapters.InProcessEventLog;
 import com.mattstine.dddworkshop.pizzashop.infrastructure.events.ports.Topic;
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.*;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.mock;
@@ -13,13 +11,16 @@ import static org.mockito.Mockito.mock;
 /**
  * @author Matt Stine
  */
+@DisplayName("The integrated default payment service")
+@DisplayNameGeneration(DisplayNameGenerator.IndicativeSentences.class)
+@IndicativeSentencesGeneration(separator = " ", generator = DisplayNameGenerator.ReplaceUnderscores.class)
 public class DefaultPaymentServiceIntegrationTests {
 
     private InProcessEventLog eventLog;
     private PaymentRepository repository;
     private PaymentProcessor processor;
 
-    @Before
+    @BeforeEach
     public void setUp() {
         eventLog = InProcessEventLog.instance();
         repository = new InProcessEventSourcedPaymentRepository(eventLog,
@@ -30,13 +31,13 @@ public class DefaultPaymentServiceIntegrationTests {
                 eventLog);
     }
 
-    @After
+    @AfterEach
     public void tearDown() {
         this.eventLog.purgeSubscribers();
     }
 
     @Test
-    public void on_successful_processing_mark_success() {
+    public void should_mark_a_payment_as_successful_when_it_receives_the_PaymentProcessedEvent_with_successful_status() {
         PaymentRef ref = new PaymentRef();
         Payment payment = Payment.builder()
                 .eventLog(eventLog)
@@ -54,7 +55,7 @@ public class DefaultPaymentServiceIntegrationTests {
     }
 
     @Test
-    public void on_failed_processing_mark_failed() {
+    public void should_mark_a_payment_as_failed_when_it_receives_the_PaymentProcessedEvent_with_failed_status() {
         PaymentRef ref = new PaymentRef();
         Payment payment = Payment.builder()
                 .eventLog(eventLog)

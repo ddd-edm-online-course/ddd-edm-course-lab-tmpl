@@ -3,11 +3,7 @@ package com.mattstine.dddworkshop.pizzashop.kitchen;
 import com.mattstine.dddworkshop.pizzashop.infrastructure.events.ports.EventLog;
 import com.mattstine.dddworkshop.pizzashop.infrastructure.events.ports.Topic;
 import com.mattstine.dddworkshop.pizzashop.ordering.OnlineOrderRef;
-import com.mattstine.lab.infrastructure.Lab3Tests;
-import com.mattstine.lab.infrastructure.Lab4Tests;
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.experimental.categories.Category;
+import org.junit.jupiter.api.*;
 
 import java.util.Arrays;
 import java.util.Collections;
@@ -15,6 +11,9 @@ import java.util.Collections;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.*;
 
+@DisplayName("The in-process event-sourced kitchen order repository")
+@DisplayNameGeneration(DisplayNameGenerator.IndicativeSentences.class)
+@IndicativeSentencesGeneration(separator = " ", generator = DisplayNameGenerator.ReplaceUnderscores.class)
 public class InProcessEventSourcedKitchenOrderRepositoryTests {
 
     private KitchenOrderRepository repository;
@@ -22,7 +21,7 @@ public class InProcessEventSourcedKitchenOrderRepositoryTests {
     private KitchenOrderRef ref;
     private KitchenOrder kitchenOrder;
 
-    @Before
+    @BeforeEach
     public void setUp() {
         eventLog = mock(EventLog.class);
         repository = new InProcessEventSourcedKitchenOrderRepository(eventLog,
@@ -37,14 +36,14 @@ public class InProcessEventSourcedKitchenOrderRepositoryTests {
     }
 
     @Test
-    @Category(Lab3Tests.class)
-    public void provides_next_identity() {
+    @Tag("Lab3Tests")
+    public void should_provide_the_next_available_identity() {
         assertThat(ref.getReference()).isNotNull();
     }
 
     @Test
-    @Category(Lab3Tests.class)
-    public void add_fires_event() {
+    @Tag("Lab3Tests")
+    public void should_publish_an_event_when_a_kitchen_order_is_added() {
         repository.add(kitchenOrder);
         assertThat(kitchenOrder.state()).isNotNull();
         KitchenOrderAddedEvent event = new KitchenOrderAddedEvent(ref, kitchenOrder.state());
@@ -53,8 +52,8 @@ public class InProcessEventSourcedKitchenOrderRepositoryTests {
 
 
     @Test
-    @Category(Lab4Tests.class)
-    public void find_by_ref_hydrates_added_order() {
+    @Tag("Lab4Tests")
+    public void should_hydrate_a_kitchen_order_when_found_by_its_reference() {
         repository.add(kitchenOrder);
 
         when(eventLog.eventsBy(new Topic("kitchen_orders")))
@@ -64,8 +63,8 @@ public class InProcessEventSourcedKitchenOrderRepositoryTests {
     }
 
     @Test
-    @Category(Lab4Tests.class)
-    public void find_by_ref_hydrates_prepping_order() {
+    @Tag("Lab4Tests")
+    public void should_hydrate_a_prepping_kitchen_order_when_found_by_its_reference() {
         repository.add(kitchenOrder);
         kitchenOrder.startPrep();
 
@@ -77,8 +76,8 @@ public class InProcessEventSourcedKitchenOrderRepositoryTests {
     }
 
     @Test
-    @Category(Lab4Tests.class)
-    public void find_by_ref_hydrates_baking_order() {
+    @Tag("Lab4Tests")
+    public void should_hydrate_a_baking_kitchen_order_when_found_by_its_reference() {
         repository.add(kitchenOrder);
         kitchenOrder.startPrep();
         kitchenOrder.startBake();
@@ -92,8 +91,8 @@ public class InProcessEventSourcedKitchenOrderRepositoryTests {
     }
 
     @Test
-    @Category(Lab4Tests.class)
-    public void find_by_ref_hydrates_assembling_order() {
+    @Tag("Lab4Tests")
+    public void should_hydrate_an_assembling_kitchen_order_when_found_by_its_reference() {
         repository.add(kitchenOrder);
         kitchenOrder.startPrep();
         kitchenOrder.startBake();
@@ -109,8 +108,8 @@ public class InProcessEventSourcedKitchenOrderRepositoryTests {
     }
 
     @Test
-    @Category(Lab4Tests.class)
-    public void find_by_ref_hydrates_assembled_order() {
+    @Tag("Lab4Tests")
+    public void should_hydrate_an_assembled_kitchen_order_when_found_by_its_reference() {
         repository.add(kitchenOrder);
         kitchenOrder.startPrep();
         kitchenOrder.startBake();

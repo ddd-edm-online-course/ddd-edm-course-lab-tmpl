@@ -4,8 +4,7 @@ import com.mattstine.dddworkshop.pizzashop.infrastructure.domain.valuetypes.Amou
 import com.mattstine.dddworkshop.pizzashop.infrastructure.events.ports.EventHandler;
 import com.mattstine.dddworkshop.pizzashop.infrastructure.events.ports.EventLog;
 import com.mattstine.dddworkshop.pizzashop.infrastructure.events.ports.Topic;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.*;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.*;
@@ -13,6 +12,9 @@ import static org.mockito.Mockito.*;
 /**
  * @author Matt Stine
  */
+@DisplayName("The default payment service")
+@DisplayNameGeneration(DisplayNameGenerator.IndicativeSentences.class)
+@IndicativeSentencesGeneration(separator = " ", generator = DisplayNameGenerator.ReplaceUnderscores.class)
 public class DefaultPaymentServiceTests {
 
     private PaymentProcessor processor;
@@ -20,7 +22,7 @@ public class DefaultPaymentServiceTests {
     private EventLog eventLog;
     private DefaultPaymentService paymentService;
 
-    @Before
+    @BeforeEach
     public void setUp() {
         processor = mock(PaymentProcessor.class);
         repository = mock(PaymentRepository.class);
@@ -29,12 +31,12 @@ public class DefaultPaymentServiceTests {
     }
 
     @Test
-    public void subscribes_to_payment_processor_topic() {
+    public void should_subscribe_to_the_payment_processor_topic() {
         verify(eventLog).subscribe(eq(new Topic("payment_processor")), isA(EventHandler.class));
     }
 
     @Test
-    public void creates_payment() {
+    public void should_create_a_payment() {
         PaymentRef ref = new PaymentRef();
         when(repository.nextIdentity()).thenReturn(ref);
 
@@ -52,7 +54,7 @@ public class DefaultPaymentServiceTests {
     }
 
     @Test
-    public void requests_from_processor() {
+    public void should_request_a_payment_from_the_payment_processor() {
         PaymentRef ref = new PaymentRef();
         Payment payment = Payment.builder()
                 .amount(Amount.of(10, 0))

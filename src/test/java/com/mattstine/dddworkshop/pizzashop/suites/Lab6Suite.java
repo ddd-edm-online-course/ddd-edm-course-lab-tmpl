@@ -1,30 +1,30 @@
 package com.mattstine.dddworkshop.pizzashop.suites;
 
 import com.mattstine.dddworkshop.pizzashop.kitchen.*;
-import com.mattstine.lab.infrastructure.*;
-import org.junit.experimental.categories.Categories;
+import org.junit.platform.runner.JUnitPlatform;
+import org.junit.platform.suite.api.IncludeTags;
+import org.junit.platform.suite.api.SelectClasses;
 import org.junit.runner.RunWith;
-import org.junit.runners.Suite;
 
 /**
  * @author Matt Stine
  */
-@RunWith(Categories.class)
-@Suite.SuiteClasses({
+@RunWith(JUnitPlatform.class)
+@SelectClasses({
 		KitchenOrderTests.class,
 		PizzaTests.class,
 		InProcessEventSourcedKitchenOrderRepositoryTests.class,
 		InProcessEventSourcedPizzaRepositoryTests.class,
-		KitchenServiceTests.class,
-		KitchenServiceIntegrationTests.class
+		DefaultKitchenServiceTests.class,
+		DefaultKitchenServiceIntegrationTests.class
 })
-@Categories.IncludeCategory({
-		Lab1Tests.class,
-		Lab2Tests.class,
-		Lab3Tests.class,
-		Lab4Tests.class,
-		Lab5Tests.class,
-		Lab6Tests.class
+@IncludeTags({
+		"Lab1Tests",
+		"Lab2Tests",
+		"Lab3Tests",
+		"Lab4Tests",
+		"Lab5Tests",
+		"Lab6Tests"
 })
 public class Lab6Suite {
 }

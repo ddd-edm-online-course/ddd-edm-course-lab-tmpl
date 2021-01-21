@@ -2,17 +2,17 @@ package com.mattstine.dddworkshop.pizzashop.kitchen;
 
 import com.mattstine.dddworkshop.pizzashop.infrastructure.events.adapters.InProcessEventLog;
 import com.mattstine.dddworkshop.pizzashop.infrastructure.events.ports.Topic;
-import com.mattstine.lab.infrastructure.Lab5Tests;
 import org.junit.After;
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.experimental.categories.Category;
+import org.junit.jupiter.api.*;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
 /**
  * @author Matt Stine
  */
+@DisplayName("The integrated in-process event-sourced pizza repository")
+@DisplayNameGeneration(DisplayNameGenerator.IndicativeSentences.class)
+@IndicativeSentencesGeneration(separator = " ", generator = DisplayNameGenerator.ReplaceUnderscores.class)
 public class InProcessEventSourcedPizzaRepositoryIntegrationTests {
 
 	private PizzaRepository repository;
@@ -20,7 +20,7 @@ public class InProcessEventSourcedPizzaRepositoryIntegrationTests {
 	private Pizza pizza;
 	private KitchenOrderRef kitchenOrderRef;
 
-	@Before
+	@BeforeEach
 	public void setUp() {
 		eventLog = InProcessEventLog.instance();
 		repository = new InProcessEventSourcedPizzaRepository(eventLog,
@@ -41,8 +41,8 @@ public class InProcessEventSourcedPizzaRepositoryIntegrationTests {
 	}
 
 	@Test
-	@Category(Lab5Tests.class)
-	public void find_by_kitchenOrderRef_hydrates_pizza() {
+	@Tag("Lab5Tests")
+	public void should_hydrate_a_pizza_when_found_by_its_kitchen_order_reference() {
 		repository.add(pizza);
 
 		assertThat(repository.findPizzasByKitchenOrderRef(kitchenOrderRef)).contains(pizza);

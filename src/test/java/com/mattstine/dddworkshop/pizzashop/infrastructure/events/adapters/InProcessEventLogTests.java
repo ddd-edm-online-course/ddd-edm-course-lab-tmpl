@@ -4,18 +4,20 @@ import com.mattstine.dddworkshop.pizzashop.infrastructure.events.ports.Event;
 import com.mattstine.dddworkshop.pizzashop.infrastructure.events.ports.Topic;
 import lombok.Value;
 import org.junit.After;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.*;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
 /**
  * @author Matt Stine
  */
+@DisplayName("The in-process event log")
+@DisplayNameGeneration(DisplayNameGenerator.IndicativeSentences.class)
+@IndicativeSentencesGeneration(separator = " ", generator = DisplayNameGenerator.ReplaceUnderscores.class)
 public class InProcessEventLogTests {
     private InProcessEventLog eventLog;
 
-    @Before
+    @BeforeEach
     public void setUp() {
         this.eventLog = InProcessEventLog.instance();
     }
@@ -26,7 +28,7 @@ public class InProcessEventLogTests {
     }
 
     @Test
-    public void shouldAddSubscriber() {
+    public void should_add_subscribers() {
         Topic topic = new Topic("some-topic");
         eventLog.subscribe(topic, System.out::println);
 
@@ -35,7 +37,7 @@ public class InProcessEventLogTests {
 
 
     @Test
-    public void shouldInvokeSubscribersOnPublish() {
+    public void should_invoke_subscribers_on_publish() {
         VerifiableEventHandler handler = VerifiableEventHandler.of(e -> {
         });
 
@@ -48,7 +50,7 @@ public class InProcessEventLogTests {
     }
 
     @Test
-    public void shouldAppendToTopicOnPublish() {
+    public void should_append_to_a_topic_on_publish() {
         Topic topic = new Topic("some-topic");
         TestEvent testEvent = new TestEvent();
         eventLog.publish(topic, testEvent);

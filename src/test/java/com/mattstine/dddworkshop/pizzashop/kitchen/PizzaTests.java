@@ -2,12 +2,7 @@ package com.mattstine.dddworkshop.pizzashop.kitchen;
 
 import com.mattstine.dddworkshop.pizzashop.infrastructure.events.ports.EventLog;
 import com.mattstine.dddworkshop.pizzashop.infrastructure.events.ports.Topic;
-import com.mattstine.lab.infrastructure.Lab1Tests;
-import com.mattstine.lab.infrastructure.Lab2Tests;
-import com.mattstine.lab.infrastructure.Lab4Tests;
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.experimental.categories.Category;
+import org.junit.jupiter.api.*;
 
 import static org.assertj.core.api.Assertions.assertThatIllegalStateException;
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
@@ -16,6 +11,9 @@ import static org.mockito.ArgumentMatchers.isA;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 
+@DisplayName("A pizza")
+@DisplayNameGeneration(DisplayNameGenerator.IndicativeSentences.class)
+@IndicativeSentencesGeneration(separator = " ", generator = DisplayNameGenerator.ReplaceUnderscores.class)
 public class PizzaTests {
 
     private Pizza pizza;
@@ -23,7 +21,7 @@ public class PizzaTests {
     private PizzaRef ref;
     private KitchenOrderRef kitchenOrderRef;
 
-    @Before
+    @BeforeEach
     public void setUp() {
         eventLog = mock(EventLog.class);
         ref = new PizzaRef();
@@ -37,48 +35,48 @@ public class PizzaTests {
     }
 
     @Test
-	@Category(Lab1Tests.class)
-    public void can_build_new_pizza() {
+	@Tag("Lab1Tests")
+    public void should_be_buildable() {
         assertThat(pizza).isNotNull();
     }
 
     @Test
-	@Category(Lab1Tests.class)
-    public void new_pizza_is_new() {
+	@Tag("Lab1Tests")
+    public void should_start_in_the_new_state() {
         assertThat(pizza.isNew()).isTrue();
     }
 
     @Test
-	@Category(Lab1Tests.class)
-    public void start_pizza_prep_updates_state() {
+	@Tag("Lab1Tests")
+    public void should_update_its_state_when_it_starts_prepping() {
         pizza.startPrep();
         assertThat(pizza.isPrepping()).isTrue();
     }
 
     @Test
-	@Category(Lab1Tests.class)
-    public void only_new_pizza_can_start_prep() {
+	@Tag("Lab1Tests")
+    public void should_only_start_prepping_if_it_is_in_the_new_state() {
         pizza.startPrep();
         assertThatIllegalStateException().isThrownBy(pizza::startPrep);
     }
 
     @Test
-	@Category(Lab1Tests.class)
-    public void finish_pizza_prep_updates_state() {
+	@Tag("Lab1Tests")
+    public void should_update_its_state_when_it_finishes_prepping() {
         pizza.startPrep();
         pizza.finishPrep();
         assertThat(pizza.hasFinishedPrep()).isTrue();
     }
 
     @Test
-	@Category(Lab1Tests.class)
-    public void only_prepping_pizza_can_finish_prep() {
+	@Tag("Lab1Tests")
+    public void should_only_finish_prepping_if_it_is_currently_prepping() {
         assertThatIllegalStateException().isThrownBy(pizza::finishPrep);
     }
 
     @Test
-	@Category(Lab1Tests.class)
-    public void start_pizza_bake_updates_state() {
+	@Tag("Lab1Tests")
+    public void should_update_its_state_when_it_starts_baking() {
         pizza.startPrep();
         pizza.finishPrep();
         pizza.startBake();
@@ -86,15 +84,15 @@ public class PizzaTests {
     }
 
     @Test
-	@Category(Lab1Tests.class)
-    public void only_prepped_pizza_can_start_bake() {
+	@Tag("Lab1Tests")
+    public void should_only_start_baking_if_it_is_prepped() {
         assertThatIllegalStateException().isThrownBy(pizza::startBake);
     }
 
     @SuppressWarnings("Duplicates")
     @Test
-	@Category(Lab1Tests.class)
-    public void finish_pizza_bake_updates_state() {
+	@Tag("Lab1Tests")
+    public void should_update_its_state_when_it_finishes_baking() {
         pizza.startPrep();
         pizza.finishPrep();
         pizza.startBake();
@@ -103,21 +101,21 @@ public class PizzaTests {
     }
 
     @Test
-	@Category(Lab1Tests.class)
-    public void only_baking_pizza_can_finish_bake() {
+	@Tag("Lab1Tests")
+    public void should_only_finish_baking_if_it_is_currently_baking() {
         assertThatIllegalStateException().isThrownBy(pizza::finishBake);
     }
 
     @Test
-	@Category(Lab2Tests.class)
-    public void start_pizza_prep_fires_event() {
+	@Tag("Lab2Tests")
+    public void should_publish_an_event_event_when_it_starts_prepping() {
         pizza.startPrep();
         verify(eventLog).publish(eq(new Topic("pizzas")), isA(PizzaPrepStartedEvent.class));
     }
 
     @Test
-	@Category(Lab2Tests.class)
-    public void finish_pizza_prep_fires_event() {
+	@Tag("Lab2Tests")
+    public void should_publish_an_event_when_it_finishes_prepping() {
         pizza.startPrep();
         pizza.finishPrep();
 
@@ -126,8 +124,8 @@ public class PizzaTests {
     }
 
     @Test
-	@Category(Lab2Tests.class)
-    public void start_pizza_bake_fires_event() {
+	@Tag("Lab2Tests")
+    public void should_publish_an_event_when_it_starts_baking() {
         pizza.startPrep();
         pizza.finishPrep();
         pizza.startBake();
@@ -138,8 +136,8 @@ public class PizzaTests {
     }
 
     @Test
-	@Category(Lab2Tests.class)
-    public void finish_pizza_bake_fires_event() {
+	@Tag("Lab2Tests")
+    public void should_publish_an_event_when_it_finishes_baking() {
         pizza.startPrep();
         pizza.finishPrep();
         pizza.startBake();
@@ -152,15 +150,15 @@ public class PizzaTests {
     }
 
     @Test
-	@Category(Lab4Tests.class)
-    public void accumulator_apply_with_pizzaAddedEvent_returns_pizza() {
+	@Tag("Lab4Tests")
+    public void accumulator_function_should_return_an_added_pizza() {
         PizzaAddedEvent pizzaAddedEvent = new PizzaAddedEvent(ref, pizza.state());
         assertThat(pizza.accumulatorFunction().apply(pizza.identity(), pizzaAddedEvent)).isEqualTo(pizza);
     }
 
     @Test
-	@Category(Lab4Tests.class)
-    public void accumulator_apply_with_pizzaPrepStartedEvent_returns_pizza() {
+	@Tag("Lab4Tests")
+    public void accumulator_function_should_return_a_prepping_pizza() {
         Pizza expectedPizza = Pizza.builder()
                 .ref(ref)
                 .eventLog(eventLog)
@@ -177,8 +175,8 @@ public class PizzaTests {
     }
 
     @Test
-	@Category(Lab4Tests.class)
-    public void accumulator_apply_with_pizzaPrepFinishedEvent_returns_pizza() {
+	@Tag("Lab4Tests")
+    public void accumulator_function_should_return_a_prepped_pizza() {
         Pizza expectedPizza = Pizza.builder()
                 .ref(ref)
                 .eventLog(eventLog)
@@ -199,8 +197,8 @@ public class PizzaTests {
     }
 
     @Test
-	@Category(Lab4Tests.class)
-    public void accumulator_apply_with_pizzaBakeStartedEvent_returns_pizza() {
+	@Tag("Lab4Tests")
+    public void accumulator_function_should_return_a_baking_pizza() {
         Pizza expectedPizza = Pizza.builder()
                 .ref(ref)
                 .eventLog(eventLog)
@@ -225,8 +223,8 @@ public class PizzaTests {
     }
 
     @Test
-	@Category(Lab4Tests.class)
-    public void accumulator_apply_with_pizzaBakeFinishedEvent_returns_pizza() {
+	@Tag("Lab4Tests")
+    public void accumulator_function_should_return_a_baked_pizza() {
         Pizza expectedPizza = Pizza.builder()
                 .ref(ref)
                 .eventLog(eventLog)

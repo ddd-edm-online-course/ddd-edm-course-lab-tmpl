@@ -6,11 +6,8 @@ import com.mattstine.dddworkshop.pizzashop.ordering.OnlineOrder;
 import com.mattstine.dddworkshop.pizzashop.ordering.OnlineOrderPaidEvent;
 import com.mattstine.dddworkshop.pizzashop.ordering.OnlineOrderRef;
 import com.mattstine.dddworkshop.pizzashop.ordering.OrderingService;
-import com.mattstine.lab.infrastructure.Lab6Tests;
 import org.junit.After;
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.experimental.categories.Category;
+import org.junit.jupiter.api.*;
 
 import java.util.Set;
 
@@ -19,7 +16,10 @@ import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
-public class KitchenServiceIntegrationTests {
+@DisplayName("The integrated default kitchen service")
+@DisplayNameGeneration(DisplayNameGenerator.IndicativeSentences.class)
+@IndicativeSentencesGeneration(separator = " ", generator = DisplayNameGenerator.ReplaceUnderscores.class)
+public class DefaultKitchenServiceIntegrationTests {
 
 	private InProcessEventLog eventLog;
 	private KitchenService kitchenService;
@@ -29,7 +29,7 @@ public class KitchenServiceIntegrationTests {
 	private KitchenOrderRef kitchenOrderRef;
 	private KitchenOrder kitchenOrder;
 
-	@Before
+	@BeforeEach
 	public void setUp() {
 		eventLog = InProcessEventLog.instance();
 		kitchenOrderRepository = new InProcessEventSourcedKitchenOrderRepository(eventLog,
@@ -55,8 +55,8 @@ public class KitchenServiceIntegrationTests {
 	}
 
 	@Test
-	@Category(Lab6Tests.class)
-	public void on_orderPaidEvent_add_to_queue() {
+	@Tag("Lab6Tests")
+	public void should_add_a_kitchen_order_to_the_queue_when_it_receives_an_OnlineOrderPaidEvent() {
 		OnlineOrderRef ref = new OnlineOrderRef();
 		OnlineOrderPaidEvent orderPaidEvent = new OnlineOrderPaidEvent(ref);
 
@@ -79,8 +79,8 @@ public class KitchenServiceIntegrationTests {
 	}
 
 	@Test
-	@Category(Lab6Tests.class)
-	public void on_kitchenOrderPrepStartedEvent_start_prep_on_all_pizzas() {
+	@Tag("Lab6Tests")
+	public void should_start_prepping_all_pizzas_when_it_receives_a_KitchenOrderPrepStartedEvent() {
 		kitchenOrder.startPrep();
 
 		Set<Pizza> pizzas = kitchenService.findPizzasByKitchenOrderRef(kitchenOrderRef);
@@ -101,8 +101,8 @@ public class KitchenServiceIntegrationTests {
 	}
 
 	@Test
-	@Category(Lab6Tests.class)
-	public void on_pizzaPrepFinished_start_pizzaBake() {
+	@Tag("Lab6Tests")
+	public void should_start_baking_the_pizza_when_it_receives_a_PizzaPrepFinishedEvent() {
 		kitchenOrder.startPrep();
 
 		Set<Pizza> pizzasByKitchenOrderRef = kitchenService.findPizzasByKitchenOrderRef(kitchenOrderRef);
@@ -118,8 +118,8 @@ public class KitchenServiceIntegrationTests {
 	}
 
 	@Test
-	@Category(Lab6Tests.class)
-	public void on_pizzaBakeStarted_start_orderBake() {
+	@Tag("Lab6Tests")
+	public void should_start_baking_the_order_when_it_receives_a_PizzaBakeStartedEvent() {
 		kitchenOrder.startPrep();
 
 		Set<Pizza> pizzasByKitchenOrderRef = kitchenService.findPizzasByKitchenOrderRef(kitchenOrderRef);
@@ -131,8 +131,8 @@ public class KitchenServiceIntegrationTests {
 	}
 
 	@Test
-	@Category(Lab6Tests.class)
-	public void on_first_pizzaBakeFinished_start_orderAssembly() {
+	@Tag("Lab6Tests")
+	public void should_start_assembling_the_order_when_it_receives_the_first_PizzaBakeFinishedEvent() {
 		kitchenOrder.startPrep();
 
 		// Load pizzas that are prepping...
@@ -151,16 +151,16 @@ public class KitchenServiceIntegrationTests {
 	}
 
 	@Test
-	@Category(Lab6Tests.class)
-	public void should_start_kitchenOrder_prep() {
+	@Tag("Lab6Tests")
+	public void should_start_prepping_the_kitchen_order_when_it_receives_the_start_order_prep_command() {
 		kitchenService.startOrderPrep(kitchenOrderRef);
 		kitchenOrder = kitchenService.findKitchenOrderByRef(kitchenOrderRef);
 		assertThat(kitchenOrder.isPrepping()).isTrue();
 	}
 
 	@Test
-	@Category(Lab6Tests.class)
-	public void should_finish_pizza_prep() {
+	@Tag("Lab6Tests")
+	public void should_finish_prepping_the_pizza_when_it_receives_the_finish_pizza_prep_command() {
 		kitchenOrder.startPrep();
 
 		Pizza pizza = kitchenService.findPizzasByKitchenOrderRef(kitchenOrderRef).stream()
@@ -174,8 +174,8 @@ public class KitchenServiceIntegrationTests {
 	}
 
 	@Test
-	@Category(Lab6Tests.class)
-	public void should_remove_pizza_from_oven() {
+	@Tag("Lab6Tests")
+	public void should_remove_the_pizza_from_the_oven_when_it_receives_the_remove_pizza_from_oven_command() {
 		kitchenOrder.startPrep();
 
 		Pizza pizza = kitchenService.findPizzasByKitchenOrderRef(kitchenOrderRef).stream()
@@ -191,8 +191,8 @@ public class KitchenServiceIntegrationTests {
 	}
 
 	@Test
-	@Category(Lab6Tests.class)
-	public void on_final_pizzaBakeFinished_finish_orderAssembly() {
+	@Tag("Lab6Tests")
+	public void should_finish_assembling_the_order_when_it_recevies_the_final_PizzaBakeFinishedEvent() {
 		kitchenOrder.startPrep();
 
 		kitchenService.findPizzasByKitchenOrderRef(kitchenOrderRef)
@@ -207,8 +207,8 @@ public class KitchenServiceIntegrationTests {
 	}
 
 	@Test
-	@Category(Lab6Tests.class)
-	public void kitchen_order_with_one_pizza_should_finish() {
+	@Tag("Lab6Tests")
+	public void should_successfully_process_an_order_with_only_one_pizza() {
 		kitchenOrderRef = kitchenOrderRepository.nextIdentity();
 
 		kitchenOrder = KitchenOrder.builder()

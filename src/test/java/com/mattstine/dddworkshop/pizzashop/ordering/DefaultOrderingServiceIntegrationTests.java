@@ -6,8 +6,7 @@ import com.mattstine.dddworkshop.pizzashop.infrastructure.events.ports.Topic;
 import com.mattstine.dddworkshop.pizzashop.payments.PaymentRef;
 import com.mattstine.dddworkshop.pizzashop.payments.PaymentService;
 import com.mattstine.dddworkshop.pizzashop.payments.PaymentSuccessfulEvent;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.*;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.mock;
@@ -15,12 +14,15 @@ import static org.mockito.Mockito.mock;
 /**
  * @author Matt Stine
  */
+@DisplayName("The integrated default ordering service")
+@DisplayNameGeneration(DisplayNameGenerator.IndicativeSentences.class)
+@IndicativeSentencesGeneration(separator = " ", generator = DisplayNameGenerator.ReplaceUnderscores.class)
 public class DefaultOrderingServiceIntegrationTests {
 
     private EventLog eventLog;
     private OnlineOrderRepository repository;
 
-    @Before
+    @BeforeEach
     public void setUp() {
         eventLog = InProcessEventLog.instance();
         repository = new InProcessEventSourcedOnlineOrderRepository(eventLog,
@@ -29,7 +31,7 @@ public class DefaultOrderingServiceIntegrationTests {
     }
 
     @Test
-    public void on_successful_payment_mark_paid() {
+    public void should_mark_an_online_order_as_paid_when_it_receives_a_PaymentSuccessfulEvent() {
         OnlineOrderRef onlineOrderRef = new OnlineOrderRef();
         OnlineOrder onlineOrder = OnlineOrder.builder()
                 .type(OnlineOrder.Type.PICKUP)

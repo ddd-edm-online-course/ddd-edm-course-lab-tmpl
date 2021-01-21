@@ -7,11 +7,12 @@ import com.mattstine.dddworkshop.pizzashop.payments.DefaultPaymentServiceIntegra
 import com.mattstine.dddworkshop.pizzashop.payments.DefaultPaymentServiceTests;
 import com.mattstine.dddworkshop.pizzashop.payments.InProcessEventSourcedPaymentRepositoryTests;
 import com.mattstine.dddworkshop.pizzashop.payments.PaymentTests;
+import org.junit.platform.runner.JUnitPlatform;
+import org.junit.platform.suite.api.SelectClasses;
 import org.junit.runner.RunWith;
-import org.junit.runners.Suite;
 
-@RunWith(Suite.class)
-@Suite.SuiteClasses({
+@RunWith(JUnitPlatform.class)
+@SelectClasses({
         AmountTests.class,
         InProcessEventLogTests.class,
         DefaultOrderingServiceIntegrationTests.class,

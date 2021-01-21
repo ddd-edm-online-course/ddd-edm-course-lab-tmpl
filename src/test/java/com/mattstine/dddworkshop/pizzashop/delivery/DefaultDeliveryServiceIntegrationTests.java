@@ -9,11 +9,8 @@ import com.mattstine.dddworkshop.pizzashop.kitchen.KitchenService;
 import com.mattstine.dddworkshop.pizzashop.ordering.OnlineOrder;
 import com.mattstine.dddworkshop.pizzashop.ordering.OnlineOrderRef;
 import com.mattstine.dddworkshop.pizzashop.ordering.OrderingService;
-import com.mattstine.lab.infrastructure.Lab7Tests;
 import org.junit.After;
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.experimental.categories.Category;
+import org.junit.jupiter.api.*;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.mock;
@@ -22,14 +19,17 @@ import static org.mockito.Mockito.when;
 /**
  * @author Matt Stine
  */
-public class DeliveryServiceIntegrationTests {
+@DisplayName("The integrated default delivery service")
+@DisplayNameGeneration(DisplayNameGenerator.IndicativeSentences.class)
+@IndicativeSentencesGeneration(separator = " ", generator = DisplayNameGenerator.ReplaceUnderscores.class)
+public class DefaultDeliveryServiceIntegrationTests {
 
 	private InProcessEventLog eventLog;
 	private DeliveryService deliveryService;
 	private OrderingService orderingService;
 	private KitchenService kitchenService;
 
-	@Before
+	@BeforeEach
 	public void setUp() {
 		eventLog = InProcessEventLog.instance();
 		DeliveryOrderRepository deliveryOrderRepository = new InProcessEventSourcedDeliveryOrderRepository(eventLog,
@@ -45,8 +45,8 @@ public class DeliveryServiceIntegrationTests {
 	}
 
 	@Test
-	@Category(Lab7Tests.class)
-	public void on_kitchenOrderAssemblyFinished_add_to_queue() {
+	@Tag("Lab7Tests")
+	public void should_add_a_delivery_order_to_the_queue_when_it_receives_KitchenOrderAssemblyFinishedEvent() {
 		KitchenOrderRef kitchenOrderRef = new KitchenOrderRef();
 		KitchenOrderAssemblyFinishedEvent kitchenOrderAssemblyFinishedEvent = new KitchenOrderAssemblyFinishedEvent(kitchenOrderRef);
 

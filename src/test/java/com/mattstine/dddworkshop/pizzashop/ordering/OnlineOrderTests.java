@@ -3,8 +3,7 @@ package com.mattstine.dddworkshop.pizzashop.ordering;
 import com.mattstine.dddworkshop.pizzashop.infrastructure.events.ports.EventLog;
 import com.mattstine.dddworkshop.pizzashop.infrastructure.events.ports.Topic;
 import com.mattstine.dddworkshop.pizzashop.payments.PaymentRef;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.*;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatIllegalStateException;
@@ -16,6 +15,9 @@ import static org.mockito.Mockito.verify;
 /**
  * @author Matt Stine
  */
+@DisplayName("An online order")
+@DisplayNameGeneration(DisplayNameGenerator.IndicativeSentences.class)
+@IndicativeSentencesGeneration(separator = " ", generator = DisplayNameGenerator.ReplaceUnderscores.class)
 public class OnlineOrderTests {
 
     private EventLog eventLog;
@@ -23,7 +25,7 @@ public class OnlineOrderTests {
     private Pizza pizza;
     private OnlineOrderRef ref;
 
-    @Before
+    @BeforeEach
     public void setUp() {
         ref = new OnlineOrderRef();
         eventLog = mock(EventLog.class);
@@ -36,17 +38,17 @@ public class OnlineOrderTests {
     }
 
     @Test
-    public void new_order_is_new() {
+    public void should_be_buildable() {
         assertThat(onlineOrder.isNew()).isTrue();
     }
 
     @Test
-    public void should_create_pickup_order() {
+    public void should_default_to_creating_a_pickup_order() {
         assertThat(onlineOrder.isPickupOrder()).isTrue();
     }
 
     @Test
-    public void should_create_delivery_order() {
+    public void should_be_able_to_create_delivery_order() {
         onlineOrder = OnlineOrder.builder()
                 .type(OnlineOrder.Type.DELIVERY)
                 .eventLog(eventLog)
@@ -56,13 +58,13 @@ public class OnlineOrderTests {
     }
 
     @Test
-    public void should_add_pizza() {
+    public void should_be_able_to_add_a_pizza() {
         onlineOrder.addPizza(pizza);
         assertThat(onlineOrder.getPizzas()).contains(pizza);
     }
 
     @Test
-    public void adding_pizza_fires_event() {
+    public void should_publish_an_event_when_adding_a_pizza() {
         onlineOrder.addPizza(pizza);
         verify(eventLog)
                 .publish(eq(new Topic("ordering")),
@@ -70,21 +72,21 @@ public class OnlineOrderTests {
     }
 
     @Test
-    public void can_only_add_pizza_to_new_order() {
+    public void should_only_allow_adding_a_pizza_to_a_new_order() {
         onlineOrder.addPizza(pizza);
         onlineOrder.submit();
         assertThatIllegalStateException().isThrownBy(() -> onlineOrder.addPizza(pizza));
     }
 
     @Test
-    public void submit_order_updates_state() {
+    public void should_update_its_state_when_it_receives_the_submit_order_command() {
         onlineOrder.addPizza(pizza);
         onlineOrder.submit();
         assertThat(onlineOrder.isSubmitted()).isTrue();
     }
 
     @Test
-    public void submit_order_fires_event() {
+    public void should_publish_an_event_when_it_receives_the_submit_order_command() {
         onlineOrder.addPizza(Pizza.builder().size(Pizza.Size.MEDIUM).build());
         onlineOrder.submit();
         verify(eventLog)
@@ -93,26 +95,26 @@ public class OnlineOrderTests {
     }
 
     @Test
-    public void submit_requires_at_least_one_pizza() {
+    public void should_require_at_least_one_pizza_in_its_state_to_handle_the_submit_order_command() {
         assertThatIllegalStateException()
                 .isThrownBy(() -> onlineOrder.submit());
     }
 
     @Test
-    public void can_only_submit_new_order() {
+    public void should_only_handle_the_submit_order_command_from_the_new_state() {
         onlineOrder.addPizza(pizza);
         onlineOrder.submit();
         assertThatIllegalStateException().isThrownBy(onlineOrder::submit);
     }
 
     @Test
-    public void calculates_price() {
+    public void should_calculate_its_price() {
         onlineOrder.addPizza(pizza);
         assertThat(onlineOrder.calculatePrice()).isEqualTo(Pizza.Size.MEDIUM.getPrice());
     }
 
     @Test
-    public void mark_paid_updates_state() {
+    public void should_update_its_state_when_it_receives_the_mark_paid_command() {
         onlineOrder.addPizza(pizza);
         onlineOrder.submit();
         onlineOrder.markPaid();
@@ -120,7 +122,7 @@ public class OnlineOrderTests {
     }
 
     @Test
-    public void mark_paid_fires_event() {
+    public void should_publish_an_event_when_it_receives_the_mark_paid_command() {
         onlineOrder.addPizza(pizza);
         verify(eventLog).publish(eq(new Topic("ordering")), isA(PizzaAddedEvent.class));
         onlineOrder.submit();
@@ -130,26 +132,26 @@ public class OnlineOrderTests {
     }
 
     @Test
-    public void can_only_mark_submitted_order_paid() {
+    public void should_only_handle_the_mark_paid_command_from_the_submitted_state() {
         assertThatIllegalStateException().isThrownBy(onlineOrder::markPaid);
     }
 
     @Test
-    public void setting_payment_ref_fires_event() {
+    public void should_publish_an_event_when_it_receives_the_assign_payment_reference_command() {
         PaymentRef paymentRef = new PaymentRef();
         onlineOrder.assignPaymentRef(paymentRef);
 
         verify(eventLog).publish(eq(new Topic("ordering")), isA(PaymentRefAssignedEvent.class));
     }
-
+//accumulator_function_should_return_an_assembled_kitchen_order
     @Test
-    public void accumulator_apply_with_orderAddedEvent_returns_order() {
+    public void accumulator_function_should_return_an_added_online_order() {
         OnlineOrderAddedEvent orderAddedEvent = new OnlineOrderAddedEvent(ref, onlineOrder.state());
         assertThat(onlineOrder.accumulatorFunction().apply(onlineOrder.identity(), orderAddedEvent)).isEqualTo(onlineOrder);
     }
 
     @Test
-    public void accumulator_apply_with_pizzaAddedEvent_updates_state() {
+    public void accumulator_function_should_return_an_online_order_with_an_added_pizza() {
         OnlineOrder expectedOnlineOrder = OnlineOrder.builder()
                 .ref(ref)
                 .type(OnlineOrder.Type.PICKUP)
@@ -163,7 +165,7 @@ public class OnlineOrderTests {
     }
 
     @Test
-    public void accumulator_apply_with_orderSubmittedEvent_updates_state() {
+    public void accumulator_function_should_return_a_submitted_online_order() {
         OnlineOrder expectedOnlineOrder = OnlineOrder.builder()
                 .ref(ref)
                 .type(OnlineOrder.Type.PICKUP)
@@ -181,7 +183,7 @@ public class OnlineOrderTests {
     }
 
     @Test
-    public void accumulator_apply_with_paymentRefAssignedEvent_updates_state() {
+    public void accumulator_function_should_return_an_online_order_with_an_assigned_payment_reference() {
         OnlineOrder expectedOnlineOrder = OnlineOrder.builder()
                 .ref(ref)
                 .type(OnlineOrder.Type.PICKUP)
@@ -205,7 +207,7 @@ public class OnlineOrderTests {
     }
 
     @Test
-    public void accumulator_apply_with_orderPaidEvent_updates_state() {
+    public void accumulator_function_should_return_a_paid_online_order() {
         OnlineOrder expectedOnlineOrder = OnlineOrder.builder()
                 .ref(ref)
                 .type(OnlineOrder.Type.PICKUP)

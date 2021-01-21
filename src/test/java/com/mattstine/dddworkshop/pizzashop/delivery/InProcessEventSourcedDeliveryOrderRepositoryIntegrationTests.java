@@ -4,17 +4,17 @@ import com.mattstine.dddworkshop.pizzashop.infrastructure.events.adapters.InProc
 import com.mattstine.dddworkshop.pizzashop.infrastructure.events.ports.Topic;
 import com.mattstine.dddworkshop.pizzashop.kitchen.KitchenOrderRef;
 import com.mattstine.dddworkshop.pizzashop.ordering.OnlineOrderRef;
-import com.mattstine.lab.infrastructure.Lab7Tests;
 import org.junit.After;
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.experimental.categories.Category;
+import org.junit.jupiter.api.*;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
 /**
  * @author Matt Stine
  */
+@DisplayName("The integrated in-process event-sourced delivery order repository")
+@DisplayNameGeneration(DisplayNameGenerator.IndicativeSentences.class)
+@IndicativeSentencesGeneration(separator = " ", generator = DisplayNameGenerator.ReplaceUnderscores.class)
 public class InProcessEventSourcedDeliveryOrderRepositoryIntegrationTests {
 
 	private DeliveryOrderRepository repository;
@@ -22,7 +22,7 @@ public class InProcessEventSourcedDeliveryOrderRepositoryIntegrationTests {
 	private DeliveryOrder deliveryOrder;
 	private KitchenOrderRef kitchenOrderRef;
 
-	@Before
+	@BeforeEach
 	public void setUp() {
 		eventLog = InProcessEventLog.instance();
 		repository = new InProcessEventSourcedDeliveryOrderRepository(eventLog,
@@ -44,8 +44,8 @@ public class InProcessEventSourcedDeliveryOrderRepositoryIntegrationTests {
 	}
 
 	@Test
-	@Category(Lab7Tests.class)
-	public void find_by_kitchenOrderRef_hydrates_deliveryOrder() {
+	@Tag("Lab7Tests")
+	public void should_hydrate_a_delivery_order_when_found_by_its_kitchen_order_reference() {
 		repository.add(deliveryOrder);
 
 		assertThat(repository.findByKitchenOrderRef(kitchenOrderRef)).isEqualTo(deliveryOrder);

@@ -3,12 +3,7 @@ package com.mattstine.dddworkshop.pizzashop.kitchen;
 import com.mattstine.dddworkshop.pizzashop.infrastructure.events.ports.EventLog;
 import com.mattstine.dddworkshop.pizzashop.infrastructure.events.ports.Topic;
 import com.mattstine.dddworkshop.pizzashop.ordering.OnlineOrderRef;
-import com.mattstine.lab.infrastructure.Lab1Tests;
-import com.mattstine.lab.infrastructure.Lab2Tests;
-import com.mattstine.lab.infrastructure.Lab4Tests;
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.experimental.categories.Category;
+import org.junit.jupiter.api.*;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatIllegalStateException;
@@ -17,6 +12,9 @@ import static org.mockito.ArgumentMatchers.isA;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 
+@DisplayName("A kitchen order")
+@DisplayNameGeneration(DisplayNameGenerator.IndicativeSentences.class)
+@IndicativeSentencesGeneration(separator = " ", generator = DisplayNameGenerator.ReplaceUnderscores.class)
 public class KitchenOrderTests {
 
     private KitchenOrder kitchenOrder;
@@ -24,7 +22,7 @@ public class KitchenOrderTests {
     private KitchenOrderRef ref;
     private OnlineOrderRef onlineOrderRef;
 
-    @Before
+    @BeforeEach
     public void setUp() {
         eventLog = mock(EventLog.class);
         ref = new KitchenOrderRef();
@@ -39,48 +37,48 @@ public class KitchenOrderTests {
     }
 
     @Test
-    @Category(Lab1Tests.class)
-    public void can_build_new_order() {
+    @Tag("Lab1Tests")
+    public void should_be_buildable() {
         assertThat(kitchenOrder).isNotNull();
     }
 
     @Test
-    @Category(Lab1Tests.class)
-    public void new_order_is_new() {
+    @Tag("Lab1Tests")
+    public void should_start_in_the_new_state() {
         assertThat(kitchenOrder.isNew()).isTrue();
     }
 
     @Test
-    @Category(Lab1Tests.class)
-    public void start_order_prep_updates_state() {
+    @Tag("Lab1Tests")
+    public void should_update_its_state_when_it_receives_the_start_prep_command() {
         kitchenOrder.startPrep();
         assertThat(kitchenOrder.isPrepping()).isTrue();
     }
 
     @Test
-    @Category(Lab1Tests.class)
-    public void only_new_order_can_start_prep() {
+    @Tag("Lab1Tests")
+    public void should_only_start_prepping_if_it_is_in_the_new_state() {
         kitchenOrder.startPrep();
         assertThatIllegalStateException().isThrownBy(kitchenOrder::startPrep);
     }
 
     @Test
-    @Category(Lab1Tests.class)
-    public void start_order_bake_updates_state() {
+    @Tag("Lab1Tests")
+    public void should_update_its_state_when_it_receives_the_start_bake_command() {
         kitchenOrder.startPrep();
         kitchenOrder.startBake();
         assertThat(kitchenOrder.isBaking()).isTrue();
     }
 
     @Test
-    @Category(Lab1Tests.class)
-	public void only_prepping_order_can_start_bake() {
+    @Tag("Lab1Tests")
+	public void should_only_start_baking_if_it_is_in_the_prepping_state() {
         assertThatIllegalStateException().isThrownBy(kitchenOrder::startBake);
     }
 
     @Test
-    @Category(Lab1Tests.class)
-    public void start_order_assembly_updates_state() {
+    @Tag("Lab1Tests")
+    public void should_update_its_state_when_it_receives_the_start_assembly_command() {
         kitchenOrder.startPrep();
         kitchenOrder.startBake();
         kitchenOrder.startAssembly();
@@ -88,14 +86,14 @@ public class KitchenOrderTests {
     }
 
     @Test
-    @Category(Lab1Tests.class)
-    public void only_baking_order_can_start_assembly() {
+    @Tag("Lab1Tests")
+    public void should_only_start_assembling_if_it_is_in_the_baking_state() {
         assertThatIllegalStateException().isThrownBy(kitchenOrder::startAssembly);
     }
 
     @Test
-    @Category(Lab1Tests.class)
-    public void finish_order_assembly_updates_state() {
+    @Tag("Lab1Tests")
+    public void should_update_its_state_when_it_receives_the_finish_assembly_command() {
         kitchenOrder.startPrep();
         kitchenOrder.startBake();
         kitchenOrder.startAssembly();
@@ -104,21 +102,21 @@ public class KitchenOrderTests {
     }
 
     @Test
-    @Category(Lab1Tests.class)
-    public void only_assembling_order_can_finish_assembly() {
+    @Tag("Lab1Tests")
+    public void should_only_finish_assembling_if_it_is_in_the_assembling_state() {
         assertThatIllegalStateException().isThrownBy(kitchenOrder::finishAssembly);
     }
 
     @Test
-    @Category(Lab2Tests.class)
-    public void start_order_prep_fires_event() {
+    @Tag("Lab2Tests")
+    public void should_publish_an_event_when_it_receives_the_start_prep_command() {
         kitchenOrder.startPrep();
         verify(eventLog).publish(eq(new Topic("kitchen_orders")), isA(KitchenOrderPrepStartedEvent.class));
     }
 
     @Test
-    @Category(Lab2Tests.class)
-    public void start_order_bake_fires_event() {
+    @Tag("Lab2Tests")
+    public void should_publish_an_event_when_it_receives_the_start_bake_command() {
         kitchenOrder.startPrep();
         kitchenOrder.startBake();
         verify(eventLog).publish(eq(new Topic("kitchen_orders")), isA(KitchenOrderPrepStartedEvent.class));
@@ -126,8 +124,8 @@ public class KitchenOrderTests {
     }
 
     @Test
-    @Category(Lab2Tests.class)
-    public void start_order_assembly_fires_event() {
+    @Tag("Lab2Tests")
+    public void should_publish_an_event_when_it_receives_the_start_assembly_command() {
         kitchenOrder.startPrep();
         kitchenOrder.startBake();
         kitchenOrder.startAssembly();
@@ -137,8 +135,8 @@ public class KitchenOrderTests {
     }
 
     @Test
-    @Category(Lab2Tests.class)
-    public void finish_order_assembly_fires_event() {
+    @Tag("Lab2Tests")
+    public void should_publish_an_event_when_it_receives_the_finish_assembly_command() {
         kitchenOrder.startPrep();
         kitchenOrder.startBake();
         kitchenOrder.startAssembly();
@@ -150,15 +148,15 @@ public class KitchenOrderTests {
     }
 
     @Test
-    @Category(Lab4Tests.class)
-    public void accumulator_apply_with_orderAddedEvent_returns_order() {
+    @Tag("Lab4Tests")
+    public void accumulator_function_should_return_an_added_kitchen_order() {
         KitchenOrderAddedEvent orderAddedEvent = new KitchenOrderAddedEvent(ref, kitchenOrder.state());
         assertThat(kitchenOrder.accumulatorFunction().apply(kitchenOrder.identity(), orderAddedEvent)).isEqualTo(kitchenOrder);
     }
 
     @Test
-    @Category(Lab4Tests.class)
-    public void accumulator_apply_with_orderPrepStartedEvent_returns_order() {
+    @Tag("Lab4Tests")
+    public void accumulator_function_should_return_a_prepping_kitchen_order() {
         KitchenOrder expectedKitchenOrder = KitchenOrder.builder()
                 .ref(ref)
                 .onlineOrderRef(onlineOrderRef)
@@ -176,8 +174,8 @@ public class KitchenOrderTests {
     }
 
     @Test
-    @Category(Lab4Tests.class)
-    public void accumulator_apply_with_orderBakeStartedEvent_returns_order() {
+    @Tag("Lab4Tests")
+    public void accumulator_function_should_return_a_baking_kitchen_order() {
         KitchenOrder expectedKitchenOrder = KitchenOrder.builder()
                 .ref(ref)
                 .onlineOrderRef(onlineOrderRef)
@@ -199,8 +197,8 @@ public class KitchenOrderTests {
     }
 
     @Test
-    @Category(Lab4Tests.class)
-    public void accumulator_apply_with_orderAssemblyStartedEvent_returns_order() {
+    @Tag("Lab4Tests")
+    public void accumulator_function_should_return_an_assembling_kitchen_order() {
         KitchenOrder expectedKitchenOrder = KitchenOrder.builder()
                 .ref(ref)
                 .onlineOrderRef(onlineOrderRef)
@@ -226,8 +224,8 @@ public class KitchenOrderTests {
     }
 
     @Test
-    @Category(Lab4Tests.class)
-    public void accumulator_apply_with_orderAssemblyFinishedEvent_returns_order() {
+    @Tag("Lab4Tests")
+    public void accumulator_function_should_return_an_assembled_kitchen_order() {
         KitchenOrder expectedKitchenOrder = KitchenOrder.builder()
                 .ref(ref)
                 .onlineOrderRef(onlineOrderRef)

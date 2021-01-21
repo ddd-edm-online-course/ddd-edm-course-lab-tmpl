@@ -1,17 +1,16 @@
 package com.mattstine.lab.setup;
 
-import com.mattstine.lab.infrastructure.FirstSubmissionTest;
-import com.mattstine.lab.setup.HelloWorldTest;
-import org.junit.experimental.categories.Categories;
+import org.junit.platform.runner.JUnitPlatform;
+import org.junit.platform.suite.api.IncludeTags;
+import org.junit.platform.suite.api.SelectClasses;
 import org.junit.runner.RunWith;
-import org.junit.runners.Suite;
 
-@RunWith(Categories.class)
-@Suite.SuiteClasses({
+@RunWith(JUnitPlatform.class)
+@SelectClasses({
         HelloWorldTest.class
 })
-@Categories.IncludeCategory({
-        FirstSubmissionTest.class
+@IncludeTags({
+        "FirstSubmissionTest"
 })
 public class FirstSubmissionSuite {
 }

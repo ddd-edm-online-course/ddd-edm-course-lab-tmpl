@@ -5,21 +5,21 @@ import com.mattstine.dddworkshop.pizzashop.infrastructure.events.ports.EventLog;
 import com.mattstine.dddworkshop.pizzashop.infrastructure.events.ports.Topic;
 import com.mattstine.dddworkshop.pizzashop.ordering.OnlineOrderRef;
 import com.mattstine.dddworkshop.pizzashop.ordering.OrderingService;
-import com.mattstine.lab.infrastructure.Lab6Tests;
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.experimental.categories.Category;
+import org.junit.jupiter.api.*;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.*;
 
-public class KitchenServiceTests {
+@DisplayName("The default kitchen service")
+@DisplayNameGeneration(DisplayNameGenerator.IndicativeSentences.class)
+@IndicativeSentencesGeneration(separator = " ", generator = DisplayNameGenerator.ReplaceUnderscores.class)
+public class DefaultKitchenServiceTests {
 
 	private KitchenService service;
 	private KitchenOrderRepository kitchenOrderRepository;
 	private EventLog eventLog;
 
-	@Before
+	@BeforeEach
 	public void setUp() {
 		eventLog = mock(EventLog.class);
 		kitchenOrderRepository = mock(KitchenOrderRepository.class);
@@ -29,14 +29,14 @@ public class KitchenServiceTests {
 	}
 
 	@Test
-	@Category(Lab6Tests.class)
-	public void subscribes_to_ordering_topic() {
+	@Tag("Lab6Tests")
+	public void should_subscribe_to_the_ordering_topic() {
 		verify(eventLog).subscribe(eq(new Topic("ordering")), isA(EventHandler.class));
 	}
 
 	@Test
-	@Category(Lab6Tests.class)
-	public void should_return_kitchenOrder_by_onlineOrderRef() {
+	@Tag("Lab6Tests")
+	public void should_return_a_kitchen_order_by_its_online_order_reference() {
 		OnlineOrderRef onlineOrderRef = new OnlineOrderRef();
 
 		KitchenOrder kitchenOrder = KitchenOrder.builder()
@@ -51,14 +51,14 @@ public class KitchenServiceTests {
 	}
 
 	@Test
-	@Category(Lab6Tests.class)
-	public void subscribes_to_kitchen_orders_topic() {
+	@Tag("Lab6Tests")
+	public void should_subscribe_to_the_kitchen_orders_topic() {
 		verify(eventLog).subscribe(eq(new Topic("kitchen_orders")), isA(EventHandler.class));
 	}
 
 	@Test
-	@Category(Lab6Tests.class)
-	public void subscribes_to_pizzas_topic() {
+	@Tag("Lab6Tests")
+	public void should_subscribe_to_the_pizzas_topic() {
 		verify(eventLog).subscribe(eq(new Topic("pizzas")), isA(EventHandler.class));
 	}
 

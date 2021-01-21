@@ -7,10 +7,7 @@ import com.mattstine.dddworkshop.pizzashop.kitchen.KitchenOrderRef;
 import com.mattstine.dddworkshop.pizzashop.kitchen.KitchenService;
 import com.mattstine.dddworkshop.pizzashop.ordering.OnlineOrderRef;
 import com.mattstine.dddworkshop.pizzashop.ordering.OrderingService;
-import com.mattstine.lab.infrastructure.Lab7Tests;
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.experimental.categories.Category;
+import org.junit.jupiter.api.*;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.eq;
@@ -20,13 +17,16 @@ import static org.mockito.Mockito.*;
 /**
  * @author Matt Stine
  */
-public class DeliveryServiceTests {
+@DisplayName("The default delivery service")
+@DisplayNameGeneration(DisplayNameGenerator.IndicativeSentences.class)
+@IndicativeSentencesGeneration(separator = " ", generator = DisplayNameGenerator.ReplaceUnderscores.class)
+public class DefaultDeliveryServiceTests {
 
 	private DeliveryService service;
 	private EventLog eventLog;
 	private DeliveryOrderRepository deliveryOrderRepository;
 
-	@Before
+	@BeforeEach
 	public void setUp() {
 		eventLog = mock(EventLog.class);
 		deliveryOrderRepository = mock(DeliveryOrderRepository.class);
@@ -36,14 +36,14 @@ public class DeliveryServiceTests {
 	}
 
 	@Test
-	@Category(Lab7Tests.class)
-	public void subscribes_to_kitchen_orders_topic() {
+	@Tag("Lab7Tests")
+	public void should_subscribe_to_the_kitchen_orders_topic() {
 		verify(eventLog).subscribe(eq(new Topic("kitchen_orders")), isA(EventHandler.class));
 	}
 
 	@Test
-	@Category(Lab7Tests.class)
-	public void should_return_deliveryOrder_by_kitchenOrderRef() {
+	@Tag("Lab7Tests")
+	public void should_return_a_delivery_order_by_its_kitchen_order_reference() {
 		KitchenOrderRef kitchenOrderRef = new KitchenOrderRef();
 
 		DeliveryOrder deliveryOrder = DeliveryOrder.builder()

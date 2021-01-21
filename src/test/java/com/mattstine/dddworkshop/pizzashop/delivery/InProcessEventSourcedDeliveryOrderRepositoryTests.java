@@ -4,10 +4,7 @@ import com.mattstine.dddworkshop.pizzashop.infrastructure.events.ports.EventLog;
 import com.mattstine.dddworkshop.pizzashop.infrastructure.events.ports.Topic;
 import com.mattstine.dddworkshop.pizzashop.kitchen.KitchenOrderRef;
 import com.mattstine.dddworkshop.pizzashop.ordering.OnlineOrderRef;
-import com.mattstine.lab.infrastructure.Lab7Tests;
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.experimental.categories.Category;
+import org.junit.jupiter.api.*;
 
 import java.util.Collections;
 
@@ -18,6 +15,9 @@ import static org.mockito.Mockito.*;
 /**
  * @author Matt Stine
  */
+@DisplayName("The in-process event-sourced delivery order repository")
+@DisplayNameGeneration(DisplayNameGenerator.IndicativeSentences.class)
+@IndicativeSentencesGeneration(separator = " ", generator = DisplayNameGenerator.ReplaceUnderscores.class)
 public class InProcessEventSourcedDeliveryOrderRepositoryTests {
 
 	private DeliveryOrderRepository repository;
@@ -25,7 +25,7 @@ public class InProcessEventSourcedDeliveryOrderRepositoryTests {
 	private DeliveryOrderRef ref;
 	private DeliveryOrder deliveryOrder;
 
-	@Before
+	@BeforeEach
 	public void setUp() {
 		eventLog = mock(EventLog.class);
 		repository = new InProcessEventSourcedDeliveryOrderRepository(eventLog,
@@ -41,22 +41,22 @@ public class InProcessEventSourcedDeliveryOrderRepositoryTests {
 	}
 
 	@Test
-	@Category(Lab7Tests.class)
-	public void provides_next_identity() {
+	@Tag("Lab7Tests")
+	public void should_provide_the_next_available_identity() {
 		assertThat(ref.getReference()).isNotNull();
 	}
 
 	@Test
-	@Category(Lab7Tests.class)
-	public void add_fires_event() {
+	@Tag("Lab7Tests")
+	public void should_publish_an_event_when_a_delivery_order_is_added() {
 		repository.add(deliveryOrder);
 		DeliveryOrderAddedEvent event = new DeliveryOrderAddedEvent(ref, deliveryOrder.state());
 		verify(eventLog).publish(eq(new Topic("delivery_orders")), eq(event));
 	}
 
 	@Test
-	@Category(Lab7Tests.class)
-	public void find_by_ref_hydrates_added_order() {
+	@Tag("Lab7Tests")
+	public void should_hydrate_a_delivery_order_when_it_is_found_by_its_reference() {
 		repository.add(deliveryOrder);
 
 		when(eventLog.eventsBy(new Topic("delivery_orders")))

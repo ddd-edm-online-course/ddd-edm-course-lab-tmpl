@@ -12,6 +12,7 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-compiler-plugin</artifactId>
+                <version>3.8.1</version>
                 <configuration>
                     <source>1.8</source>
                     <target>1.8</target>
@@ -20,7 +21,7 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-surefire-plugin</artifactId>
-                <version>2.22.0</version>
+                <version>2.22.2</version>
                 <configuration>
                     <groups>${testcase.groups}</groups>
                 </configuration>
@@ -32,54 +33,91 @@
         <dependency>
             <groupId>org.projectlombok</groupId>
             <artifactId>lombok</artifactId>
-            <version>1.16.20</version>
+            <version>1.18.16</version>
         </dependency>
         <dependency>
             <groupId>junit</groupId>
             <artifactId>junit</artifactId>
-            <version>4.12</version>
+            <version>4.13.1</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.junit.platform</groupId>
+            <artifactId>junit-platform-suite-api</artifactId>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.junit.platform</groupId>
+            <artifactId>junit-platform-runner</artifactId>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.junit.jupiter</groupId>
+            <artifactId>junit-jupiter-api</artifactId>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.junit.jupiter</groupId>
+            <artifactId>junit-jupiter-engine</artifactId>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.junit.vintage</groupId>
+            <artifactId>junit-vintage-engine</artifactId>
             <scope>test</scope>
         </dependency>
         <dependency>
             <groupId>org.assertj</groupId>
             <artifactId>assertj-core</artifactId>
-            <version>3.9.0</version>
+            <version>3.18.1</version>
             <scope>test</scope>
         </dependency>
         <dependency>
             <groupId>org.mockito</groupId>
             <artifactId>mockito-core</artifactId>
-            <version>2.13.0</version>
+            <version>3.6.0</version>
             <scope>test</scope>
         </dependency>
     </dependencies>
+
+    <dependencyManagement>
+        <dependencies>
+            <dependency>
+                <groupId>org.junit</groupId>
+                <artifactId>junit-bom</artifactId>
+                <version>5.7.0</version>
+                <type>pom</type>
+                <scope>import</scope>
+            </dependency>
+        </dependencies>
+    </dependencyManagement>
 
     <profiles>
         <profile>
             <id>FirstSubmission</id>
             <properties>
-                <testcase.groups>com.mattstine.lab.infrastructure.FirstSubmissionTest</testcase.groups>
+                <testcase.groups>FirstSubmissionTest</testcase.groups>
                 <testcase.excludeGroups>
-                    com.mattstine.lab.infrastructure.Lab1Tests,com.mattstine.lab.infrastructure.Lab2Tests,com.mattstine.lab.infrastructure.Lab3Tests,com.mattstine.lab.infrastructure.Lab4Tests,com.mattstine.lab.infrastructure.Lab5Tests,com.mattstine.lab.infrastructure.Lab6Tests,com.mattstine.lab.infrastructure.Lab7Tests
+                    Lab1Tests,Lab2Tests,Lab3Tests,Lab4Tests,Lab5Tests,Lab6Tests,Lab7Tests
                 </testcase.excludeGroups>
             </properties>
         </profile>
         <profile>
             <id>Lab1</id>
             <properties>
-                <testcase.groups>com.mattstine.lab.infrastructure.Lab1Tests</testcase.groups>
+                <testcase.groups>Lab1Tests</testcase.groups>
                 <testcase.excludeGroups>
-                    com.mattstine.lab.infrastructure.Lab2Tests,com.mattstine.lab.infrastructure.Lab3Tests,com.mattstine.lab.infrastructure.Lab4Tests,com.mattstine.lab.infrastructure.Lab5Tests,com.mattstine.lab.infrastructure.Lab6Tests,com.mattstine.lab.infrastructure.Lab7Tests
+                    Lab2Tests,Lab3Tests,Lab4Tests,Lab5Tests,Lab6Tests,Lab7Tests
                 </testcase.excludeGroups>
             </properties>
         </profile>
         <profile>
             <id>Lab2</id>
             <properties>
-                <testcase.groups>com.mattstine.lab.infrastructure.Lab1Tests,com.mattstine.lab.infrastructure.Lab2Tests
+                <testcase.groups>Lab1Tests,Lab2Tests
                 </testcase.groups>
                 <testcase.excludeGroups>
-                    com.mattstine.lab.infrastructure.Lab3Tests,com.mattstine.lab.infrastructure.Lab4Tests,com.mattstine.lab.infrastructure.Lab5Tests,com.mattstine.lab.infrastructure.Lab6Tests,com.mattstine.lab.infrastructure.Lab7Tests
+                    Lab3Tests,Lab4Tests,Lab5Tests,Lab6Tests,Lab7Tests
                 </testcase.excludeGroups>
             </properties>
         </profile>
@@ -87,10 +125,10 @@
             <id>Lab3</id>
             <properties>
                 <testcase.groups>
-                    com.mattstine.lab.infrastructure.Lab1Tests,com.mattstine.lab.infrastructure.Lab2Tests,com.mattstine.lab.infrastructure.Lab3Tests
+                    Lab1Tests,Lab2Tests,Lab3Tests
                 </testcase.groups>
                 <testcase.excludeGroups>
-                    com.mattstine.lab.infrastructure.Lab4Tests,com.mattstine.lab.infrastructure.Lab5Tests,com.mattstine.lab.infrastructure.Lab6Tests,com.mattstine.lab.infrastructure.Lab7Tests
+                    Lab4Tests,Lab5Tests,Lab6Tests,Lab7Tests
                 </testcase.excludeGroups>
             </properties>
         </profile>
@@ -98,10 +136,10 @@
             <id>Lab4</id>
             <properties>
                 <testcase.groups>
-                    com.mattstine.lab.infrastructure.Lab1Tests,com.mattstine.lab.infrastructure.Lab2Tests,com.mattstine.lab.infrastructure.Lab3Tests,com.mattstine.lab.infrastructure.Lab4Tests
+                    Lab1Tests,Lab2Tests,Lab3Tests,Lab4Tests
                 </testcase.groups>
                 <testcase.excludeGroups>
-                    com.mattstine.lab.infrastructure.Lab5Tests,com.mattstine.lab.infrastructure.Lab6Tests,com.mattstine.lab.infrastructure.Lab7Tests
+                    Lab5Tests,Lab6Tests,Lab7Tests
                 </testcase.excludeGroups>
             </properties>
         </profile>
@@ -109,10 +147,10 @@
             <id>Lab5</id>
             <properties>
                 <testcase.groups>
-                    com.mattstine.lab.infrastructure.Lab1Tests,com.mattstine.lab.infrastructure.Lab2Tests,com.mattstine.lab.infrastructure.Lab3Tests,com.mattstine.lab.infrastructure.Lab4Tests,com.mattstine.lab.infrastructure.Lab5Tests
+                    Lab1Tests,Lab2Tests,Lab3Tests,Lab4Tests,Lab5Tests
                 </testcase.groups>
                 <testcase.excludeGroups>
-                    com.mattstine.lab.infrastructure.Lab6Tests,com.mattstine.lab.infrastructure.Lab7Tests
+                    Lab6Tests,Lab7Tests
                 </testcase.excludeGroups>
             </properties>
         </profile>
@@ -120,16 +158,16 @@
             <id>Lab6</id>
             <properties>
                 <testcase.groups>
-                    com.mattstine.lab.infrastructure.Lab1Tests,com.mattstine.lab.infrastructure.Lab2Tests,com.mattstine.lab.infrastructure.Lab3Tests,com.mattstine.lab.infrastructure.Lab4Tests,com.mattstine.lab.infrastructure.Lab5Tests,com.mattstine.lab.infrastructure.Lab6Tests
+                    Lab1Tests,Lab2Tests,Lab3Tests,Lab4Tests,Lab5Tests,Lab6Tests
                 </testcase.groups>
-                <testcase.excludeGroups>com.mattstine.lab.infrastructure.Lab7Tests</testcase.excludeGroups>
+                <testcase.excludeGroups>Lab7Tests</testcase.excludeGroups>
             </properties>
         </profile>
         <profile>
             <id>Lab7</id>
             <properties>
                 <testcase.groups>
-                    com.mattstine.lab.infrastructure.Lab1Tests,com.mattstine.lab.infrastructure.Lab2Tests,com.mattstine.lab.infrastructure.Lab3Tests,com.mattstine.lab.infrastructure.Lab4Tests,com.mattstine.lab.infrastructure.Lab5Tests,com.mattstine.lab.infrastructure.Lab6Tests,com.mattstine.lab.infrastructure.Lab7Tests
+                    Lab1Tests,Lab2Tests,Lab3Tests,Lab4Tests,Lab5Tests,Lab6Tests,Lab7Tests
                 </testcase.groups>
             </properties>
         </profile>

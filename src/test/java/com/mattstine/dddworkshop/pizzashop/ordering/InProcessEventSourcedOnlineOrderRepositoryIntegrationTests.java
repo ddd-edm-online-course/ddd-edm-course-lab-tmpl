@@ -4,14 +4,16 @@ import com.mattstine.dddworkshop.pizzashop.infrastructure.events.adapters.InProc
 import com.mattstine.dddworkshop.pizzashop.infrastructure.events.ports.Topic;
 import com.mattstine.dddworkshop.pizzashop.payments.PaymentRef;
 import org.junit.After;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.*;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
 /**
  * @author Matt Stine
  */
+@DisplayName("The integrated in-process event-sourced integrated online order repository")
+@DisplayNameGeneration(DisplayNameGenerator.IndicativeSentences.class)
+@IndicativeSentencesGeneration(separator = " ", generator = DisplayNameGenerator.ReplaceUnderscores.class)
 public class InProcessEventSourcedOnlineOrderRepositoryIntegrationTests {
 
     private OnlineOrderRepository repository;
@@ -19,7 +21,7 @@ public class InProcessEventSourcedOnlineOrderRepositoryIntegrationTests {
     private Pizza pizza;
     private InProcessEventLog eventLog;
 
-    @Before
+    @BeforeEach
     public void setUp() {
         eventLog = InProcessEventLog.instance();
         repository = new InProcessEventSourcedOnlineOrderRepository(eventLog,
@@ -39,7 +41,7 @@ public class InProcessEventSourcedOnlineOrderRepositoryIntegrationTests {
     }
 
     @Test
-    public void find_by_paymentRef_hydrates_order() {
+    public void should_hydrate_an_online_order_when_found_by_its_payment_reference() {
         repository.add(onlineOrder);
         onlineOrder.addPizza(pizza);
         onlineOrder.submit();

@@ -2,23 +2,22 @@ package com.mattstine.dddworkshop.pizzashop.suites;
 
 import com.mattstine.dddworkshop.pizzashop.kitchen.KitchenOrderTests;
 import com.mattstine.dddworkshop.pizzashop.kitchen.PizzaTests;
-import com.mattstine.lab.infrastructure.Lab1Tests;
-import com.mattstine.lab.infrastructure.Lab2Tests;
-import org.junit.experimental.categories.Categories;
+import org.junit.platform.runner.JUnitPlatform;
+import org.junit.platform.suite.api.IncludeTags;
+import org.junit.platform.suite.api.SelectClasses;
 import org.junit.runner.RunWith;
-import org.junit.runners.Suite;
 
 /**
  * @author Matt Stine
  */
-@RunWith(Categories.class)
-@Suite.SuiteClasses({
+@RunWith(JUnitPlatform.class)
+@SelectClasses({
 		KitchenOrderTests.class,
 		PizzaTests.class
 })
-@Categories.IncludeCategory({
-		Lab1Tests.class,
-		Lab2Tests.class
+@IncludeTags({
+		"Lab1Tests",
+		"Lab2Tests"
 })
 public class Lab2Suite {
 }

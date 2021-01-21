@@ -3,8 +3,7 @@ import com.mattstine.dddworkshop.pizzashop.infrastructure.events.ports.EventHand
 import com.mattstine.dddworkshop.pizzashop.infrastructure.events.ports.EventLog;
 import com.mattstine.dddworkshop.pizzashop.infrastructure.events.ports.Topic;
 import com.mattstine.dddworkshop.pizzashop.payments.PaymentRef;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.*;
 
 import java.util.Arrays;
 import java.util.Collections;
@@ -15,6 +14,9 @@ import static org.mockito.Mockito.*;
 /**
  * @author Matt Stine
  */
+@DisplayName("The in-process event-sourced online order repository")
+@DisplayNameGeneration(DisplayNameGenerator.IndicativeSentences.class)
+@IndicativeSentencesGeneration(separator = " ", generator = DisplayNameGenerator.ReplaceUnderscores.class)
 public class InProcessEventSourcedOnlineOrderRepositoryTests {
 
     private OnlineOrderRepository repository;
@@ -23,7 +25,7 @@ public class InProcessEventSourcedOnlineOrderRepositoryTests {
     private OnlineOrder onlineOrder;
     private Pizza pizza;
 
-    @Before
+    @BeforeEach
     public void setUp() {
         eventLog = mock(EventLog.class);
         repository = new InProcessEventSourcedOnlineOrderRepository(eventLog,
@@ -38,19 +40,19 @@ public class InProcessEventSourcedOnlineOrderRepositoryTests {
     }
 
     @Test
-    public void provides_next_identity() {
+    public void should_provide_the_next_available_identity() {
         assertThat(ref).isNotNull();
     }
 
     @Test
-    public void add_fires_event() {
+    public void should_publish_an_event_when_an_online_order_is_added() {
         repository.add(onlineOrder);
         OnlineOrderAddedEvent event = new OnlineOrderAddedEvent(onlineOrder.getRef(), onlineOrder.state());
         verify(eventLog).publish(eq(new Topic("ordering")), eq(event));
     }
 
     @Test
-    public void find_by_ref_hydrates_added_order() {
+    public void should_hydrate_an_online_order_when_found_by_its_reference() {
         repository.add(onlineOrder);
 
         when(eventLog.eventsBy(new Topic("ordering")))
@@ -60,7 +62,7 @@ public class InProcessEventSourcedOnlineOrderRepositoryTests {
     }
 
     @Test
-    public void find_by_ref_hydrates_order_with_added_pizza() {
+    public void should_hydrate_an_online_order_with_a_pizza_when_found_by_its_reference() {
         repository.add(onlineOrder);
         onlineOrder.addPizza(pizza);
 
@@ -72,7 +74,7 @@ public class InProcessEventSourcedOnlineOrderRepositoryTests {
     }
 
     @Test
-    public void find_by_ref_hydrates_submitted_order() {
+    public void should_hydrate_a_submitted_online_order_when_found_by_its_reference() {
         repository.add(onlineOrder);
         onlineOrder.addPizza(pizza);
         onlineOrder.submit();
@@ -86,7 +88,7 @@ public class InProcessEventSourcedOnlineOrderRepositoryTests {
     }
 
     @Test
-    public void find_by_ref_hydrates_order_with_paymentRef_assigned() {
+    public void should_hydrate_an_online_order_with_an_assigned_payment_reference_when_found_by_its_reference() {
         repository.add(onlineOrder);
         onlineOrder.addPizza(pizza);
         onlineOrder.submit();
@@ -104,7 +106,7 @@ public class InProcessEventSourcedOnlineOrderRepositoryTests {
     }
 
     @Test
-    public void find_by_ref_hydrates_order_marked_paid() {
+    public void should_hydrate_a_paid_online_order_when_found_by_its_reference() {
         repository.add(onlineOrder);
         onlineOrder.addPizza(pizza);
         onlineOrder.submit();
@@ -125,7 +127,7 @@ public class InProcessEventSourcedOnlineOrderRepositoryTests {
     }
 
     @Test
-    public void subscribes_to_ordering_topic() {
+    public void should_subscribe_to_the_ordering_topic() {
         verify(eventLog).subscribe(eq(new Topic("ordering")), isA(EventHandler.class));
     }
 
