@@ -8,15 +8,15 @@ You have now successfully acquired your own private copy of the lab exercises an
 This is your sandbox, and you can feel free to make changes, commit and push those changes, etc.
 You'll also find guidance here on how to complete the labs and run the tests. Happy coding!
 
-WARNING: While this is *your* repository, please don't make changes to any of the implemented code that already has passing tests during the labs.
-If you break that code, you may not be able to successfully complete the labs.
+_WARNING: While this is *your* repository, please don't make changes to any of the implemented code that already has passing tests during the labs.
+If you break that code, you may not be able to successfully complete the labs._
 
 ## Setup Guide
 
 If you've gotten this far, we can safely assume that your Git/GitHub setup is correct.
 All that remains is to import the code into your IDE of choice and run your first tests.
 
-| NOTE: | While IDE choice should not matter, these instructions have only been tested in IntelliJ IDEA. |
+_NOTE: While IDE choice should not matter, these instructions have only been tested in IntelliJ IDEA._
 
 1. Ensure your workstation has a proper Java 11 installation.
 
@@ -33,7 +33,7 @@ At the following links, you can find instructions for [Eclipse](https://projectl
 
 Now we'll ensure that you are properly setup for submitting completed labs and viewing your results in GitHub.
 
-NOTE: While submission of your lab implementations is entirely optional, it will help your instructor gauge everyone's progress, as well as provide him the opportunity to provide custom feedback in your repository!
+_NOTE: While submission of your lab implementations is entirely optional, it will help your instructor gauge everyone's progress, as well as provide him the opportunity to provide custom feedback in your repository!_
 
 1. Find `com.mattstine.lab.setup.HelloWorldTest`. This test should currently be failing.
 
