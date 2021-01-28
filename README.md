@@ -16,6 +16,19 @@ If you break that code, you may not be able to successfully complete the labs._
 If you've gotten this far, we can safely assume that your Git/GitHub setup is correct.
 All that remains is to import the code into your IDE of choice and run your first tests.
 
+You also have the choice of working on the labs within a browser-based IDE environment
+called [Repl.it](https://repl.it). If you would like to do this, just click on the "Work in Repl.it" button
+at the top of this README document. If this button is not present, it's possible that GitHub
+Classroom has not finished configuring your repo. Just wait a moment and refresh the browser.
+
+![Repl.it Button](assets/repl_it_button.png "Repl.it Button")
+
+When you enter the Repl.it IDE, it will look similar to below. You can click the "Run" button to execute your
+first tests, and you can use the Version Control icon to perform your commits. You also have a shell
+tab that will allow you to run basic UNIX commands.
+
+![Repl.it Screenshot](assets/repl_it.png "Repl.it Screenshot")
+
 _NOTE: While IDE choice should not matter, these instructions have only been tested in IntelliJ IDEA._
 
 1. Ensure your workstation has a proper Java 11 installation.
@@ -43,6 +56,16 @@ _NOTE: While submission of your lab implementations is entirely optional, it wil
 For this lab, you'll prefix with `[SETUP]`. For Lab 1, you'll prefix with `[LAB 1]`. And so on...
 
 1. Push your changes to GitHub.
+
+1. GitHub Classroom has configured your repository to "autograde" your submissions. You can view the progress of
+   this autograding by clicking on "Actions," followed by the commit you want to view, and then "Autograding."
+   GitHub will grade *ALL* of the labs each time you submit, so don't be alarmed by the failures. For your Setup Submission, if you
+   search the output for "Setup Lab" you should find a green checkmark.
+   
+1. Finally, if you click on "Pull requests," you wil find a single PR entitled "Feedback." This PR will allow me to provide
+   you with feedback on your work. For example, if you run into test failures that you do not understand, just
+   go ahead and commit/push that code, then contact me in the private chat window. I can then take a look at your code and
+   provide you with feedback on the commit.
 
 1. Assuming you've gotten this far, you're ready to start Lab 1!
 
