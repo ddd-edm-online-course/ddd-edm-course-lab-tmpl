@@ -58,10 +58,23 @@ For this lab, you'll prefix with `[SETUP]`. For Lab 1, you'll prefix with `[LAB 
 1. Push your changes to GitHub.
 
 1. GitHub Classroom has configured your repository to "autograde" your submissions. You can view the progress of
-   this autograding by clicking on "Actions," followed by the commit you want to view, and then "Autograding."
+   this autograding by clicking on "Actions":
+
+   ![GitHub Actions Button](assets/gh_actions_button.png "GitHub Actions Button") 
+
+   followed by the commit you want to view:
+
+   ![GitHub Actions Commit](assets/gh_actions_commit.png "GitHub Actions Commit")
+
+   and then "Autograding":
+
+   ![GitHub Actions Autograding](assets/gh_actions_autograding.png "GitHub Actions Autograding")
+
    GitHub will grade *ALL* of the labs each time you submit, so don't be alarmed by the failures. For your Setup Submission, if you
    search the output for "Setup Lab" you should find a green checkmark.
    
+   ![GitHub Actions Success](assets/gh_actions_success.png "GitHub Actions Success")
+
 1. Finally, if you click on "Pull requests," you wil find a single PR entitled "Feedback." This PR will allow me to provide
    you with feedback on your work. For example, if you run into test failures that you do not understand, just
    go ahead and commit/push that code, then contact me in the private chat window. I can then take a look at your code and
