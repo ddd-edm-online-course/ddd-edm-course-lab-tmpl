@@ -75,10 +75,19 @@ For this lab, you'll prefix with `[SETUP]`. For Lab 1, you'll prefix with `[LAB 
    
    ![GitHub Actions Success](assets/gh_actions_success.png "GitHub Actions Success")
 
-1. Finally, if you click on "Pull requests," you wil find a single PR entitled "Feedback." This PR will allow me to provide
-   you with feedback on your work. For example, if you run into test failures that you do not understand, just
-   go ahead and commit/push that code, then contact me in the private chat window. I can then take a look at your code and
+1. Finally, if you click on "Pull requests":
+
+   ![GitHub Pull Requests](assets/gh_pull_requests.png "GitHub Pull Requests")
+   
+   you will find a single PR entitled "Feedback":
+
+   ![Feedback Pull Request](assets/gh_pull_requests_feedback.png "Feedback Pull Request")
+
+   This PR will allow me to provide you with feedback on your work. For example, if you run into test failures that you do not understand, just
+   go ahead and commit/push that code, then contact me in the private chat window within the O'Reilly Learning Platform. I can then take a look at your code and
    provide you with feedback on the commit.
+
+   ![Feedback PR Details](assets/gh_pull_requests_feedback_detail.png "Feedback PR Details")
 
 1. Assuming you've gotten this far, you're ready to start Lab 1!
 
