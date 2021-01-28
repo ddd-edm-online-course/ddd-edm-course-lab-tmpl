@@ -1,8 +1,8 @@
-= Domain-Driven Design and Event-Driven Microservices
+# Domain-Driven Design and Event-Driven Microservices
 
 **Learning a Pathway to Evolutionary Architecture**
 
-== Welcome to the Lab Environment!
+## Welcome to the Lab Environment!
 
 You have now successfully acquired your own private copy of the lab exercises and instructions.
 This is your sandbox, and you can feel free to make changes, commit and push those changes, etc.
@@ -11,14 +11,14 @@ You'll also find guidance here on how to complete the labs and run the tests. Ha
 WARNING: While this is *your* repository, please don't make changes to any of the implemented code that already has passing tests during the labs.
 If you break that code, you may not be able to successfully complete the labs.
 
-== Setup Guide
+## Setup Guide
 
 If you've gotten this far, we can safely assume that your Git/GitHub setup is correct.
 All that remains is to import the code into your IDE of choice and run your first tests.
 
 NOTE: While IDE choice should not matter, these instructions have only been tested in IntelliJ IDEA.
 
-. Ensure your workstation has a proper Java 8 installation.
+. Ensure your workstation has a proper Java 11 installation.
 
 . You will need to make sure your IDE is properly configured for Lombok.
 At the following links, you can find instructions for https://projectlombok.org/setup/eclipse[Eclipse] and https://projectlombok.org/setup/intellij[IntelliJ] IDEA.
@@ -29,7 +29,7 @@ At the following links, you can find instructions for https://projectlombok.org/
 
 . Assuming you've gotten this far, you're ready to submit your setup lab. Read on!
 
-== Lab Submission Guide
+## Lab Submission Guide
 
 Now we'll ensure that you are properly setup for submitting completed labs to GitHub and viewing your results in TravisCI.
 
@@ -64,9 +64,7 @@ image::assets/travis_repo.png[]
 
 . Assuming you've gotten this far, you're ready to start Lab 1!
 
-== Lab Guides
-
-TODO: these need to be written
+## Lab Guides
 
 * link:docs/lab1.adoc[Lab 1] - TDD Aggregate Root - Create Kitchen Commands with Business Logic and Invariants
 * link:docs/lab2.adoc[Lab 2] - TDD Aggregate Root - Create and Publish Kitchen Domain Events
