@@ -18,58 +18,40 @@ All that remains is to import the code into your IDE of choice and run your firs
 
 NOTE: While IDE choice should not matter, these instructions have only been tested in IntelliJ IDEA.
 
-. Ensure your workstation has a proper Java 11 installation.
+1. Ensure your workstation has a proper Java 11 installation.
 
-. You will need to make sure your IDE is properly configured for Lombok.
-At the following links, you can find instructions for https://projectlombok.org/setup/eclipse[Eclipse] and https://projectlombok.org/setup/intellij[IntelliJ] IDEA.
+1. You will need to make sure your IDE is properly configured for Lombok.
+At the following links, you can find instructions for [Eclipse](https://projectlombok.org/setup/eclipse) and [IntelliJ](https://projectlombok.org/setup/intellij) IDEA.
 
-. Import `pom.xml` as a Maven project into your IDE.
+1. Import `pom.xml` as a Maven project into your IDE.
 
-. Run `com.mattstine.dddworkshop.pizzashop.suites.SetupSuite` to demonstrate that all of the implemented tests are passing.
+1. Run `com.mattstine.dddworkshop.pizzashop.suites.SetupSuite` to demonstrate that all the implemented tests are passing.
 
-. Assuming you've gotten this far, you're ready to submit your setup lab. Read on!
+1. Assuming you've gotten this far, you're ready to submit your setup lab. Read on!
 
 ## Lab Submission Guide
 
-Now we'll ensure that you are properly setup for submitting completed labs to GitHub and viewing your results in TravisCI.
+Now we'll ensure that you are properly setup for submitting completed labs and viewing your results in GitHub.
 
 NOTE: While submission of your lab implementations is entirely optional, it will help your instructor gauge everyone's progress, as well as provide him the opportunity to provide custom feedback in your repository!
 
-. Find `com.mattstine.lab.setup.HelloWorldTest`. This test should currently be failing.
+1. Find `com.mattstine.lab.setup.HelloWorldTest`. This test should currently be failing.
 
-. Make it pass!
+1. Make it pass!
 
-. Change the `script` property in `.travis.yml` to read: `mvn test -B -P FirstSubmission`
-
-. You'll now want to commit your changes to Git. When submitting labs, please prefix your commit with `[NAME OF LAB]` in order to make it easier to track down.
+1. You'll now want to commit your changes to Git. When submitting labs, please prefix your commit with `[NAME OF LAB]` in order to make it easier to track down.
 For this lab, you'll prefix with `[SETUP]`. For Lab 1, you'll prefix with `[LAB 1]`. And so on...
 
-. Push your changes to GitHub.
+1. Push your changes to GitHub.
 
-. Visit http://travis-ci.com, and sign in with your GitHub account. If you are not already a Travis CI user, you will need to complete the following steps.
-+
-image::assets/travis.png[]
-
-. You will be asked to authorize Travis CI to access data from your GitHub account. You will have to accept to continue. If you are not comfortable with this authorization, you will be able to complete the labs (if you're here, I assume you've cloned the repo), but you won't be able to submit for feedback.
-+
-image::assets/authorize_travis.png[]
-
-. You may be asked by GitHub to confirm your password.
-+
-image::assets/password.png[]
-
-. Travis CI will sync any enabled repos in your GitHub account. Your class repo should already be there as well, and should have a successful build.
-+
-image::assets/travis_repo.png[]
-
-. Assuming you've gotten this far, you're ready to start Lab 1!
+1. Assuming you've gotten this far, you're ready to start Lab 1!
 
 ## Lab Guides
 
-* link:docs/lab1.adoc[Lab 1] - TDD Aggregate Root - Create Kitchen Commands with Business Logic and Invariants
-* link:docs/lab2.adoc[Lab 2] - TDD Aggregate Root - Create and Publish Kitchen Domain Events
-* link:docs/lab3.adoc[Lab 3] - TDD Aggregate Repository - Create Kitchen Repositories and Add Domain Events
-* link:docs/lab4.adoc[Lab 4] - TDD Aggregate Repository - Rehydrate Kitchen Aggregates by Reference
-* link:docs/lab5.adoc[Lab 5] - TDD Policy - Subscribe to a Kitchen Domain Event from within an Aggregate and Create CQRS View
-* link:docs/lab6.adoc[Lab 6] - TDD Application Service - Expose Kitchen Business Interface and Implement Transactions
-* link:docs/lab7.adoc[Lab 7] - TDD Policy - Subscribe to a Kitchen Domain Event from an Adjacent Aggregate and Update State
+* [Lab 1](docs/lab1.adoc) - TDD Aggregate Root - Create Kitchen Commands with Business Logic and Invariants
+* [Lab 2](docs/lab2.adoc) - TDD Aggregate Root - Create and Publish Kitchen Domain Events
+* [Lab 3](docs/lab3.adoc) - TDD Aggregate Repository - Create Kitchen Repositories and Add Domain Events
+* [Lab 4](docs/lab4.adoc) - TDD Aggregate Repository - Rehydrate Kitchen Aggregates by Reference
+* [Lab 5](docs/lab5.adoc) - TDD Policy - Subscribe to a Kitchen Domain Event from within an Aggregate and Create CQRS View
+* [Lab 6](docs/lab6.adoc) - TDD Application Service - Expose Kitchen Business Interface and Implement Transactions
+* [Lab 7](docs/lab7.adoc) - TDD Policy - Subscribe to a Kitchen Domain Event from an Adjacent Aggregate and Update State
