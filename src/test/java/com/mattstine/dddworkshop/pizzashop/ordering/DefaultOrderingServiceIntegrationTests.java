@@ -6,6 +6,7 @@ import com.mattstine.dddworkshop.pizzashop.infrastructure.events.ports.Topic;
 import com.mattstine.dddworkshop.pizzashop.payments.PaymentRef;
 import com.mattstine.dddworkshop.pizzashop.payments.PaymentService;
 import com.mattstine.dddworkshop.pizzashop.payments.PaymentSuccessfulEvent;
+import org.junit.After;
 import org.junit.jupiter.api.*;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -19,7 +20,7 @@ import static org.mockito.Mockito.mock;
 @IndicativeSentencesGeneration(separator = " ", generator = DisplayNameGenerator.ReplaceUnderscores.class)
 public class DefaultOrderingServiceIntegrationTests {
 
-    private EventLog eventLog;
+    private InProcessEventLog eventLog;
     private OnlineOrderRepository repository;
 
     @BeforeEach
@@ -28,6 +29,12 @@ public class DefaultOrderingServiceIntegrationTests {
         repository = new InProcessEventSourcedOnlineOrderRepository(eventLog,
                 new Topic("ordering"));
         new DefaultOrderingService(eventLog, repository, mock(PaymentService.class));
+    }
+
+    @AfterEach
+    public void tearDown() {
+        this.eventLog.purgeSubscribers();
+        this.eventLog.purgeEvents();
     }
 
     @Test

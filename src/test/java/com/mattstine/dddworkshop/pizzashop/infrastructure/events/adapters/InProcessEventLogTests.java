@@ -22,9 +22,10 @@ public class InProcessEventLogTests {
         this.eventLog = InProcessEventLog.instance();
     }
 
-    @After
+    @AfterEach
     public void tearDown() {
         this.eventLog.purgeSubscribers();
+        this.eventLog.purgeEvents();
     }
 
     @Test

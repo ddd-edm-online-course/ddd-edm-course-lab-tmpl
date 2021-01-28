@@ -34,6 +34,7 @@ public class DefaultPaymentServiceIntegrationTests {
     @AfterEach
     public void tearDown() {
         this.eventLog.purgeSubscribers();
+        this.eventLog.purgeEvents();
     }
 
     @Test

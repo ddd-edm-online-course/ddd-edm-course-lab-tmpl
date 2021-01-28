@@ -35,9 +35,10 @@ public class InProcessEventSourcedPizzaRepositoryIntegrationTests {
 				.build();
 	}
 
-	@After
+	@AfterEach
 	public void tearDown() {
 		this.eventLog.purgeSubscribers();
+		this.eventLog.purgeEvents();
 	}
 
 	@Test

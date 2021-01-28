@@ -39,9 +39,10 @@ public class DefaultDeliveryServiceIntegrationTests {
 		deliveryService = new DeliveryService(eventLog, deliveryOrderRepository, orderingService, kitchenService);
 	}
 
-	@After
+	@AfterEach
 	public void tearDown() {
 		this.eventLog.purgeSubscribers();
+		this.eventLog.purgeEvents();
 	}
 
 	@Test

@@ -53,4 +53,8 @@ public final class InProcessEventLog implements EventLog {
     public void purgeSubscribers() {
         this.topics.clear();
     }
+
+    public void purgeEvents() {
+        this.events.clear();
+    }
 }

@@ -35,9 +35,10 @@ public class InProcessEventSourcedOnlineOrderRepositoryIntegrationTests {
         pizza = Pizza.builder().size(Pizza.Size.MEDIUM).build();
     }
 
-    @After
+    @AfterEach
     public void tearDown() {
         this.eventLog.purgeSubscribers();
+        this.eventLog.purgeEvents();
     }
 
     @Test

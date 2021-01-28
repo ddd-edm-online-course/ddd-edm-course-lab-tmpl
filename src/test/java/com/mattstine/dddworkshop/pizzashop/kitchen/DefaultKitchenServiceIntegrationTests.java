@@ -49,9 +49,10 @@ public class DefaultKitchenServiceIntegrationTests {
 		kitchenOrderRepository.add(kitchenOrder);
 	}
 
-	@After
+	@AfterEach
 	public void tearDown() {
 		this.eventLog.purgeSubscribers();
+		this.eventLog.purgeEvents();
 	}
 
 	@Test
