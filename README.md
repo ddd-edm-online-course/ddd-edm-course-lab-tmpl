@@ -16,7 +16,7 @@ If you break that code, you may not be able to successfully complete the labs.
 If you've gotten this far, we can safely assume that your Git/GitHub setup is correct.
 All that remains is to import the code into your IDE of choice and run your first tests.
 
-|NOTE:|While IDE choice should not matter, these instructions have only been tested in IntelliJ IDEA.|
+| NOTE: | While IDE choice should not matter, these instructions have only been tested in IntelliJ IDEA. |
 
 1. Ensure your workstation has a proper Java 11 installation.
 
