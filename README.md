@@ -16,19 +16,6 @@ If you break that code, you may not be able to successfully complete the labs._
 If you've gotten this far, we can safely assume that your Git/GitHub setup is correct.
 All that remains is to import the code into your IDE of choice and run your first tests.
 
-You also have the choice of working on the labs within a browser-based IDE environment
-called [Repl.it](https://repl.it). If you would like to do this, just click on the "Work in Repl.it" button
-at the top of this README document. If this button is not present, it's possible that GitHub
-Classroom has not finished configuring your repo. Just wait a moment and refresh the browser.
-
-![Repl.it Button](assets/repl_it_button.png "Repl.it Button")
-
-When you enter the Repl.it IDE, it will look similar to below. You can click the "Run" button to execute your
-first tests, and you can use the Version Control icon to perform your commits. You also have a shell
-tab that will allow you to run basic UNIX commands.
-
-![Repl.it Screenshot](assets/repl_it.png "Repl.it Screenshot")
-
 _NOTE: While IDE choice should not matter, these instructions have only been tested in IntelliJ IDEA._
 
 1. Ensure your workstation has a proper Java 11 installation.
