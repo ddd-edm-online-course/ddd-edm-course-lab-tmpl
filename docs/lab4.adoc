@@ -29,7 +29,3 @@ You can run `com.mattstine.dddworkshop.pizzashop.suites.Lab4Suite` to check your
 . To properly implement `apply`, you need to check the type of the `AggregateEvent` passed as an argument, and for each event type published for that `Aggregate`, perform the appropriate state transformation.
 
 . If you're looking for hints, try looking at the `apply` implementations in the Ordering and Payments contexts.
-
-. Change the `script` property in `.travis.yml` to read: `mvn test -B -P Lab4`
-
-. When you've completed the lab, be sure to submit your work to GitHub using a `[LAB 4]` prefix on your commit message.

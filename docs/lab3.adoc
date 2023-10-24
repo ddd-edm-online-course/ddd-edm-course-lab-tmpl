@@ -20,7 +20,3 @@ You can run `com.mattstine.dddworkshop.pizzashop.suites.Lab3Suite` to check your
 . `KitchenOrder` has an internal static class called `OrderState` that captures the initial state snapshot for the `KitchenOrder`. It is returned by the `state()` method. Complete these implementations. Look for hints in the `Aggregate` types found in the Ordering and Payments contexts.
 
 . `Pizza` has an internal static class called `PizzaState` that captures the initial state snapshot for the `Pizza`. It is returned by the `state()` method. Complete these implementations. Look for hints in the `Aggregate` types found in the Ordering and Payments contexts. 
-
-. Change the `script` property in `.travis.yml` to read: `mvn test -B -P Lab3`
-
-. When you've completed the lab, be sure to submit your work to GitHub using a `[LAB 3]` prefix on your commit message.

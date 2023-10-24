@@ -46,7 +46,3 @@ You can run `com.mattstine.dddworkshop.pizzashop.suites.Lab1Suite` to check your
 . Implement each of these status methods on the two Aggregates.
 
 . If you're looking for hints on how to implement these command and status methods, take a look at the Aggregates in the Ordering or Payments contexts.
-
-. Change the `script` property in `.travis.yml` to read: `mvn test -B -P Lab1`
-
-. When you've completed the lab, be sure to submit your work to GitHub using a `[LAB 1]` prefix on your commit message.

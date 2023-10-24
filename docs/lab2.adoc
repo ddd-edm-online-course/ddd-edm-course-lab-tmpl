@@ -26,7 +26,3 @@ You can run `com.mattstine.dddworkshop.pizzashop.suites.Lab2Suite` to check your
 . Walk through each of the command methods that you completed in Lab 1 on these Aggregates, and publish the appropriate events. They all already exist within the `kitchen` package.
 
 . If you're looking for hints on how to publish an event, take a look at the Aggregates in the Ordering or Payments contexts.
-
-. Change the `script` property in `.travis.yml` to read: `mvn test -B -P Lab2`
-
-. When you've completed the lab, be sure to submit your work to GitHub using a `[LAB 2]` prefix on your commit message.

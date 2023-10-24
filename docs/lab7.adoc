@@ -49,7 +49,3 @@ If you're looking for hints, you can model your implementation after your soluti
 . Finally, finish the implementation of `DeliveryService`. It needs to subscribe to the `kitchen_orders` topic, and on `KitchenOrderAssemblyFinishedEvent`, create a matching `DeliveryOrder`.
 +
 Then complete the implementation of `DeliveryService.findDeliveryOrderByKitchenOrderRef`. This should be easy!
-
-. Change the `script` property in `.travis.yml` to read: `mvn test -B -P Lab7`
-
-. When you've completed the lab, be sure to submit your work to GitHub using a `[LAB 7]` prefix on your commit message.
