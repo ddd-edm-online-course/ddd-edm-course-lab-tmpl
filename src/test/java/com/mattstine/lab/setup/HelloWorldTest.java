@@ -11,7 +11,7 @@ public class HelloWorldTest {
     @Test
     @Tag("FirstSubmissionTest")
     public void helloLabSubmission() {
-        HelloWorld helloWorld = new HelloWorld("<FIX ME>");
+        HelloWorld helloWorld = new HelloWorld("It works!");
 
         assertThat(helloWorld.getMessage()).isEqualTo("It works!");
     }
